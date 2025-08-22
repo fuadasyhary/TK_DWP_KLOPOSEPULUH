@@ -55,13 +55,68 @@
       h1{font-size:26px}
     }
 
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px;
+    }
+    .gallery-grid img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 3px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+      transition: transform 0.2s ease;
+      cursor: pointer;
+    }
+    .gallery-grid img:hover {
+      transform: scale(1.05);
+    }
+
+    .guru-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      text-align: center;
+    }
+    .guru-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .guru-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+    }
+    .guru-img {
+      width: 120px;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 50%;
+      margin-bottom: 12px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+    }
+    .guru-card h3 {
+      margin: 8px 0 4px 0;
+      font-size: 18px;
+      font-weight: bold;
+      color: #333;
+    }
+    .guru-card p {
+      margin: 0;
+      font-size: 14px;
+      color: #666;
+    }
+
     /* playful confetti */
     .confetti{position:absolute;pointer-events:none;z-index:0;opacity:0.9}
   </style>
 </head>
 <body>
   <header>
-    <div class="logo" aria-hidden>
+    <div aria-hidden>
       <img src="logo.png" alt="Logo Sekolah" style="width:64px;height:64px;">
       </svg>
     </div>
@@ -79,34 +134,43 @@
     <section class="hero card" aria-labelledby="about-title">
       <div class="hero-left">
         <h2 id="about-title" style="margin:0;font-size:18px">Selamat datang di profil kami 👋</h2>
-        <p style="margin:8px 0 0;color:var(--muted)">Website profil yang friendly buat anak — warna ceria, teks mudah dibaca, dan tombol besar supaya guru & ortu gampang pakai.</p>
+        <p style="margin:20px 0 0;color:var(--muted)">Visi dan Misi</p>
+
+        <p style="margin:20px 0 0;color:var(--muted)">Visi</p>
+        <p style="margin:3px 0 0;color:var(--muted)">“MEMBENTUK GENERASI YANG MANDIRI, CERDAS, BERPRESTASI DAN BERAKHLAK MULIA”</p>
+          
+        <p style="margin:10px 0 0;color:var(--muted)">Misi</p>
+          
+        <p style="margin:3px 0 0;color:var(--muted)">1. MEMBANGUN PEMBIASAAN BERPERILAKU HIDUP SEHAT, BERSIH DAN BERAKHLAK MULIA</p>
+          
+          
+        <p style="margin:3px 0 0;color:var(--muted)">2. MEMBANGUN KECERDASAN ANAK DALAM ASPEK KOGNITIF, AFEKTIF, SPIRITUAL MAUPUN SOSIAL</p>
+          
+          
+        <p style="margin:3px 0 0;color:var(--muted)">3. MENGEMBANGKAN KREATIVITAS YANG INOVATIF PADA ANAK, SEHINGGA MAMPU BERSOSIALISASI</p>
+          
+          
+          
+        <p style="margin:10px 0 0;color:var(--muted)">Tujuan</p>
+          
+        <p style="margin:3px 0 0;color:var(--muted)">1. MELATIH UNTUK BERIMAN DAN BERTAQWA KEPADA TUHAN YANG MAHA ESA</p>
+          
+          
+        <p style="margin:3px 0 0;color:var(--muted)">2. MELATIH UNTUK MANDIRI DALAM KEGIATAN SEHARI-HARI</p>
+          
+          
+        <p style="margin:3px 0 0;color:var(--muted)">3. MELATIH UNTUK HIDUP BERSAMA DAN BERGUNA BAGI ORANG LAIN</p>
 
         <div class="actions">
           <button class="btn btn-primary" onclick="openSK()">Lihat SK Operasional</button>
           <button class="btn btn-ghost" onclick="scrollToProfile()">Lihat Profil Lengkap</button>
+          <button class="btn btn-ghost" onclick="window.open('https://edukasianak.netlify.app/', '_blank')">Apps Edukasi Anak</button>
         </div>
 
         <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">
           <div class="card" style="padding:10px;border-radius:12px">No. SK Pendirian<br><strong>077/104.10/i-90</strong></div>
           <div class="card" style="padding:10px;border-radius:12px">Tgl SK Pendirian<br><strong>17 Jan 1990</strong></div>
           <div class="card" style="padding:10px;border-radius:12px">SK Operasional<br><strong>421.1/1810/438.5.1/2019</strong></div>
-        </div>
-      </div>
-
-      <div class="hero-right">
-        <div class="mascot">
-          <!-- playful mascot image -->
-          <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" role="img">
-            <rect width="120" height="120" rx="20" fill="#FFF" />
-            <g transform="translate(18,12)">
-              <circle cx="30" cy="30" r="26" fill="#FFB3C6" />
-              <circle cx="22" cy="26" r="3.5" fill="#3B3B3B" />
-              <circle cx="38" cy="26" r="3.5" fill="#3B3B3B" />
-              <path d="M18 40c6 6 24 6 30 0" stroke="#3B3B3B" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-              <rect x="4" y="64" width="52" height="18" rx="8" fill="#7AD6FF" />
-            </g>
-          </svg>
-          <div style="font-size:12px;color:var(--muted);margin-top:6px">TK yang ramah & ceria</div>
         </div>
       </div>
     </section>
@@ -217,6 +281,61 @@
 
       </div>
     </section>
+
+    <!-- 🔥 Section Profil Guru -->
+    <section class="card" style="margin-top:14px">
+      <h2 style="margin:0 0 16px 0; text-align:center;">Profil Guru</h2>
+      <div class="guru-grid">
+        
+        <div class="guru-card">
+          <img src="guru1.jpg" alt="Ibu Siti" class="guru-img">
+          <h3>Ibu Siti Aminah</h3>
+          <p>Kepala Sekolah</p>
+        </div>
+        
+        <div class="guru-card">
+          <img src="guru2.jpg" alt="Ibu Dewi" class="guru-img">
+          <h3>Ibu Dewi Lestari</h3>
+          <p>Guru Kelas A</p>
+        </div>
+        
+        <div class="guru-card">
+          <img src="guru3.jpg" alt="Ibu Rina" class="guru-img">
+          <h3>Ibu Rina Kartika</h3>
+          <p>Guru Kelas B</p>
+        </div>
+        
+        <div class="guru-card">
+          <img src="guru4.jpg" alt="Ibu Maya" class="guru-img">
+          <h3>Ibu Maya Sari</h3>
+          <p>Guru Ekstrakurikuler</p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 🔥 Section Galeri -->
+    <section class="card" style="margin-top:14px">
+      <h2 style="margin:0 0 16px 0; text-align:center;">Galeri Kegiatan</h2>
+      <div class="gallery-grid">
+        <img src="gallery1.jpg" alt="Kegiatan 1">
+        <img src="gallery2.jpg" alt="Kegiatan 2">
+        <img src="gallery3.jpg" alt="Kegiatan 3">
+        <img src="gallery4.jpg" alt="Kegiatan 4">
+        <img src="gallery5.jpg" alt="Kegiatan 5">
+        <img src="gallery6.jpg" alt="Kegiatan 6">
+        <img src="gallery6.jpg" alt="Kegiatan 7">
+        <img src="gallery6.jpg" alt="Kegiatan 8">
+        <img src="gallery6.jpg" alt="Kegiatan 9">
+        <img src="gallery6.jpg" alt="Kegiatan 10">
+        <img src="gallery6.jpg" alt="Kegiatan 11">
+        <img src="gallery6.jpg" alt="Kegiatan 12">
+        <img src="gallery6.jpg" alt="Kegiatan 13">
+        <img src="gallery6.jpg" alt="Kegiatan 14">
+        <img src="gallery6.jpg" alt="Kegiatan 15">
+      </div>
+    </section>
+
     <section class="card" style="margin-top:14px">
       <div class="map-container" style="margin:20px 0; text-align:center;">
         <h2>Lokasi Sekolah TK Dharma Wanita Persatuan Kloposepuluh</h2>
@@ -235,7 +354,7 @@
   </main>
 
   <footer>
-    © TK DHARMA WANITA PERSATUAN KLOPOSEPULUH
+    ©Mochamad Fuad Asyhary
   </footer>
 
   <div id="sk-modal" style="display:none;position:fixed;inset:0;background:rgba(3,6,18,0.45);align-items:center;justify-content:center;padding:20px">
