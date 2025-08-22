@@ -336,21 +336,67 @@
     <section class="card" style="margin-top:14px">
       <h2 style="margin:0 0 16px 0; text-align:center;">Galeri Kegiatan</h2>
       <div class="gallery-grid">
-        <img src="gallery1.jpg" alt="Kegiatan 1">
-        <img src="gallery2.jpg" alt="Kegiatan 2">
-        <img src="gallery3.jpg" alt="Kegiatan 3">
-        <img src="gallery4.jpg" alt="Kegiatan 4">
-        <img src="gallery5.jpg" alt="Kegiatan 5">
-        <img src="gallery6.jpg" alt="Kegiatan 6">
-        <img src="gallery6.jpg" alt="Kegiatan 7">
-        <img src="gallery6.jpg" alt="Kegiatan 8">
-        <img src="gallery6.jpg" alt="Kegiatan 9">
-        <img src="gallery6.jpg" alt="Kegiatan 10">
+        <img src="1.jfif" alt="Kegiatan 1">
+        <img src="2.jfif" alt="Kegiatan 2">
+        <img src="3.jpg" alt="Kegiatan 3">
+        <img src="4.jfif" alt="Kegiatan 4">
+        <img src="5.jpg" alt="Kegiatan 5">
+        <img src="6.jpg" alt="Kegiatan 6">
+        <img src="7.jpg" alt="Kegiatan 7">
+        <img src="8.jpg" alt="Kegiatan 8">
+        <img src="9.jpg" alt="Kegiatan 9">
+        <img src="10.jpg" alt="Kegiatan 10">
         <img src="gallery6.jpg" alt="Kegiatan 11">
         <img src="gallery6.jpg" alt="Kegiatan 12">
         <img src="gallery6.jpg" alt="Kegiatan 13">
         <img src="gallery6.jpg" alt="Kegiatan 14">
         <img src="gallery6.jpg" alt="Kegiatan 15">
+      </div>
+    </section>
+
+    <!-- Modal Full Galeri -->
+    <div id="gallery-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);align-items:center;justify-content:center;z-index:9999;">
+      <span id="close-gallery" style="position:absolute;top:20px;right:30px;font-size:30px;color:#fff;cursor:pointer;">&times;</span>
+      <img id="gallery-full-img" src="" alt="Full Gallery" style="max-width:90%;max-height:90%;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,0.6);transition:0.3s">
+      <button id="prev-img" style="position:absolute;left:20px;top:50%;transform:translateY(-50%);font-size:40px;color:#fff;background:none;border:none;cursor:pointer;">&#10094;</button>
+      <button id="next-img" style="position:absolute;right:20px;top:50%;transform:translateY(-50%);font-size:40px;color:#fff;background:none;border:none;cursor:pointer;">&#10095;</button>
+    </div>
+
+    <!-- 🔥 Section Kontak -->
+    <section class="card" style="margin-top:14px">
+      <h2 style="margin:0 0 16px 0; text-align:center;">Kontak Sekolah</h2>
+      <div class="profile-grid">
+
+        <div class="field">
+          <div class="k">Telepon</div>
+          <div class="v">031-788XXXX</div>
+        </div>
+
+        <div class="field">
+          <div class="k">Email</div>
+          <div class="v"><a href="mailto:tkdwpklopox@gmail.com">tkdwpklopox@gmail.com</a></div>
+        </div>
+
+        <div class="field">
+          <div class="k">Website</div>
+          <div class="v"><a href="https://tkdwpkloposepuluh.netlify.app/" target="_blank">https://tkdwpkloposepuluh.netlify.app/</a></div>
+        </div>
+
+        <div class="field">
+          <div class="k">Instagram</div>
+          <div class="v"><a href="https://www.instagram.com/tkdwpklopox/" target="_blank">@tkdwpklopox</a></div>
+        </div>
+
+        <div class="field">
+          <div class="k">Alamat Lengkap</div>
+          <div class="v">KLOPOSEPULUH RT 23 RW 06, KLOPOSEPULUH, KEC. SUKODONO, KAB. SIDOARJO, PROV. JAWA TIMUR</div>
+        </div>
+
+        <div class="field">
+          <div class="k">Jam Operasional</div>
+          <div class="v">Senin - Sabtu: 07:00 - 13:00 WIB (Kecuali Tanggal Merah atau Cuti Bersama)</div>
+        </div>
+
       </div>
     </section>
 
@@ -406,6 +452,45 @@
       var dots=[];for(var i=0;i<12;i++){dots.push({x:Math.random()*200,y:Math.random()*120,r:2+Math.random()*4,c:['#FF7AA2','#FFD166','#7AD6FF','#B3FF9E'][i%4]})}
       dots.forEach(function(d){ctx.fillStyle=d.c;ctx.beginPath();ctx.arc(d.x,d.y,d.r,0,Math.PI*2);ctx.fill()});
     })();
+
+    // Full gallery
+    const galleryImages = document.querySelectorAll('.gallery-grid img');
+    const modal = document.getElementById('gallery-modal');
+    const modalImg = document.getElementById('gallery-full-img');
+    const closeBtn = document.getElementById('close-gallery');
+    const prevBtn = document.getElementById('prev-img');
+    const nextBtn = document.getElementById('next-img');
+
+    let currentIndex = 0;
+
+    galleryImages.forEach((img, idx) => {
+      img.addEventListener('click', () => {
+        currentIndex = idx;
+        modal.style.display = 'flex';
+        modalImg.src = img.src;
+      });
+    });
+
+    closeBtn.addEventListener('click', () => modal.style.display = 'none');
+
+    prevBtn.addEventListener('click', () => {
+      currentIndex = (currentIndex - 1 + galleryImages.length) % galleryImages.length;
+      modalImg.src = galleryImages[currentIndex].src;
+    });
+
+    nextBtn.addEventListener('click', () => {
+      currentIndex = (currentIndex + 1) % galleryImages.length;
+      modalImg.src = galleryImages[currentIndex].src;
+    });
+
+    // optional: keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      if(modal.style.display === 'flex'){
+        if(e.key === 'ArrowLeft') prevBtn.click();
+        if(e.key === 'ArrowRight') nextBtn.click();
+        if(e.key === 'Escape') closeBtn.click();
+      }
+    });
   </script>
 </body>
 </html>
