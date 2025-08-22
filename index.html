@@ -110,6 +110,17 @@
       color: #666;
     }
 
+    .kids-animation {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      width: 180px;
+      height: 180px;
+      z-index: 999;
+      pointer-events: none;
+    }
+
+
     /* playful confetti */
     .confetti{position:absolute;pointer-events:none;z-index:0;opacity:0.9}
   </style>
@@ -130,6 +141,12 @@
     </div>
   </header>
 
+    <!-- 🔥 Animasi Anak-anak -->
+  <div class="kids-animation">
+    <script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.6.2/dist/dotlottie-wc.js" type="module"></script>
+  <dotlottie-wc src="https://lottie.host/128d49d9-7965-416b-a0cf-dc3b87dc438e/W9LRfpvXx9.lottie" style="width: 180px;height: 180px" speed="1" autoplay loop></dotlottie-wc>
+  </div>
+  
   <main>
     <section class="hero card" aria-labelledby="about-title">
       <div class="hero-left">
