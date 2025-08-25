@@ -216,10 +216,10 @@
         <p style="margin:3px 0 0;color:var(--muted)">3. Melatih Untuk Hidup Bersama Dan Berguna Bagi Orang Lain</p>
 
         <div class="actions">
-          <button class="btn btn-primary" onclick="openSK()">Lihat SK Operasional</button>
           <button class="btn btn-ghost" onclick="scrollToProfile()">Lihat Profil Lengkap</button>
           <button class="btn btn-ghost" onclick="window.open('https://edukasianak.netlify.app/', '_blank')">Apps Edukasi Anak</button>
           <button class="btn btn-ghost" onclick="window.open('https://forms.zohopublic.com/tkdwpklopox/form/PendaftaranSiswaTK/formperma/6LN1Dx6Z1YKB5_Q94LM3DKG4fCyGJJly-_FvFA-414s', '_blank')">Pendaftaran / Pindahan</button>
+          <button class="btn btn-primary" onclick="openReportPopup()">Report Pendaftaran</button>
         </div>
 
         <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">
@@ -494,28 +494,67 @@
 
   </main>
 
+  <!-- 🔥 Modal Report -->
+  <div id="report-modal" style="display:none;position:fixed;inset:0;background:rgba(3,6,18,0.45);align-items:center;justify-content:center;padding:20px;z-index:9999">
+    <div style="max-width:400px;width:100%;background:white;border-radius:12px;padding:18px;box-shadow:0 14px 40px rgba(2,6,23,0.35);">
+      <h3 style="margin-top:0">📑 Pilih Jenis Report</h3>
+
+      <label style="display:block;margin-bottom:6px;">Jenis Pengunjung:</label>
+      <select id="report-type" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;margin-bottom:12px" onchange="togglePasswordField()">
+        <option value="">-- Pilih --</option>
+        <option value="calonsiswa">Calon Siswa</option>
+        <option value="guru">Guru</option>
+      </select>
+
+      <div id="password-wrapper" style="display:none;">
+        <label style="display:block;margin-bottom:6px;">Password Guru:</label>
+        <input type="password" id="report-pass" placeholder="Password..." style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;margin-bottom:12px">
+      </div>
+
+      <div style="display:flex;gap:10px;margin-top:16px;justify-content:flex-end">
+        <button class="btn btn-ghost" onclick="closeReportPopup()">Batal</button>
+        <button class="btn btn-primary" onclick="checkReportAccess()">Masuk</button>
+      </div>
+      <p id="report-error" style="color:red;font-size:14px;display:none;margin-top:8px">❌ Akses ditolak</p>
+    </div>
+  </div>
+
   <footer><a href="https://id.linkedin.com/in/mochamad-fuad-asyhary">
     ©Mochamad Fuad Asyhary</a>
   </footer>
 
-  <div id="sk-modal" style="display:none;position:fixed;inset:0;background:rgba(3,6,18,0.45);align-items:center;justify-content:center;padding:20px">
-    <div style="max-width:720px;width:100%;background:white;border-radius:12px;padding:18px;box-shadow:0 14px 40px rgba(2,6,23,0.35);">
-      <h3 style="margin-top:0">SK Operasional</h3>
-      <p style="color:var(--muted)">Nomor: <strong>421.1/1810/438.5.1/2019</strong></p>
-      <p style="color:var(--muted)">Tanggal: <strong>21 Mei 2019</strong></p>
-      <p style="color:var(--muted)">File: <em>(placeholder)</em> — jika Anda ingin mengunggah file SK, silakan kirim file atau beri tahu nama file agar dapat di-link di sini.</p>
-      <div style="display:flex;gap:10px;margin-top:8px;justify-content:flex-end">
-        <button class="btn btn-ghost" onclick="closeSK()">Tutup</button>
-      </div>
-    </div>
-  </div>
-
   <script>
-    function openSK(){
-      document.getElementById('sk-modal').style.display='flex';
+    function openReportPopup(){
+      document.getElementById('report-modal').style.display='flex';
+      document.getElementById('report-type').value="";
+      document.getElementById('password-wrapper').style.display="none";
+      document.getElementById('report-error').style.display="none";
+      document.getElementById('report-pass').value="";
     }
-    function closeSK(){
-      document.getElementById('sk-modal').style.display='none';
+    function closeReportPopup(){
+      document.getElementById('report-modal').style.display='none';
+    }
+    function togglePasswordField(){
+      const type = document.getElementById('report-type').value;
+      document.getElementById('password-wrapper').style.display = (type==="guru") ? "block" : "none";
+    }
+    function checkReportAccess(){
+      const type = document.getElementById('report-type').value;
+      const pass = document.getElementById('report-pass').value.trim();
+  
+      if(type === "calonsiswa"){
+        window.open("https://forms.zohopublic.com/tkdwpklopox/report/CalonSiswa/reportperma/LZvNu6V6osLIWSQjGFR4kFWP9zeIZHd428RnVUukp78","_blank");
+        closeReportPopup();
+      } else if(type === "guru"){
+        if(pass === "tkdwpklopo10"){ // 🔑 ganti sesuai password guru yang kamu mau
+          window.open("https://forms.zohopublic.com/tkdwpklopox/report/Guru/reportperma/upFhj3x_RzPpOSibaucobubAJfpzVZ8Ei3ebuO8Jtgw","_blank");
+          closeReportPopup();
+        } else {
+          document.getElementById('report-error').style.display="block";
+        }
+      } else {
+        document.getElementById('report-error').style.display="block";
+      }
     }
     function scrollToProfile(){
       document.getElementById('profil').scrollIntoView({behavior:'smooth'});
@@ -571,5 +610,3 @@
   </script>
 </body>
 </html>
-
-
