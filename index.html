@@ -570,6 +570,7 @@
         <select id="data-type" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;margin-bottom:12px">
           <option value="">-- Pilih Data --</option>
           <option value="report">Data Report</option>
+          <option value="excel">Data Excel</option>
           <option value="dokumen">Data Dokument</option>
         </select>
       </div>
@@ -648,6 +649,9 @@
             document.getElementById('report-error').style.display="none";
           } else if(dataType === "report"){
             window.open("https://forms.zohopublic.com/tkdwpklopox/report/Guru/reportperma/upFhj3x_RzPpOSibaucobubAJfpzVZ8Ei3ebuO8Jtgw","_blank");
+            closeReportPopup();
+          } else if(dataType === "excel"){
+            window.open("https://docs.google.com/spreadsheets/d/12pnmW0KKCm4V21MunudXJ0yb17-r4BiNeJYW3dXJ5s4/edit?usp=sharing","_blank");
             closeReportPopup();
           } else if(dataType === "dokumen"){
             window.open("https://drive.google.com/drive/folders/1NlqQcu4Xwe6HkO7Mg4IpsMrtVYjhEoTO?usp=sharing","_blank");
@@ -740,4 +744,3 @@
   </script>
 </body>
 </html>
-
