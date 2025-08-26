@@ -495,7 +495,7 @@
 
         <div class="field">
           <div class="k">Telepon</div>
-          <div class="v">031-788XXXX</div>
+          <div class="v">081233961727</div>
         </div>
 
         <div class="field">
@@ -530,8 +530,8 @@
       <div class="map-container" style="margin:20px 0; text-align:center;">
         <h2>Lokasi Sekolah</h2>
         <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d247.28926221561716!2d112.68673274357639!3d-7.395491422300087!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sid!2sid!4v1756172932027!5m2!1sid!2sid" 
-            width="600" 
-            height="450" 
+            width="800" 
+            height="400" 
             style="border:0;" 
             allowfullscreen="" 
             loading="lazy" 
@@ -541,7 +541,6 @@
     </section>
 
   </main>
-
   <!-- 🔥 Modal Report -->
   <div id="report-modal" style="display:none;position:fixed;inset:0;background:rgba(3,6,18,0.45);align-items:center;justify-content:center;padding:20px;z-index:9999">
     <div style="max-width:400px;width:100%;background:white;border-radius:12px;padding:18px;box-shadow:0 14px 40px rgba(2,6,23,0.35);">
@@ -554,17 +553,35 @@
         <option value="guru">Guru</option>
       </select>
 
+      <!-- Password untuk guru -->
       <div id="password-wrapper" style="display:none;">
         <label style="display:block;margin-bottom:6px;">Password Guru:</label>
-        <input type="password" id="report-pass" placeholder="Password..." style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;margin-bottom:12px">
+        <input type="password" id="report-pass" placeholder="Password..." style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;margin-bottom:6px">
+        <p id="attempt-info" style="color:orange;font-size:13px;display:none;margin:4px 0 0;"></p>
+      </div>
+
+      <!-- Dropdown jenis data (muncul hanya jika guru + password benar) -->
+      <div id="data-type-wrapper" style="display:none;">
+        <label style="display:block;margin-bottom:6px;">Jenis Data:</label>
+        <select id="data-type" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;margin-bottom:12px">
+          <option value="">-- Pilih Data --</option>
+          <option value="report">Data Report</option>
+          <option value="dokumen">Data Dokument</option>
+        </select>
       </div>
 
       <div style="display:flex;gap:10px;margin-top:16px;justify-content:flex-end">
         <button class="btn btn-ghost" onclick="closeReportPopup()">Batal</button>
         <button class="btn btn-primary" onclick="checkReportAccess()">Masuk</button>
       </div>
-      <p id="report-error" style="color:red;font-size:14px;display:none;margin-top:8px">❌ Akses ditolak</p>
     </div>
+  </div>
+
+  <div id="password-wrapper" style="display:none;">
+    <label style="display:block;margin-bottom:6px;">Password Guru:</label>
+    <input type="password" id="report-pass" placeholder="Password..." style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;margin-bottom:6px">
+    <p id="attempt-info" style="color:orange;font-size:13px;display:none;margin:4px 0 0;"></p>
+    <p id="report-error" style="color:red;font-size:14px;display:none;margin-top:8px">❌ Akses ditolak</p>
   </div>
 
   <footer><a href="https://id.linkedin.com/in/mochamad-fuad-asyhary">
@@ -572,38 +589,99 @@
   </footer>
 
   <script>
+    let attemptCount = 0;
+    let isLocked = false;
+    let lockTimeout;
+    let countdownInterval;
+  
     function openReportPopup(){
       document.getElementById('report-modal').style.display='flex';
       document.getElementById('report-type').value="";
       document.getElementById('password-wrapper').style.display="none";
+      document.getElementById('data-type-wrapper').style.display="none";
       document.getElementById('report-error').style.display="none";
       document.getElementById('report-pass').value="";
+      document.getElementById('attempt-info').style.display="none";
+      document.getElementById('report-pass').disabled=false;
+      document.querySelector('#report-modal button.btn-primary').disabled=false;
+      attemptCount = 0;
+      clearTimeout(lockTimeout);
+      clearInterval(countdownInterval);
+      isLocked = false;
     }
+  
     function closeReportPopup(){
       document.getElementById('report-modal').style.display='none';
     }
+  
     function togglePasswordField(){
       const type = document.getElementById('report-type').value;
       document.getElementById('password-wrapper').style.display = (type==="guru") ? "block" : "none";
+      document.getElementById('data-type-wrapper').style.display="none";
+      document.getElementById('report-error').style.display="none";
+      document.getElementById('attempt-info').style.display="none";
     }
+  
     function checkReportAccess(){
       const type = document.getElementById('report-type').value;
       const pass = document.getElementById('report-pass').value.trim();
+      const dataType = document.getElementById('data-type').value;
+  
+      if(isLocked){
+        return; // kalau masih di-lock jangan bisa login
+      }
   
       if(type === "calonsiswa"){
         window.open("https://forms.zohopublic.com/tkdwpklopox/report/CalonSiswa/reportperma/LZvNu6V6osLIWSQjGFR4kFWP9zeIZHd428RnVUukp78","_blank");
         closeReportPopup();
+  
       } else if(type === "guru"){
-        if(pass === "tkdwpklopo10"){ // 🔑 ganti sesuai password guru yang kamu mau
-          window.open("https://forms.zohopublic.com/tkdwpklopox/report/Guru/reportperma/upFhj3x_RzPpOSibaucobubAJfpzVZ8Ei3ebuO8Jtgw","_blank");
-          closeReportPopup();
+        if(pass === "Tkdwpklopo10"){ // 🔑 password guru
+          attemptCount = 0; // reset counter kalau benar
+          document.getElementById('attempt-info').style.display="none";
+          if(dataType === ""){
+            document.getElementById('data-type-wrapper').style.display="block";
+            document.getElementById('report-error').style.display="none";
+          } else if(dataType === "report"){
+            window.open("https://forms.zohopublic.com/tkdwpklopox/report/Guru/reportperma/upFhj3x_RzPpOSibaucobubAJfpzVZ8Ei3ebuO8Jtgw","_blank");
+            closeReportPopup();
+          } else if(dataType === "dokumen"){
+            window.open("https://drive.google.com/drive/folders/1NlqQcu4Xwe6HkO7Mg4IpsMrtVYjhEoTO?usp=sharing","_blank");
+            closeReportPopup();
+          }
         } else {
+          attemptCount++;
           document.getElementById('report-error').style.display="block";
+          document.getElementById('attempt-info').style.display="block";
+          document.getElementById('attempt-info').innerText = `❌ Password salah (${attemptCount}/5)`;
+  
+          if(attemptCount >= 5){
+            isLocked = true;
+            let remaining = 30; // ⏳ diganti 30 detik
+            document.getElementById('attempt-info').innerText = `⏳ Terlalu banyak percobaan gagal. Coba lagi dalam ${remaining} detik.`;
+            document.getElementById('report-pass').disabled=true;
+            document.querySelector('#report-modal button.btn-primary').disabled=true;
+  
+            countdownInterval = setInterval(()=>{
+              remaining--;
+              document.getElementById('attempt-info').innerText = `⏳ Terlalu banyak percobaan gagal. Coba lagi dalam ${remaining} detik.`;
+              if(remaining <= 0){
+                clearInterval(countdownInterval);
+                attemptCount = 0;
+                isLocked = false;
+                document.getElementById('attempt-info').style.display="none";
+                document.getElementById('report-pass').disabled=false;
+                document.querySelector('#report-modal button.btn-primary').disabled=false;
+                document.getElementById('report-pass').focus(); // auto fokus lagi biar enak
+              }
+            },1000);
+          }
         }
       } else {
         document.getElementById('report-error').style.display="block";
       }
     }
+
     function scrollToProfile(){
       document.getElementById('profil').scrollIntoView({behavior:'smooth'});
     }
