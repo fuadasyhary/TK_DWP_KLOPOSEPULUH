@@ -525,16 +525,16 @@
       <div class="map-container" style="margin:20px 0; text-align:center;">
         <h2>Lokasi Sekolah Pasegan</h2>
         <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d247.28926787964912!2d112.68678510320208!3d-7.395481311682645!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd7e3f14b213ea1%3A0x449bd3a46273fda!2sTK%20Dharma%20Wanita%20Persatuan%20Klopo%20Sepuluh%20Pasegan!5e0!3m2!1sid!2sid!4v1756187581448!5m2!1sid!2sid" 
-            width="800" 
+            width="400" 
             height="400" 
             style="border:0;" 
             allowfullscreen="" 
             loading="lazy" 
             referrerpolicy="no-referrer-when-downgrade">
       </iframe>
-      <h2>Lokasi Sekolah Seruni</h2>
-      <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1978.3192561977448!2d112.72730854571842!3d-7.3943494333924376!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd7e464cd1ffcc1%3A0xc0b560574d78d583!2sTK%20Dharma%20Wanita%20Persatuan%20Klopo%20Sepuluh!5e0!3m2!1sid!2sid!4v1756187047255!5m2!1sid!2sid" 
-          width="800" 
+      <h2>Lokasi Sekolah Wonokoyo</h2>
+      <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3956.589399753458!2d112.68990212605065!3d-7.399818442610165!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd7e3978a627e6f%3A0x6808eb287a175578!2sKloposepuluh!5e0!3m2!1sid!2sid!4v1756260679575!5m2!1sid!2sid" 
+          width="400" 
           height="400" 
           style="border:0;" 
           allowfullscreen="" 
@@ -593,7 +593,7 @@
     ©Mochamad Fuad Asyhary</a>
   </footer>
 
-  <script>
+  <script> 
     let attemptCount = 0;
     let isLocked = false;
     let lockTimeout;
@@ -649,13 +649,10 @@
             document.getElementById('report-error').style.display="none";
           } else if(dataType === "report"){
             window.open("https://forms.zohopublic.com/tkdwpklopox/report/Guru/reportperma/upFhj3x_RzPpOSibaucobubAJfpzVZ8Ei3ebuO8Jtgw","_blank");
-            closeReportPopup();
           } else if(dataType === "excel"){
             window.open("https://docs.google.com/spreadsheets/d/12pnmW0KKCm4V21MunudXJ0yb17-r4BiNeJYW3dXJ5s4/edit?usp=sharing","_blank");
-            closeReportPopup();
           } else if(dataType === "dokumen"){
             window.open("https://drive.google.com/drive/folders/1NlqQcu4Xwe6HkO7Mg4IpsMrtVYjhEoTO?usp=sharing","_blank");
-            closeReportPopup();
           }
         } else {
           attemptCount++;
