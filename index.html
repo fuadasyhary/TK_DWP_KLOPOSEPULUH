@@ -189,6 +189,21 @@
       pointer-events: none;
       border-radius: 6px;
     }
+    
+    .tab-btn {
+      padding:8px 14px;
+      border-radius:12px;
+      border:1px solid #ddd;
+      background:#f5f5f5;
+      cursor:pointer;
+      font-weight:600;
+      transition:0.2s;
+    }
+    .tab-btn.active {
+      background:var(--accent);
+      color:white;
+      border-color:var(--accent);
+    }
 
     /* playful confetti */
     .confetti{position:absolute;pointer-events:none;z-index:0;opacity:0.9}
@@ -358,49 +373,28 @@
 
       </div>
     </section>
-
-    <!-- 🔥 Section Profil Guru -->
-    <section class="card" style="margin-top:14px">
-      <h2 style="margin:0 0 16px 0; text-align:center;">Profil Guru</h2>
-      <div class="guru-grid">
-        
-        <div class="guru-card">
-          <img src="guru/yuli.jpeg" alt="Ibu Yuli" class="guru-img">
-          <h3>Ibu Yuli</h3>
-          <p>Kepala Sekolah</p>
-        </div>
-        
-        <div class="guru-card">
-          <img src="guru/niken.png" alt="Ibu Niken" class="guru-img">
-          <h3>Ibu Niken</h3>
-          <p>Guru Kelas A</p>
-        </div>
-        
-        <div class="guru-card">
-          <img src="guru/ririn.png" alt="Ibu Ririn" class="guru-img">
-          <h3>Ibu Ririn</h3>
-          <p>Guru Kelas A</p>
-        </div>
-        
-        <div class="guru-card">
-          <img src="guru/nita.png" alt="Ibu Nita" class="guru-img">
-          <h3>Ibu Nita</h3>
-          <p>Guru Kelas B</p>
-        </div>
-        
-        <div class="guru-card">
-          <img src="guru/jijah.png" alt="Ibu Azizah" class="guru-img">
-          <h3>Ibu Azizah</h3>
-          <p>Guru Kelas B</p>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- 🔥 Section Galeri -->
-    <section class="card" style="margin-top:14px">
-      <h2 style="margin:0 0 16px 0; text-align:center;">Galeri MPLS</h2>
-      <div class="gallery-grid">
+      
+  <!-- 🔥 Section Galeri dengan Tab -->
+  <section class="card" style="margin-top:14px">
+    <h2 style="margin:0 0 16px 0; text-align:center;">Galeri Sekolah</h2>
+    
+    <!-- Tab Navigation -->
+    <div class="gallery-tabs" style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:16px;">
+      <button class="tab-btn active" onclick="showGallery('mpls')">MPLS</button>
+      <button class="tab-btn" onclick="showGallery('sekolah')">Sekolah</button>
+      <button class="tab-btn" onclick="showGallery('senam')">Senam</button>
+      <button class="tab-btn" onclick="showGallery('makan')">Makan Bersama</button>
+      <button class="tab-btn" onclick="showGallery('agama')">Belajar Nilai Agama</button>
+      <button class="tab-btn" onclick="showGallery('takjil')">Bagi Takjil</button>
+      <button class="tab-btn" onclick="showGallery('manasik')">Manasik Haji</button>
+      <button class="tab-btn" onclick="showGallery('pelepasan')">Pelepasan Siswa</button>
+    </div>
+    
+    <!-- Galeri Content -->
+    <div id="galeri-container">
+    
+      <!-- MPLS -->
+      <div class="gallery-grid gallery-content" id="mpls">
         <img src="mpls/1.jpeg" alt="Kegiatan 1">
         <img src="mpls/2.jpeg" alt="Kegiatan 2">
         <img src="mpls/3.jpeg" alt="Kegiatan 3">
@@ -418,11 +412,11 @@
         <img src="mpls/15.jpeg" alt="Kegiatan 15">
         <img src="mpls/16.jpeg" alt="Kegiatan 16">
         <img src="mpls/17.jpeg" alt="Kegiatan 17">
+        <!-- tambahkan sesuai kebutuhan -->
       </div>
-    </section>
-    <section class="card" style="margin-top:14px">
-      <h2 style="margin:0 0 16px 0; text-align:center;">Galeri Sekolah</h2>
-      <div class="gallery-grid">
+    
+      <!-- Sekolah -->
+      <div class="gallery-grid gallery-content" id="sekolah" style="display:none;">
         <img src="sekolah/1.jpeg" alt="Kegiatan 1">
         <img src="sekolah/2.jpeg" alt="Kegiatan 2">
         <img src="sekolah/3.jpeg" alt="Kegiatan 3">
@@ -432,10 +426,9 @@
         <img src="sekolah/7.jpeg" alt="Kegiatan 7">
         <img src="sekolah/8.jpeg" alt="Kegiatan 8">
       </div>
-    </section>
-    <section class="card" style="margin-top:14px">
-      <h2 style="margin:0 0 16px 0; text-align:center;">Galeri Senam</h2>
-      <div class="gallery-grid">
+    
+      <!-- Senam -->
+      <div class="gallery-grid gallery-content" id="senam" style="display:none;">
         <img src="senam/1.jpeg" alt="Kegiatan 1">
         <img src="senam/2.jpeg" alt="Kegiatan 2">
         <img src="senam/3.jpeg" alt="Kegiatan 3">
@@ -447,10 +440,9 @@
         <img src="senam/9.jpeg" alt="Kegiatan 9">
         <img src="senam/10.jpeg" alt="Kegiatan 10">
       </div>
-    </section>
-    <section class="card" style="margin-top:14px">
-      <h2 style="margin:0 0 16px 0; text-align:center;">Galeri Makan Bersama</h2>
-      <div class="gallery-grid">
+    
+      <!-- Makan Bersama -->
+      <div class="gallery-grid gallery-content" id="makan" style="display:none;">
         <img src="makan_bersama/1.jpeg" alt="Kegiatan 1">
         <img src="makan_bersama/2.jpeg" alt="Kegiatan 2">
         <img src="makan_bersama/3.jpeg" alt="Kegiatan 3">
@@ -461,26 +453,23 @@
         <img src="makan_bersama/8.jpeg" alt="Kegiatan 8">
         <img src="makan_bersama/9.jpeg" alt="Kegiatan 9">
       </div>
-    </section>
-    <section class="card" style="margin-top:14px">
-      <h2 style="margin:0 0 16px 0; text-align:center;">Galeri Belajar Nilai Agama</h2>
-      <div class="gallery-grid">
-        <img src="belajar_nilai_agama/1.jpeg" alt="Kegiatan 1">
-        <img src="belajar_nilai_agama/2.jpeg" alt="Kegiatan 2">
+    
+      <!-- Belajar Nilai Agama -->
+      <div class="gallery-grid gallery-content" id="agama" style="display:none;">
+        <img src="belajar_nilai_agama/1.jpeg" alt="Agama 1">
+        <img src="belajar_nilai_agama/2.jpeg" alt="Agama 2">
       </div>
-    </section>
-    <section class="card" style="margin-top:14px">
-      <h2 style="margin:0 0 16px 0; text-align:center;">Galeri Bagi Takjil</h2>
-      <div class="gallery-grid">
+    
+      <!-- Bagi Takjil -->
+      <div class="gallery-grid gallery-content" id="takjil" style="display:none;">
         <img src="bagi_takjil/1.jpeg" alt="Kegiatan 1">
         <img src="bagi_takjil/2.jpeg" alt="Kegiatan 2">
         <img src="bagi_takjil/3.jpeg" alt="Kegiatan 3">
         <img src="bagi_takjil/4.jpeg" alt="Kegiatan 4">
       </div>
-    </section>
-    <section class="card" style="margin-top:14px">
-      <h2 style="margin:0 0 16px 0; text-align:center;">Galeri Manasik Haji</h2>
-      <div class="gallery-grid">
+    
+      <!-- Manasik Haji -->
+      <div class="gallery-grid gallery-content" id="manasik" style="display:none;">
         <img src="manasik_haji/1.jpeg" alt="Kegiatan 3">
         <img src="manasik_haji/2.jpeg" alt="Kegiatan 4">
         <img src="manasik_haji/3.jpeg" alt="Kegiatan 5">
@@ -491,15 +480,16 @@
         <img src="manasik_haji/8.jpeg" alt="Kegiatan 10">
         <img src="manasik_haji/9.jpeg" alt="Kegiatan 11">
       </div>
-    </section>
-    <section class="card" style="margin-top:14px">
-      <h2 style="margin:0 0 16px 0; text-align:center;">Galeri Pelepasan Siswa</h2>
-      <div class="gallery-grid">
+    
+      <!-- Pelepasan -->
+      <div class="gallery-grid gallery-content" id="pelepasan" style="display:none;">
         <img src="pelepasan siswa/1.jpeg" alt="Kegiatan 1">
         <img src="pelepasan siswa/2.jpeg" alt="Kegiatan 2">
         <img src="pelepasan siswa/3.jpeg" alt="Kegiatan 12">
         <img src="pelepasan siswa/4.jpeg" alt="Kegiatan 13">
       </div>
+    
+    </div>
     </section>
 
     <!-- Modal Full Galeri -->
@@ -770,6 +760,15 @@
         if(e.key === 'Escape') closeBtn.click();
       }
     });
+    
+    function showGallery(id) {
+      // sembunyikan semua
+      document.querySelectorAll('.gallery-content').forEach(el => el.style.display = 'none');
+      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+      // tampilkan yang dipilih
+      document.getElementById(id).style.display = 'grid';
+      event.target.classList.add('active');
+    }
   </script>
 </body>
 </html>
