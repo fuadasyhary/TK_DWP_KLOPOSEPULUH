@@ -1,0 +1,371 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tokoh Penemu Dunia</title>
+  <link rel="icon" type="image/png" href="https://www.biografiku.com/wp-content/uploads/2011/09/charles-babbage.jpg">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Comic Sans MS', sans-serif;
+      background: linear-gradient(to bottom, #f0f9ff, #c3e8ff);
+      overflow-x: hidden;
+    }
+    .watermark {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      color: rgba(0, 0, 0, 0.3);
+      font-size: 12px;
+      font-family: Arial, sans-serif;
+      z-index: 1000;
+    }
+    .watermark a {
+      color: rgba(0, 0, 0, 0.5);
+      text-decoration: none;
+    }
+    .watermark a:hover {
+      color: rgba(0, 0, 0, 0.8);
+      text-decoration: underline;
+    }
+    .card {
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .card:hover {
+      transform: scale(1.05);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    .modal-content {
+      background: white;
+      border-radius: 15px;
+      padding: 20px;
+      max-width: 600px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+      position: relative;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    }
+    button {
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      filter: brightness(1.1);
+    }
+    @media (max-width: 640px) {
+      .card {
+        padding: 0.5rem;
+        font-size: 0.9rem;
+      }
+      .card h2 {
+        font-size: 1.1rem;
+      }
+      .card p {
+        font-size: 0.8rem;
+      }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-4">
+  <h1 class="text-4xl font-bold text-blue-600 mb-8">Tokoh Penemu Dunia</h1>
+  <div id="card-container" class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+    <!-- Kartu akan di-generate oleh JavaScript -->
+  </div>
+  <div class="watermark"><a href="https://id.linkedin.com/in/mochamad-fuad-asyhary">By Mochamad Fuad Asyhary</a></div>
+
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <h2 id="modal-name" class="text-2xl font-bold text-blue-600 mb-2"></h2>
+      <p id="modal-story" class="text-gray-700 mb-4"></p>
+      <p id="modal-summary" class="text-gray-600 italic"></p>
+      <div class="flex justify-between mt-6">
+        <button id="prev-btn" class="bg-yellow-400 text-white px-4 py-2 rounded-full">Sebelumnya</button>
+        <button id="close-btn" class="bg-red-400 text-white px-4 py-2 rounded-full">Kembali</button>
+        <button id="next-btn" class="bg-green-400 text-white px-4 py-2 rounded-full">Selanjutnya</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const inventors = [
+      {
+        name: "Thomas Edison",
+        story: "Thomas Alva Edison, lahir pada 11 Februari 1847 di Milan, Ohio, adalah penemu Amerika yang terkenal dengan penemuan lampu pijar. Ia menghabiskan waktu bertahun-tahun bereksperimen untuk menemukan bahan filamen yang tepat agar lampu bisa menyala lebih lama dan terjangkau. Selain lampu pijar, Edison juga menciptakan fonograf, alat yang bisa merekam dan memutar suara, yang sangat menakjubkan pada zamannya. Ia memiliki lebih dari 1.000 paten atas namanya dan dikenal sebagai 'Penyihir dari Menlo Park' karena laboratoriumnya di New Jersey menghasilkan banyak inovasi. Edison juga membantu mengembangkan sistem distribusi listrik, yang memungkinkan rumah-rumah menggunakan listrik secara praktis.",
+        summary: "Penemu lampu pijar dan fonograf."
+      },
+      {
+        name: "Alexander Graham Bell",
+        story: "Alexander Graham Bell, lahir pada 3 Maret 1847 di Edinburgh, Skotlandia, adalah penemu telepon. Ia tertarik pada ilmu suara karena ibunya dan istrinya mengalami gangguan pendengaran. Pada tahun 1876, Bell berhasil mengirimkan pesan suara pertama melalui telepon, mengucapkan, 'Mr. Watson, come here, I want to see you.' Penemuan ini merevolusi cara orang berkomunikasi jarak jauh. Selain telepon, Bell juga melakukan penelitian tentang penerbangan dan teknologi pendengaran, serta mendirikan National Geographic Society untuk menyebarkan pengetahuan ilmiah.",
+        summary: "Penemu telepon."
+      },
+      {
+        name: "Wright Brothers",
+        story: "Orville dan Wilbur Wright, dua bersaudara dari Dayton, Ohio, adalah pelopor penerbangan. Mereka lahir pada tahun 1871 dan 1867. Dengan latar belakang sebagai mekanik sepeda, mereka mempelajari aerodinamika dan merancang pesawat terbang pertama yang dikendalikan, Flyer I. Pada 17 Desember 1903, di Kitty Hawk, Carolina Utara, mereka berhasil menerbangkan pesawat selama 12 detik, menandai penerbangan bertenaga pertama dalam sejarah. Mereka terus menyempurnakan desain pesawat, membuka jalan bagi industri penerbangan modern.",
+        summary: "Penemu pesawat terbang."
+      },
+      {
+        name: "Marie Curie",
+        story: "Marie Curie, lahir pada 7 November 1867 di Warsawa, Polandia, adalah ilmuwan wanita luar biasa yang menemukan elemen radium dan polonium. Ia pindah ke Paris untuk belajar sains dan menjadi wanita pertama yang memenangkan Hadiah Nobel, bahkan dua kali: di bidang Fisika (1903) dan Kimia (1911). Penelitiannya tentang radioaktivitas membantu pengembangan sinar-X untuk pengobatan medis. Selama Perang Dunia I, ia menggunakan unit sinar-X bergerak untuk membantu dokter di medan perang. Meski terpapar radiasi berbahaya, ia tetap berdedikasi pada sains hingga akhir hidupnya.",
+        summary: "Penemu radium dan polonium."
+      },
+      {
+        name: "Nikola Tesla",
+        story: "Nikola Tesla, lahir pada 10 Juli 1856 di Smiljan, Kroasia, adalah penemu dan insinyur listrik yang mengembangkan sistem arus bolak-balik (AC), yang menjadi standar untuk distribusi listrik modern. Berbeda dengan arus searah (DC) yang didukung oleh Edison, AC memungkinkan listrik dikirim jarak jauh dengan efisien. Tesla juga menciptakan kumparan Tesla dan berkontribusi pada teknologi radio serta motor listrik. Meski sering kekurangan dana, visinya tentang teknologi nirkabel dan energi gratis menginspirasi banyak inovasi masa depan.",
+        summary: "Penemu sistem listrik AC."
+      },
+      {
+        name: "Albert Einstein",
+        story: "Albert Einstein, lahir pada 14 Maret 1879 di Ulm, Jerman, adalah fisikawan teoretis yang mengubah pemahaman kita tentang alam semesta. Teori relativitasnya, khususnya relativitas khusus yang diterbitkan pada 1905, memperkenalkan rumus terkenal E=mc², yang menunjukkan hubungan antara massa dan energi. Ia juga memenangkan Hadiah Nobel Fisika pada 1921 untuk penjelasannya tentang efek fotolistrik, yang menjadi dasar teknologi seperti panel surya. Einstein pindah ke Amerika Serikat untuk menghindari persekusi Nazi dan menjadi simbol kejeniusan sains.",
+        summary: "Penemu teori relativitas."
+      },
+      {
+        name: "Tim Berners-Lee",
+        story: "Tim Berners-Lee, lahir pada 8 Juni 1955 di London, Inggris, adalah penemu World Wide Web. Pada tahun 1989, saat bekerja di CERN, ia mengusulkan sistem untuk berbagi informasi melalui internet menggunakan hiperteks. Ia menciptakan HTML, URL, dan HTTP, yang menjadi dasar web modern. Pada 1991, situs web pertama diluncurkan. Berners-Lee memilih untuk tidak mematenkan penemuannya, memastikan web dapat digunakan secara gratis oleh semua orang, yang mempercepat perkembangan internet global.",
+        summary: "Penemu World Wide Web."
+      },
+      {
+        name: "Johannes Gutenberg",
+        story: "Johannes Gutenberg, lahir sekitar tahun 1400 di Mainz, Jerman, adalah penemu mesin cetak dengan huruf lepas pada sekitar tahun 1440. Sebelum penemuannya, buku disalin tangan, yang sangat lambat dan mahal. Mesin cetaknya memungkinkan produksi buku secara massal, termasuk Alkitab Gutenberg yang terkenal. Penemuan ini memicu Revolusi Pencetakan, mempercepat penyebaran pengetahuan, pendidikan, dan literasi di Eropa, serta menjadi fondasi untuk era Renaissance dan Reformasi.",
+        summary: "Penemu mesin cetak."
+      },
+      {
+        name: "Ada Lovelace",
+        story: "Ada Lovelace, lahir pada 10 Desember 1815 di London, Inggris, dianggap sebagai programmer komputer pertama di dunia. Ia bekerja dengan Charles Babbage pada mesin analitik, sebuah komputer awal. Pada tahun 1843, ia menerbitkan catatan tentang mesin ini, termasuk algoritma untuk menghitung angka Bernoulli, yang dianggap sebagai program komputer pertama. Lovelace juga melihat potensi komputer melampaui perhitungan, membayangkan mesin bisa menciptakan musik atau karya seni, ide yang sangat visioner pada masanya.",
+        summary: "Programmer komputer pertama."
+      },
+      {
+        name: "Alexander Fleming",
+        story: "Alexander Fleming, lahir pada 6 Agustus 1881 di Ayrshire, Skotlandia, adalah dokter dan mikrobiologis yang menemukan penisilin pada tahun 1928. Ia secara tidak sengaja menemukan bahwa jamur Penicillium menghasilkan zat yang membunuh bakteri. Penemuan ini menjadi antibiotik pertama, yang merevolusi pengobatan infeksi bakteri dan menyelamatkan jutaan nyawa. Selama Perang Dunia II, penisilin digunakan untuk mengobati prajurit yang terluka. Fleming menerima Hadiah Nobel Kedokteran pada 1945 atas kontribusinya pada dunia medis.",
+        summary: "Penemu penisilin."
+      },
+      {
+        name: "James Watt",
+        story: "James Watt, lahir pada 19 Januari 1736 di Greenock, Skotlandia, adalah insinyur yang menyempurnakan mesin uap. Mesin uap sebelumnya kurang efisien, tetapi Watt menambahkan kondensor terpisah pada tahun 1765, yang meningkatkan efisiensinya secara drastis. Penemuannya memicu Revolusi Industri, memungkinkan mesin uap digunakan di pabrik, kereta api, dan kapal. Watt juga memperkenalkan istilah 'horsepower' untuk mengukur tenaga mesin. Inovasinya mengubah cara dunia bekerja dan bergerak.",
+        summary: "Penyempurna mesin uap."
+      },
+      {
+        name: "Guglielmo Marconi",
+        story: "Guglielmo Marconi, lahir pada 25 April 1874 di Bologna, Italia, adalah penemu sistem komunikasi radio nirkabel. Pada tahun 1895, ia berhasil mengirim sinyal radio jarak pendek, dan pada 1901, ia mengirim sinyal melintasi Samudra Atlantik. Penemuannya menjadi dasar teknologi radio, televisi, dan komunikasi nirkabel modern. Marconi memenangkan Hadiah Nobel Fisika pada 1909 dan teknologi radionya membantu menyelamatkan nyawa, seperti saat bencana Titanic.",
+        summary: "Penemu radio nirkabel."
+      },
+      {
+        name: "Karl Benz",
+        story: "Karl Benz, lahir pada 25 November 1844 di Mühlburg, Jerman, adalah penemu mobil bertenaga bensin pertama. Pada tahun 1885, ia menciptakan Benz Patent-Motorwagen, kendaraan roda tiga yang dianggap sebagai mobil modern pertama. Mobilnya menggunakan mesin pembakaran internal, dan istrinya, Bertha Benz, melakukan perjalanan jarak jauh pertama dengan mobil pada 1888 untuk mempromosikannya. Penemuan Benz menjadi fondasi industri otomotif yang mengubah transportasi dunia.",
+        summary: "Penemu mobil bertenaga bensin."
+      },
+      {
+        name: "George Stephenson",
+        story: "George Stephenson, lahir pada 9 Juni 1781 di Wylam, Inggris, dikenal sebagai 'Bapak Kereta Api.' Ia merancang lokomotif uap pertama, 'Locomotion No. 1,' yang digunakan pada jalur kereta api Stockton-Darlington pada 1825. Ia juga membangun jalur kereta api Liverpool-Manchester, yang menjadi model untuk sistem kereta api modern. Penemuan Stephenson memungkinkan transportasi massal yang cepat dan murah, mengubah ekonomi dan masyarakat.",
+        summary: "Penemu lokomotif uap."
+      },
+      {
+        name: "Samuel Morse",
+        story: "Samuel Morse, lahir pada 27 April 1791 di Charlestown, Massachusetts, adalah penemu kode Morse dan telegraf listrik. Pada tahun 1837, ia mengembangkan sistem telegraf yang memungkinkan pengiriman pesan jarak jauh melalui kabel. Kode Morse, yang menggunakan titik dan garis untuk mewakili huruf, mempermudah komunikasi global. Pada 1844, ia mengirim pesan telegraf pertama: 'What hath God wrought.' Penemuannya menjadi dasar untuk komunikasi modern.",
+        summary: "Penemu kode Morse dan telegraf."
+      },
+      {
+        name: "Louis Pasteur",
+        story: "Louis Pasteur, lahir pada 27 Desember 1822 di Dole, Prancis, adalah ilmuwan yang merevolusi dunia kedokteran. Ia mengembangkan teori kuman penyakit, yang menunjukkan bahwa mikroorganisme menyebabkan penyakit. Pasteur juga menciptakan vaksin rabies dan anthrax, serta proses pasteurisasi untuk membunuh bakteri dalam susu dan makanan. Penemuannya menyelamatkan banyak nyawa dan menjadi dasar untuk ilmu mikrobiologi modern.",
+        summary: "Penemu pasteurisasi dan vaksin rabies."
+      },
+      {
+        name: "Wilhelm Röntgen",
+        story: "Wilhelm Röntgen, lahir pada 27 Maret 1845 di Lennep, Jerman, adalah fisikawan yang menemukan sinar-X pada tahun 1895. Ia secara tidak sengaja menemukan sinar yang bisa menembus benda padat, menghasilkan gambar tulang di dalam tubuh. Penemuannya merevolusi dunia kedokteran, memungkinkan dokter mendiagnosis patah tulang dan penyakit tanpa operasi. Röntgen memenangkan Hadiah Nobel Fisika pertama pada 1901 atas penemuannya yang luar biasa ini.",
+        summary: "Penemu sinar-X."
+      },
+      {
+        name: "Henry Ford",
+        story: "Henry Ford, lahir pada 30 Juli 1863 di Dearborn, Michigan, adalah penemu sistem lini produksi untuk pembuatan mobil. Pada tahun 1908, ia memperkenalkan Ford Model T, mobil yang terjangkau untuk masyarakat umum. Dengan lini produksi bergerak yang ia kembangkan pada 1913, ia bisa memproduksi mobil lebih cepat dan murah. Inovasinya mengubah industri otomotif dan membuat mobil menjadi bagian dari kehidupan sehari-hari.",
+        summary: "Penemu lini produksi mobil."
+      },
+      {
+        name: "Charles Babbage",
+        story: "Charles Babbage, lahir pada 26 Desember 1791 di London, Inggris, dikenal sebagai 'Bapak Komputer.' Ia merancang Difference Engine untuk menghitung tabel matematika secara otomatis dan Analytical Engine, yang dianggap sebagai komputer mekanis pertama. Meski mesinnya tidak selesai dibuat pada masanya karena keterbatasan teknologi, desainnya menjadi dasar untuk komputer modern. Babbage bekerja bersama Ada Lovelace, yang menulis program untuk mesinnya.",
+        summary: "Penemu komputer mekanis."
+      },
+      {
+        name: "John Logie Baird",
+        story: "John Logie Baird, lahir pada 13 Agustus 1888 di Helensburgh, Skotlandia, adalah penemu televisi mekanis. Pada tahun 1925, ia berhasil menyiarkan gambar bergerak pertama di dunia menggunakan sistem mekanis. Meski teknologinya kemudian digantikan oleh televisi elektronik, Baird membuka jalan bagi penyiaran televisi modern. Ia juga bereksperimen dengan televisi berwarna dan transmisi jarak jauh, yang menjadi cikal bakal teknologi TV saat ini.",
+        summary: "Penemu televisi mekanis."
+      },
+      {
+        name: "Edwin Hubble",
+        story: "Edwin Hubble, lahir pada 20 November 1889 di Marshfield, Missouri, adalah astronom yang membuktikan bahwa alam semesta mengembang. Dengan menggunakan teleskop di Observatorium Mount Wilson, ia menemukan bahwa galaksi-galaksi bergerak menjauh satu sama lain, yang menjadi dasar teori Big Bang. Ia juga mengembangkan sistem klasifikasi galaksi. Penemuannya mengubah cara kita memahami alam semesta dan menginspirasi penelitian kosmologi modern.",
+        summary: "Penemu ekspansi alam semesta."
+      },
+      {
+        name: "Grace Hopper",
+        story: "Grace Hopper, lahir pada 9 Desember 1906 di New York City, adalah pelopor dalam ilmu komputer. Ia mengembangkan kompiler pertama, yang mengubah bahasa pemrograman menjadi kode mesin, membuat pemrograman lebih mudah. Ia juga membantu menciptakan bahasa pemrograman COBOL, yang masih digunakan hingga kini. Selama di Angkatan Laut AS, ia mendapat julukan 'Amazing Grace' karena kontribusinya dalam teknologi komputer.",
+        summary: "Penemu kompiler komputer."
+      },
+      {
+        name: "Jonas Salk",
+        story: "Jonas Salk, lahir pada 28 Oktober 1914 di New York City, adalah dokter yang mengembangkan vaksin polio pertama pada tahun 1955. Polio adalah penyakit yang melumpuhkan banyak anak, dan vaksinnya menyelamatkan jutaan nyawa. Salk memilih untuk tidak mematenkan vaksinnya agar bisa diakses oleh semua orang. Penemuannya menjadi salah satu kemajuan terbesar dalam sejarah kedokteran.",
+        summary: "Penemu vaksin polio."
+      },
+      {
+        name: "Alan Turing",
+        story: "Alan Turing, lahir pada 23 Juni 1912 di London, Inggris, adalah matematikawan dan ilmuwan komputer yang meletakkan dasar teori komputasi. Ia merancang mesin Turing, model teoretis untuk komputer modern, dan membantu memecahkan kode Enigma Jerman selama Perang Dunia II. Kontribusinya di Bletchley Park mempercepat kemenangan Sekutu. Turing juga merupakan pelopor kecerdasan buatan, mengusulkan ide komputer yang bisa berpikir seperti manusia.",
+        summary: "Penemu teori komputasi."
+      },
+      {
+        name: "Philo Farnsworth",
+        story: "Philo Farnsworth, lahir pada 19 Agustus 1906 di Beaver, Utah, adalah penemu televisi elektronik. Pada usia 21 tahun, ia mendemonstrasikan sistem televisi elektronik pertama pada 1927, yang menggunakan tabung sinar katode untuk menampilkan gambar. Penemuannya menjadi dasar televisi modern yang kita gunakan saat ini. Meski menghadapi tantangan hukum atas paten, Farnsworth diakui sebagai pionir teknologi penyiaran.",
+        summary: "Penemu televisi elektronik."
+      },
+      {
+        name: "Robert Goddard",
+        story: "Robert Goddard, lahir pada 5 Oktober 1882 di Worcester, Massachusetts, adalah pelopor roket modern. Pada tahun 1926, ia meluncurkan roket berbahan bakar cair pertama di dunia. Ia juga mengembangkan teknologi seperti nosel roket dan bahan bakar multi-tahap. Meski awalnya diragukan, idenya menjadi dasar untuk eksplorasi luar angkasa, termasuk pendaratan di bulan. Goddard memiliki lebih dari 200 paten terkait teknologi roket.",
+        summary: "Penemu roket berbahan bakar cair."
+      },
+      {
+        name: "Hedy Lamarr",
+        story: "Hedy Lamarr, lahir pada 9 November 1914 di Wina, Austria, adalah aktris dan penemu yang mengembangkan teknologi frekuensi lompatan (frequency hopping) selama Perang Dunia II. Bersama George Antheil, ia menciptakan sistem komunikasi rahasia untuk mengendalikan torpedo, yang mencegah gangguan sinyal musuh. Teknologinya menjadi cikal bakal Wi-Fi, Bluetooth, dan GPS modern. Meski baru diakui kemudian, Lamarr adalah pionir teknologi nirkabel.",
+        summary: "Penemu teknologi frekuensi lompatan."
+      },
+      {
+        name: "Steve Wozniak",
+        story: "Steve Wozniak, lahir pada 11 Agustus 1950 di San Jose, California, adalah insinyur yang merancang komputer Apple I dan Apple II, yang memulai revolusi komputer pribadi. Bersama Steve Jobs, ia mendirikan Apple Computer pada 1976. Apple II, yang diluncurkan pada 1977, adalah komputer pribadi pertama yang sukses secara komersial, dengan desain yang ramah pengguna. Kereniusan teknis Wozniak membentuk dasar industri komputer modern.",
+        summary: "Penemu komputer Apple."
+      },
+      {
+        name: "Eli Whitney",
+        story: "Eli Whitney, lahir pada 8 Desember 1765 di Westborough, Massachusetts, adalah penemu mesin pemisah kapas (cotton gin) pada tahun 1793. Mesin ini memisahkan biji dari serat kapas dengan cepat, merevolusi industri kapas di Amerika. Meski meningkatkan produksi, penemuannya juga memperkuat perbudakan di Amerika Selatan. Whitney juga mempelopori konsep suku cadang yang dapat ditukar, yang memengaruhi manufaktur modern.",
+        summary: "Penemu mesin pemisah kapas."
+      },
+      {
+        name: "Michael Faraday",
+        story: "Michael Faraday, lahir pada 22 September 1791 di Newington, Inggris, adalah ilmuwan yang menemukan induksi elektromagnetik pada tahun 1831, yang menjadi dasar untuk generator listrik dan transformator. Ia juga mengembangkan konsep medan listrik dan hukum elektrolisis. Penemuan Faraday meletakkan dasar untuk teknologi listrik modern, dan unit listrik 'farad' dinamakan untuk menghormatinya. Ia dikenal karena eksperimennya yang sederhana namun inovatif.",
+        summary: "Penemu induksi elektromagnetik."
+      }
+    ];
+
+    const cardContainer = document.getElementById('card-container');
+    const modal = document.getElementById('modal');
+    const modalName = document.getElementById('modal-name');
+    const modalStory = document.getElementById('modal-story');
+    const modalSummary = document.getElementById('modal-summary');
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const closeBtn = document.getElementById('close-btn');
+
+    let currentIndex = 0;
+
+    function renderCards() {
+      cardContainer.innerHTML = '';
+      inventors.forEach((inventor, index) => {
+        const card = document.createElement('div');
+        card.className = 'card bg-white rounded-lg shadow-lg p-4 cursor-pointer';
+        card.innerHTML = `
+          <h2 class="text-xl font-bold text-blue-600">${inventor.name}</h2>
+          <p class="text-gray-600">${inventor.summary}</p>
+        `;
+        card.addEventListener('click', () => openModal(index));
+        cardContainer.appendChild(card);
+      });
+    }
+
+    function openModal(index) {
+      currentIndex = index;
+      updateModal();
+      modal.style.display = 'flex';
+    }
+
+    function updateModal() {
+      const inventor = inventors[currentIndex];
+      modalName.textContent = inventor.name;
+      modalStory.textContent = inventor.story;
+      modalSummary.textContent = `Ringkasan: ${inventor.summary}`;
+      prevBtn.textContent = currentIndex > 0 ? `Sebelumnya: ${inventors[currentIndex - 1].name}` : 'Sebelumnya';
+      nextBtn.textContent = currentIndex < inventors.length - 1 ? `Selanjutnya: ${inventors[currentIndex + 1].name}` : 'Selanjutnya';
+      prevBtn.disabled = currentIndex === 0;
+      nextBtn.disabled = currentIndex === inventors.length - 1;
+    }
+
+    prevBtn.addEventListener('click', () => {
+      if (currentIndex > 0) {
+        currentIndex--;
+        updateModal();
+      }
+    });
+
+    nextBtn.addEventListener('click', () => {
+      if (currentIndex < inventors.length - 1) {
+        currentIndex++;
+        updateModal();
+      }
+    });
+
+    closeBtn.addEventListener('click', () => {
+      modal.style.display = 'none';
+    });
+
+    renderCards();
+  </script>
+  <!-- AUDIO -->
+  <audio id="bg-audio" src="skyhigh.mp3" loop hidden></audio>
+  <!-- SCRIPT UNTUK AUTOPLAY SETELAH KLIK -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.body.addEventListener('click', function () {
+        var audio = document.getElementById('bg-audio');
+        audio.play().catch(err => {
+          console.log('Autoplay diblokir:', err);
+        });
+      }, { once: true });
+    });
+  </script>
+</body>
+</html>

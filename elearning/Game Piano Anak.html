@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Piano Anak</title>
+    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/4702/4702764.png">
+    <style>
+        body {
+            font-family: 'Comic Sans MS', Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: linear-gradient(to bottom, #e0f7fa, #80deea);
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            color: #1b57d8;
+            font-size: 2em;
+            text-shadow: 2px 2px #ffffff;
+            margin-bottom: 15px;
+        }
+        #songSelect {
+            width: 280px;
+            padding: 8px;
+            font-size: 1em;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            background-color: #ffffff;
+            border: 2px solid #f06292;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+            cursor: pointer;
+        }
+        #noteDisplay {
+            font-size: 1.2em;
+            color: #ffffff;
+            background-color: #4a44ef;
+            padding: 8px;
+            border-radius: 8px;
+            border: 2px solid #ffffff;
+            margin-bottom: 12px;
+            width: 280px;
+            text-align: center;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+        }
+        #fullNotes {
+            font-size: 1em;
+            color: #333;
+            background-color: #ffffff;
+            padding: 12px 16px;
+            border-radius: 8px;
+            border: 2px solid #f06292;
+            margin-bottom: 12px;
+            width: 90%;
+            max-width: 600px;
+            text-align: center;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+        #fullNotes span {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 50px;
+            padding: 6px;
+            margin: 3px;
+            border-radius: 5px;
+            background-color: #e0e0e0;
+            border: 1px solid #ccc;
+        }
+        #fullNotes .played {
+            background-color: #4caf50;
+            color: #ffffff;
+        }
+        #fullNotes .current {
+            background-color: #ffeb3b;
+            color: #333;
+        }
+        #fullNotes .lyric {
+            font-size: 0.8em;
+            color: #333;
+            margin-top: 3px;
+        }
+        .piano {
+            display: flex;
+            justify-content: center;
+            background: #ffffff;
+            padding: 8px;
+            border-radius: 12px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+            flex-wrap: wrap;
+        }
+        .key {
+            width: 40px;
+            height: 150px;
+            margin: 3px;
+            border: 2px solid #333;
+            border-radius: 6px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            font-size: 1em;
+            font-weight: bold;
+            color: #333;
+            cursor: pointer;
+            transition: transform 0.1s, box-shadow 0.1s, background 0.3s;
+            position: relative;
+            background: linear-gradient(#ffffff, #e0e0e0);
+            box-shadow: inset 0 -4px 8px rgba(0,0,0,0.1);
+        }
+        .key:active {
+            transform: scale(0.95);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+        }
+        .key.highlight {
+            background: #ffeb3b;
+            border-color: #d4a017;
+        }
+        .note-label {
+            position: absolute;
+            top: 8px;
+            font-size: 0.9em;
+            color: inherit;
+        }
+        .watermark {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            color: rgba(0, 0, 0, 0.3);
+            font-size: 10px;
+            font-family: Arial, sans-serif;
+            z-index: 1000;
+        }
+        .watermark a {
+            color: rgba(0, 0, 0, 0.5);
+            text-decoration: none;
+        }
+        .watermark a:hover {
+            color: rgba(0, 0, 0, 0.8);
+            text-decoration: underline;
+        }
+        #mobilePopup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            flex-direction: column;
+        }
+        #mobilePopup p {
+            font-size: 18px;
+            margin: 15px;
+        }
+        #mobilePopup button {
+            padding: 8px 16px;
+            font-size: 1em;
+            border-radius: 8px;
+            background-color: #f06292;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        #mobilePopup button:hover {
+            background-color: #d81b60;
+        }
+    </style>
+</head>
+<body>
+    <div id="mobilePopup">
+        <p>Harap putar perangkat ke mode landscape untuk bermain game ini!</p>
+        <button id="playButton">Main Sekarang</button>
+    </div>
+    <div class="watermark"><a href="https://id.linkedin.com/in/mochamad-fuad-asyhary">By Mochamad Fuad Asyhary</a></div>  
+    <h1>Game Piano Anak</h1>
+    <select id="songSelect">
+        <option value="bintang_kecil">Bintang Kecil</option>
+        <option value="balonku">Balonku Ada Lima</option>
+        <option value="kasih_ibu">Kasih Ibu kepada Beta</option>
+        <option value="kupu_kupu">Kupu-Kupu yang Lucu</option>
+        <option value="pelangi">Pelangi</option>
+        <option value="indonesia_raya">Indonesia Raya</option>
+        <option value="mengheningkan_cipta">Mengheningkan Cipta</option>
+        <option value="bagimu_negeri">Bagimu Negeri</option>
+        <option value="ibu_kita_kartini">Ibu Kita Kartini</option>
+        <option value="satu_satu">Satu Nusa Satu Bangsa</option>
+    </select>
+    <div id="noteDisplay">Pilih lagu untuk melihat petunjuk nada!</div>
+    <div id="fullNotes"></div>
+    <div class="piano">
+        <div class="key" data-note="C4" data-freq="261.63"><span class="note-label">1</span></div>
+        <div class="key" data-note="D4" data-freq="293.66"><span class="note-label">2</span></div>
+        <div class="key" data-note="E4" data-freq="329.63"><span class="note-label">3</span></div>
+        <div class="key" data-note="F4" data-freq="349.23"><span class="note-label">4</span></div>
+        <div class="key" data-note="G4" data-freq="392.00"><span class="note-label">5</span></div>
+        <div class="key" data-note="A4" data-freq="440.00"><span class="note-label">6</span></div>
+        <div class="key" data-note="B4" data-freq="493.88"><span class="note-label">7</span></div>
+        <div class="key" data-note="C5" data-freq="523.25"><span class="note-label">1'</span></div>
+        <div class="key" data-note="D5" data-freq="587.33"><span class="note-label">2'</span></div>
+        <div class="key" data-note="E5" data-freq="659.25"><span class="note-label">3'</span></div>
+        <div class="key" data-note="F5" data-freq="698.46"><span class="note-label">4'</span></div>
+        <div class="key" data-note="G5" data-freq="783.99"><span class="note-label">5'</span></div>
+        <div class="key" data-note="A5" data-freq="880.00"><span class="note-label">6'</span></div>
+        <div class="key" data-note="B5" data-freq="987.77"><span class="note-label">7'</span></div>
+    </div>
+
+    <script>
+        const songs = {
+            bintang_kecil: [
+                { note: "G4", number: "5", lyric: "Bin-", duration: 500 },
+                { note: "E5", number: "3'", lyric: "tang", duration: 500 },
+                { note: "D5", number: "2'", lyric: "ke-", duration: 500 },
+                { note: "C5", number: "1'", lyric: "cil", duration: 500 },
+                { note: "B4", number: "7", lyric: "di", duration: 500 },
+                { note: "D5", number: "2'", lyric: "lan-", duration: 500 },
+                { note: "C5", number: "1'", lyric: "git", duration: 500 },
+                { note: "B4", number: "7", lyric: "yang", duration: 500 },
+                { note: "A4", number: "6", lyric: "ting-", duration: 500 },
+                { note: "G4", number: "5", lyric: "gi", duration: 500 },
+                { note: "B4", number: "7", lyric: "A-", duration: 500 },
+                { note: "C5", number: "1'", lyric: "mat", duration: 500 },
+                { note: "A4", number: "6", lyric: "ba-", duration: 500 },
+                { note: "G4", number: "5", lyric: "nyak", duration: 500 },
+                { note: "C5", number: "1'", lyric: "men-", duration: 500 },
+                { note: "E5", number: "3'", lyric: "ghi-", duration: 500 },
+                { note: "G5", number: "5'", lyric: "as", duration: 500 },
+                { note: "E5", number: "3'", lyric: "ang-", duration: 500 },
+                { note: "C5", number: "1'", lyric: "ka-", duration: 500 },
+                { note: "D5", number: "2'", lyric: "sa", duration: 500 },
+                { note: "G5", number: "5'", lyric: "A-", duration: 500 },
+                { note: "E5", number: "3'", lyric: "ku", duration: 500 },
+                { note: "D5", number: "2'", lyric: "in-", duration: 500 },
+                { note: "C5", number: "1'", lyric: "gin", duration: 500 },
+                { note: "E5", number: "3'", lyric: "ter-", duration: 500 },
+                { note: "G5", number: "5'", lyric: "bang", duration: 500 },
+                { note: "E5", number: "3'", lyric: "dan", duration: 500 },
+                { note: "D5", number: "2'", lyric: "me-", duration: 500 },
+                { note: "C5", number: "1'", lyric: "na-", duration: 500 },
+                { note: "A4", number: "6", lyric: "ri", duration: 500 },
+                { note: "B4", number: "7", lyric: "Jauh", duration: 500 },
+                { note: "C5", number: "1'", lyric: "ting-", duration: 500 },
+                { note: "A4", number: "6", lyric: "gi", duration: 500 },
+                { note: "G4", number: "5", lyric: "ke", duration: 500 },
+                { note: "D5", number: "2'", lyric: "tem-", duration: 500 },
+                { note: "E5", number: "3'", lyric: "pat", duration: 500 },
+                { note: "F5", number: "4'", lyric: "kau", duration: 500 },
+                { note: "D5", number: "2'", lyric: "be-", duration: 500 },
+                { note: "A4", number: "6", lyric: "ra-", duration: 500 },
+                { note: "B4", number: "7", lyric: "da", duration: 500 },
+                { note: "C5", number: "1'", lyric: "", duration: 1000 },
+            ],
+            balonku: [
+                { note: "E4", number: "3", lyric: "Ba-", duration: 500 },
+                { note: "F4", number: "4", lyric: "lon-", duration: 500 },
+                { note: "G4", number: "5", lyric: "ku", duration: 500 },
+                { note: "C5", number: "1'", lyric: "a-", duration: 500 },
+                { note: "G4", number: "5", lyric: "da", duration: 500 },
+                { note: "E4", number: "3", lyric: "li-", duration: 500 },
+                { note: "G4", number: "5", lyric: "ma", duration: 500 },
+                { note: "D4", number: "2", lyric: "Ru-", duration: 500 },
+                { note: "E4", number: "3", lyric: "pa-", duration: 500 },
+                { note: "F4", number: "4", lyric: "ru-", duration: 500 },
+                { note: "D4", number: "2", lyric: "pa", duration: 500 },
+                { note: "D4", number: "2", lyric: "war-", duration: 500 },
+                { note: "G4", number: "5", lyric: "na-", duration: 500 },
+                { note: "F4", number: "4", lyric: "nya", duration: 500 },
+                { note: "E4", number: "3", lyric: "Hi-", duration: 500 },
+                { note: "E4", number: "3", lyric: "jau", duration: 500 },
+                { note: "A4", number: "6", lyric: "ku-", duration: 500 },
+                { note: "A4", number: "6", lyric: "ning", duration: 500 },
+                { note: "B4", number: "7", lyric: "ke-", duration: 500 },
+                { note: "C5", number: "1'", lyric: "la-", duration: 500 },
+                { note: "G4", number: "5", lyric: "bu", duration: 500 },
+                { note: "E4", number: "3", lyric: "Me-", duration: 500 },
+                { note: "F4", number: "4", lyric: "rah", duration: 500 },
+                { note: "G4", number: "5", lyric: "mu-", duration: 500 },
+                { note: "F4", number: "4", lyric: "da", duration: 500 },
+                { note: "E4", number: "3", lyric: "dan", duration: 500 },
+                { note: "D4", number: "2", lyric: "bi-", duration: 500 },
+                { note: "C4", number: "1", lyric: "ru", duration: 500 },
+                { note: "C4", number: "1", lyric: "", duration: 1000 },
+                { note: "E4", number: "3", lyric: "Me-", duration: 500 },
+                { note: "F4", number: "4", lyric: "le-", duration: 500 },
+                { note: "G4", number: "5", lyric: "tus", duration: 500 },
+                { note: "C5", number: "1'", lyric: "ba-", duration: 500 },
+                { note: "G4", number: "5", lyric: "lon", duration: 500 },
+                { note: "E4", number: "3", lyric: "hi-", duration: 500 },
+                { note: "G4", number: "5", lyric: "jau", duration: 500 },
+                { note: "C5", number: "1'", lyric: "", duration: 1000 },
+                { note: "D4", number: "2", lyric: "Ha-", duration: 500 },
+                { note: "E4", number: "3", lyric: "ti-", duration: 500 },
+                { note: "F4", number: "4", lyric: "ku", duration: 500 },
+                { note: "D4", number: "2", lyric: "san-", duration: 500 },
+                { note: "G4", number: "5", lyric: "gat", duration: 500 },
+                { note: "F4", number: "4", lyric: "ka-", duration: 500 },
+                { note: "E4", number: "3", lyric: "cau", duration: 500 },
+                { note: "E4", number: "3", lyric: "Ba-", duration: 500 },
+                { note: "E4", number: "3", lyric: "lon-", duration: 500 },
+                { note: "A4", number: "6", lyric: "ku", duration: 500 },
+                { note: "A4", number: "6", lyric: "ting-", duration: 500 },
+                { note: "B4", number: "7", lyric: "gal", duration: 500 },
+                { note: "C5", number: "1'", lyric: "em-", duration: 500 },
+                { note: "G4", number: "5", lyric: "pat", duration: 500 },
+                { note: "D4", number: "2", lyric: "Ku-", duration: 500 },
+                { note: "D4", number: "2", lyric: "pe-", duration: 500 },
+                { note: "G4", number: "5", lyric: "gang", duration: 500 },
+                { note: "F4", number: "4", lyric: "e-", duration: 500 },
+                { note: "E4", number: "3", lyric: "rat-", duration: 500 },
+                { note: "D4", number: "2", lyric: "e-", duration: 500 },
+                { note: "C4", number: "1", lyric: "rat", duration: 500 },
+                { note: "C4", number: "1", lyric: "", duration: 1000 }
+            ],
+            kasih_ibu: [
+                { note: "E4", number: "3", lyric: "Ka-", duration: 500 },
+                { note: "D4", number: "2", lyric: "sih", duration: 500 },
+                { note: "E4", number: "3", lyric: "I-", duration: 500 },
+                { note: "C4", number: "1", lyric: "bu", duration: 500 },
+                { note: "C4", number: "1", lyric: "ke-", duration: 500 },
+                { note: "C5", number: "1'", lyric: "pa-", duration: 500 },
+                { note: "A4", number: "6", lyric: "da", duration: 500 },
+                { note: "C5", number: "1'", lyric: "be-", duration: 500 },
+                { note: "G4", number: "5", lyric: "ta", duration: 500 },
+                { note: "A4", number: "6", lyric: "Tak", duration: 500 },
+                { note: "G4", number: "5", lyric: "ter-", duration: 500 },
+                { note: "F4", number: "4", lyric: "hin-", duration: 500 },
+                { note: "E4", number: "3", lyric: "gga", duration: 500 },
+                { note: "C4", number: "1", lyric: "Se-", duration: 500 },
+                { note: "D4", number: "2", lyric: "pan-", duration: 500 },
+                { note: "E4", number: "3", lyric: "jang", duration: 500 },
+                { note: "G4", number: "5", lyric: "Ma-", duration: 500 },
+                { note: "D4", number: "2", lyric: "sa", duration: 500 },
+                { note: "E4", number: "3", lyric: "Ha-", duration: 500 },
+                { note: "E4", number: "3", lyric: "nya", duration: 500 },
+                { note: "D4", number: "2", lyric: "Mem-", duration: 500 },
+                { note: "E4", number: "3", lyric: "be-", duration: 500 },
+                { note: "C4", number: "1", lyric: "ri", duration: 500 },
+                { note: "C4", number: "1", lyric: "Tak-", duration: 500 },
+                { note: "C5", number: "1'", lyric: "ha-", duration: 500 },
+                { note: "C5", number: "1'", lyric: "rap", duration: 500 },
+                { note: "A4", number: "6", lyric: "Kem-", duration: 500 },
+                { note: "C5", number: "1'", lyric: "ba-", duration: 500 },
+                { note: "G4", number: "5", lyric: "li-", duration: 500 },
+                { note: "A4", number: "6", lyric: "Ba-", duration: 500 },
+                { note: "A4", number: "6", lyric: "gai", duration: 500 },
+                { note: "G4", number: "5", lyric: "Sang", duration: 500 },
+                { note: "F4", number: "4", lyric: "Sur-", duration: 500 },
+                { note: "E4", number: "3", lyric: "ya", duration: 500 },
+                { note: "C4", number: "1", lyric: "Me-", duration: 500 },
+                { note: "D4", number: "2", lyric: "nyi-", duration: 500 },
+                { note: "E4", number: "3", lyric: "na-", duration: 500 },
+                { note: "E4", number: "3", lyric: "ri", duration: 500 },
+                { note: "D4", number: "2", lyric: "Du-", duration: 500 },
+                { note: "D4", number: "2", lyric: "ni-", duration: 500 },
+                { note: "C4", number: "1", lyric: "a", duration: 500 }
+            ],
+            kupu_kupu: [
+                { note: "C4", number: "1", lyric: "Ku-", duration: 500 },
+                { note: "D4", number: "2", lyric: "pu-", duration: 500 },
+                { note: "E4", number: "3", lyric: "ku-", duration: 500 },
+                { note: "F4", number: "4", lyric: "pu", duration: 500 },
+                { note: "G4", number: "5", lyric: "yang", duration: 500 },
+                { note: "A4", number: "6", lyric: "lu-", duration: 500 },
+                { note: "G4", number: "5", lyric: "cu", duration: 500 },
+                { note: "F4", number: "4", lyric: "", duration: 500 },
+                { note: "E4", number: "3", lyric: "Ke-", duration: 500 },
+                { note: "F4", number: "4", lyric: "ma-", duration: 500 },
+                { note: "G4", number: "5", lyric: "na", duration: 500 },
+                { note: "A4", number: "6", lyric: "eng-", duration: 500 },
+                { note: "G4", number: "5", lyric: "kau", duration: 500 },
+                { note: "F4", number: "4", lyric: "ter-", duration: 500 },
+                { note: "E4", number: "3", lyric: "bang", duration: 500 },
+                { note: "D4", number: "2", lyric: "", duration: 500 },
+                { note: "D4", number: "2", lyric: "Hi-", duration: 500 },
+                { note: "E4", number: "3", lyric: "lir", duration: 500 },
+                { note: "F4", number: "4", lyric: "mu-", duration: 500 },
+                { note: "G4", number: "5", lyric: "dik", duration: 500 },
+                { note: "A4", number: "6", lyric: "men-", duration: 500 },
+                { note: "G4", number: "5", lyric: "ca-", duration: 500 },
+                { note: "F4", number: "4", lyric: "ri", duration: 500 },
+                { note: "E4", number: "3", lyric: "", duration: 500 },
+                { note: "C4", number: "1", lyric: "Ke", duration: 500 },
+                { note: "D4", number: "2", lyric: "sa-", duration: 500 },
+                { note: "E4", number: "3", lyric: "na", duration: 500 },
+                { note: "F4", number: "4", lyric: "ke-", duration: 500 },
+                { note: "G4", number: "5", lyric: "ma-", duration: 500 },
+                { note: "A4", number: "6", lyric: "ri", duration: 500 },
+                { note: "G4", number: "5", lyric: "di", duration: 500 },
+                { note: "F4", number: "4", lyric: "taman", duration: 500 },
+                { note: "E4", number: "3", lyric: "bun-", duration: 500 },
+                { note: "F4", number: "4", lyric: "ga", duration: 500 },
+                { note: "G4", number: "5", lyric: "", duration: 500 },
+                { note: "A4", number: "6", lyric: "Hi-", duration: 500 },
+                { note: "G4", number: "5", lyric: "lir", duration: 500 },
+                { note: "F4", number: "4", lyric: "mu-", duration: 500 },
+                { note: "E4", number: "3", lyric: "dik", duration: 500 },
+                { note: "D4", number: "2", lyric: "men-", duration: 500 },
+                { note: "C4", number: "1", lyric: "ca-", duration: 500 },
+                { note: "D4", number: "2", lyric: "ri", duration: 1000 },
+                { note: "C4", number: "1", lyric: "Ke", duration: 500 },
+                { note: "D4", number: "2", lyric: "sa-", duration: 500 },
+                { note: "E4", number: "3", lyric: "na", duration: 500 },
+                { note: "F4", number: "4", lyric: "ke-", duration: 500 },
+                { note: "G4", number: "5", lyric: "ma-", duration: 500 },
+                { note: "A4", number: "6", lyric: "ri", duration: 500 },
+                { note: "G4", number: "5", lyric: "di", duration: 500 },
+                { note: "F4", number: "4", lyric: "taman", duration: 500 },
+                { note: "E4", number: "3", lyric: "bun-", duration: 500 },
+                { note: "F4", number: "4", lyric: "ga", duration: 1000 }
+            ],
+            pelangi: [
+                { note: "C4", number: "1", lyric: "Pe-", duration: 500 },
+                { note: "E4", number: "3", lyric: "lan-", duration: 500 },
+                { note: "G4", number: "5", lyric: "gi", duration: 500 },
+                { note: "A4", number: "6", lyric: "pe-", duration: 500 },
+                { note: "G4", number: "5", lyric: "lan-", duration: 500 },
+                { note: "E4", number: "3", lyric: "gi", duration: 500 },
+                { note: "C4", number: "1", lyric: "pelangi", duration: 1000 },
+                { note: "G4", number: "5", lyric: "Me-", duration: 500 },
+                { note: "A4", number: "6", lyric: "rah", duration: 500 },
+                { note: "C5", number: "1'", lyric: "ku-", duration: 500 },
+                { note: "B4", number: "7", lyric: "ning", duration: 500 },
+                { note: "A4", number: "6", lyric: "hi-", duration: 500 },
+                { note: "G4", number: "5", lyric: "jau", duration: 500 },
+                { note: "F4", number: "4", lyric: "", duration: 1000 },
+                { note: "C4", number: "1", lyric: "Di", duration: 500 },
+                { note: "E4", number: "3", lyric: "langit", duration: 500 },
+                { note: "G4", number: "5", lyric: "yang", duration: 500 },
+                { note: "A4", number: "6", lyric: "biru", duration: 500 },
+                { note: "G4", number: "5", lyric: "oh", duration: 500 },
+                { note: "E4", number: "3", lyric: "me-", duration: 500 },
+                { note: "C4", number: "1", lyric: "njem", duration: 500 },
+                { note: "G4", number: "5", lyric: "", duration: 1000 },
+                { note: "G4", number: "5", lyric: "Ka-", duration: 500 },
+                { note: "A4", number: "6", lyric: "sih", duration: 500 },
+                { note: "C5", number: "1'", lyric: "Tuhan", duration: 500 },
+                { note: "B4", number: "7", lyric: "yang", duration: 500 },
+                { note: "A4", number: "6", lyric: "membu-", duration: 500 },
+                { note: "G4", number: "5", lyric: "atnya", duration: 1000 },
+                { note: "C4", number: "1", lyric: "Pe-", duration: 500 },
+                { note: "E4", number: "3", lyric: "lan-", duration: 500 },
+                { note: "G4", number: "5", lyric: "gi", duration: 500 },
+                { note: "A4", number: "6", lyric: "pe-", duration: 500 },
+                { note: "G4", number: "5", lyric: "lan-", duration: 500 },
+                { note: "E4", number: "3", lyric: "gi", duration: 500 },
+                { note: "C4", number: "1", lyric: "pelangi", duration: 1000 }
+            ],
+            indonesia_raya: [
+                { note: "C4", number: "1", lyric: "In-", duration: 500 },
+                { note: "E4", number: "3", lyric: "do-", duration: 500 },
+                { note: "G4", number: "5", lyric: "ne-", duration: 500 },
+                { note: "C5", number: "1'", lyric: "sia", duration: 500 },
+                { note: "B4", number: "7", lyric: "ta-", duration: 500 },
+                { note: "A4", number: "6", lyric: "na-", duration: 500 },
+                { note: "G4", number: "5", lyric: "ku", duration: 500 },
+                { note: "F4", number: "4", lyric: "tanah", duration: 500 },
+                { note: "G4", number: "5", lyric: "Air-", duration: 500 },
+                { note: "A4", number: "6", lyric: "ku", duration: 500 },
+                { note: "C5", number: "1'", lyric: "ne-", duration: 500 },
+                { note: "B4", number: "7", lyric: "ge-", duration: 500 },
+                { note: "A4", number: "6", lyric: "ri-", duration: 500 },
+                { note: "G4", number: "5", lyric: "ku", duration: 500 },
+                { note: "F4", number: "4", lyric: "", duration: 500 },
+                { note: "C4", number: "1", lyric: "Di", duration: 500 },
+                { note: "E4", number: "3", lyric: "sana-", duration: 500 },
+                { note: "G4", number: "5", lyric: "lah", duration: 500 },
+                { note: "C5", number: "1'", lyric: "aku", duration: 500 },
+                { note: "B4", number: "7", lyric: "ber-", duration: 500 },
+                { note: "A4", number: "6", lyric: "diri", duration: 500 },
+                { note: "G4", number: "5", lyric: "", duration: 500 },
+                { note: "A4", number: "6", lyric: "Un-", duration: 500 },
+                { note: "C5", number: "1'", lyric: "tuk", duration: 500 },
+                { note: "B4", number: "7", lyric: "sla-", duration: 500 },
+                { note: "A4", number: "6", lyric: "ma-", duration: 500 },
+                { note: "G4", number: "5", lyric: "la-", duration: 500 },
+                { note: "F4", number: "4", lyric: "ma-", duration: 500 },
+                { note: "E4", number: "3", lyric: "nya", duration: 1000 },
+                { note: "C4", number: "1", lyric: "Hi-", duration: 500 },
+                { note: "E4", number: "3", lyric: "dup-", duration: 500 },
+                { note: "G4", number: "5", lyric: "lah", duration: 500 },
+                { note: "A4", number: "6", lyric: "bang-", duration: 500 },
+                { note: "G4", number: "5", lyric: "sa-", duration: 500 },
+                { note: "F4", number: "4", lyric: "ku", duration: 500 },
+                { note: "E4", number: "3", lyric: "", duration: 1000 },
+                { note: "C4", number: "1", lyric: "Hi-", duration: 500 },
+                { note: "E4", number: "3", lyric: "dup-", duration: 500 },
+                { note: "G4", number: "5", lyric: "lah", duration: 500 },
+                { note: "A4", number: "6", lyric: "tanah", duration: 500 },
+                { note: "G4", number: "5", lyric: "ku", duration: 500 },
+                { note: "F4", number: "4", lyric: "", duration: 1000 }
+            ],
+            mengheningkan_cipta: [
+                { note: "G4", number: "5", lyric: "De-", duration: 500 },
+                { note: "A4", number: "6", lyric: "ngan", duration: 500 },
+                { note: "C5", number: "1'", lyric: "se-", duration: 500 },
+                { note: "B4", number: "7", lyric: "luruh", duration: 500 },
+                { note: "A4", number: "6", lyric: "ang-", duration: 500 },
+                { note: "G4", number: "5", lyric: "ka-", duration: 500 },
+                { note: "F4", number: "4", lyric: "sa", duration: 500 },
+                { note: "E4", number: "3", lyric: "", duration: 500 },
+                { note: "C5", number: "1'", lyric: "Ra-", duration: 500 },
+                { note: "B4", number: "7", lyric: "ya", duration: 500 },
+                { note: "A4", number: "6", lyric: "me-", duration: 500 },
+                { note: "G4", number: "5", lyric: "mu-", duration: 500 },
+                { note: "F4", number: "4", lyric: "ji", duration: 500 },
+                { note: "E4", number: "3", lyric: "pahlawan", duration: 1000 },
+                { note: "G4", number: "5", lyric: "Nan", duration: 500 },
+                { note: "A4", number: "6", lyric: "gu-", duration: 500 },
+                { note: "C5", number: "1'", lyric: "gul", duration: 500 },
+                { note: "B4", number: "7", lyric: "di", duration: 500 },
+                { note: "A4", number: "6", lyric: "tepi", duration: 500 },
+                { note: "G4", number: "5", lyric: "se-", duration: 500 },
+                { note: "F4", number: "4", lyric: "jarah", duration: 1000 },
+                { note: "C5", number: "1'", lyric: "Se-", duration: 500 },
+                { note: "B4", number: "7", lyric: "nan-", duration: 500 },
+                { note: "A4", number: "6", lyric: "ti-", duration: 500 },
+                { note: "G4", number: "5", lyric: "a-", duration: 500 },
+                { note: "F4", number: "4", lyric: "sa", duration: 500 },
+                { note: "E4", number: "3", lyric: "selalu", duration: 500 },
+                { note: "C4", number: "1", lyric: "di", duration: 500 },
+                { note: "D4", number: "2", lyric: "hati", duration: 1000 },
+                { note: "G4", number: "5", lyric: "Ter-", duration: 500 },
+                { note: "A4", number: "6", lyric: "ima", duration: 500 },
+                { note: "C5", number: "1'", lyric: "ka-", duration: 500 },
+                { note: "B4", number: "7", lyric: "sih", duration: 500 },
+                { note: "A4", number: "6", lyric: "ja-", duration: 500 },
+                { note: "G4", number: "5", lyric: "sa", duration: 500 },
+                { note: "F4", number: "4", lyric: "", duration: 1000 }
+            ],
+            bagimu_negeri: [
+                { note: "C5", number: "1'", lyric: "Pa-", duration: 500 },
+                { note: "C5", number: "1'", lyric: "da-", duration: 500 },
+                { note: "B4", number: "7", lyric: "mu", duration: 500 },
+                { note: "A4", number: "6", lyric: "ne-", duration: 500 },
+                { note: "G4", number: "5", lyric: "ge-", duration: 500 },
+                { note: "C5", number: "1'", lyric: "ri", duration: 500 },
+                { note: "B4", number: "7", lyric: "", duration: 500 },
+                { note: "A4", number: "6", lyric: "Ka-", duration: 500 },
+                { note: "C5", number: "1'", lyric: "mi", duration: 500 },
+                { note: "B4", number: "7", lyric: "ber-", duration: 500 },
+                { note: "A4", number: "6", lyric: "jan-", duration: 500 },
+                { note: "G4", number: "5", lyric: "ji", duration: 500 },
+                { note: "F4", number: "4", lyric: "", duration: 500 },
+                { note: "G4", number: "5", lyric: "Se-", duration: 500 },
+                { note: "A4", number: "6", lyric: "ti-", duration: 500 },
+                { note: "C5", number: "1'", lyric: "a", duration: 500 },
+                { note: "B4", number: "7", lyric: "ha-", duration: 600 },
+                { note: "A4", number: "6", lyric: "ti", duration: 500 },
+                { note: "G4", number: "5", lyric: "ku", duration: 500 },
+                { note: "F4", number: "4", lyric: "", duration: 500 },
+                { note: "C5", number: "1'", lyric: "Ja-", duration: 500 },
+                { note: "B4", number: "7", lyric: "ya", duration: 500 },
+                { note: "A4", number: "6", lyric: "ja-", duration: 500 },
+                { note: "G4", number: "5", lyric: "ya", duration: 500 },
+                { note: "F4", number: "4", lyric: "ne-", duration: 500 },
+                { note: "E4", number: "3", lyric: "geri", duration: 1000 },
+                { note: "C5", number: "1'", lyric: "Pa-", duration: 500 },
+                { note: "B4", number: "7", lyric: "da-", duration: 500 },
+                { note: "A4", number: "6", lyric: "mu", duration: 500 },
+                { note: "G4", number: "5", lyric: "ne-", duration: 500 },
+                { note: "F4", number: "4", lyric: "ge-", duration: 500 },
+                { note: "E4", number: "3", lyric: "ri", duration: 1000 }
+            ],
+            ibu_kita_kartini: [
+                { note: "C4", number: "1", lyric: "I-", duration: 500 },
+                { note: "D4", number: "2", lyric: "bu", duration: 500 },
+                { note: "E4", number: "3", lyric: "ki-", duration: 500 },
+                { note: "F4", number: "4", lyric: "ta", duration: 500 },
+                { note: "G4", number: "5", lyric: "Kar-", duration: 500 },
+                { note: "A4", number: "6", lyric: "ti-", duration: 500 },
+                { note: "G4", number: "5", lyric: "ni", duration: 500 },
+                { note: "F4", number: "4", lyric: "", duration: 500 },
+                { note: "F4", number: "4", lyric: "Pu-", duration: 500 },
+                { note: "E4", number: "3", lyric: "tri", duration: 500 },
+                { note: "D4", number: "2", lyric: "pu-", duration: 500 },
+                { note: "C4", number: "1", lyric: "tra", duration: 500 },
+                { note: "G4", number: "5", lyric: "", duration: 500 },
+                { note: "C4", number: "1", lyric: "In-", duration: 500 },
+                { note: "D4", number: "2", lyric: "do-", duration: 500 },
+                { note: "E4", number: "3", lyric: "ne-", duration: 500 },
+                { note: "F4", number: "4", lyric: "sia", duration: 500 },
+                { note: "G4", number: "5", lyric: "se-", duration: 500 },
+                { note: "A4", number: "6", lyric: "ja-", duration: 500 },
+                { note: "G4", number: "5", lyric: "ti", duration: 500 },
+                { note: "F4", number: "4", lyric: "", duration: 500 },
+                { note: "F4", number: "4", lyric: "Wah-", duration: 500 },
+                { note: "E4", number: "3", lyric: "ju", duration: 500 },
+                { note: "D4", number: "2", lyric: "pe-", duration: 500 },
+                { note: "C4", number: "1", lyric: "mimpin", duration: 500 },
+                { note: "G4", number: "5", lyric: "", duration: 500 },
+                { note: "C4", number: "1", lyric: "Ra-", duration: 500 },
+                { note: "D4", number: "2", lyric: "kyat", duration: 500 },
+                { note: "E4", number: "3", lyric: "wan-", duration: 500 },
+                { note: "F4", number: "4", lyric: "ita", duration: 500 },
+                { note: "G4", number: "5", lyric: "se-", duration: 500 },
+                { note: "A4", number: "6", lyric: "ma-", duration: 500 },
+                { note: "G4", number: "5", lyric: "ta", duration: 1000 },
+                { note: "C4", number: "1", lyric: "Pen-", duration: 500 },
+                { note: "D4", number: "2", lyric: "di-", duration: 500 },
+                { note: "E4", number: "3", lyric: "dik", duration: 500 },
+                { note: "F4", number: "4", lyric: "ka-", duration: 500 },
+                { note: "G4", number: "5", lyric: "nmu", duration: 500 },
+                { note: "A4", number: "6", lyric: "", duration: 500 },
+                { note: "G4", number: "5", lyric: "Ber-", duration: 500 },
+                { note: "F4", number: "4", lyric: "bu-", duration: 500 },
+                { note: "E4", number: "3", lyric: "di", duration: 500 },
+                { note: "D4", number: "2", lyric: "bagi", duration: 500 },
+                { note: "C4", number: "1", lyric: "bangsa", duration: 1000 }
+            ],
+            satu_satu: [
+                { note: "C4", number: "1", lyric: "Sa-", duration: 500 },
+                { note: "E4", number: "3", lyric: "tu", duration: 500 },
+                { note: "G4", number: "5", lyric: "nu-", duration: 500 },
+                { note: "A4", number: "6", lyric: "sa", duration: 500 },
+                { note: "G4", number: "5", lyric: "sa-", duration: 500 },
+                { note: "F4", number: "4", lyric: "tu", duration: 500 },
+                { note: "E4", number: "3", lyric: "bangsa", duration: 1000 },
+                { note: "G4", number: "5", lyric: "Sa-", duration: 500 },
+                { note: "A4", number: "6", lyric: "tu", duration: 500 },
+                { note: "C5", number: "1'", lyric: "ra-", duration: 500 },
+                { note: "B4", number: "7", lyric: "su", duration: 500 },
+                { note: "A4", number: "6", lyric: "sa-", duration: 500 },
+                { note: "G4", number: "5", lyric: "tu", duration: 500 },
+                { note: "F4", number: "4", lyric: "negara", duration: 1000 },
+                { note: "C4", number: "1", lyric: "Sa-", duration: 500 },
+                { note: "E4", number: "3", lyric: "tu", duration: 500 },
+                { note: "G4", number: "5", lyric: "ci-", duration: 500 },
+                { note: "A4", number: "6", lyric: "ta", duration: 500 },
+                { note: "G4", number: "5", lyric: "ci-", duration: 500 },
+                { note: "F4", number: "4", lyric: "ta", duration: 500 },
+                { note: "E4", number: "3", lyric: "selalu", duration: 1000 },
+                { note: "G4", number: "5", lyric: "Sa-", duration: 500 },
+                { note: "A4", number: "6", lyric: "tu", duration: 500 },
+                { note: "C5", number: "1'", lyric: "na-", duration: 500 },
+                { note: "B4", number: "7", lyric: "sa", duration: 500 },
+                { note: "A4", number: "6", lyric: "sa-", duration: 500 },
+                { note: "G4", number: "5", lyric: "tu", duration: 500 },
+                { note: "F4", number: "4", lyric: "cita", duration: 1000 },
+                { note: "C4", number: "1", lyric: "Sa-", duration: 500 },
+                { note: "E4", number: "3", lyric: "tu", duration: 500 },
+                { note: "G4", number: "5", lyric: "nu-", duration: 500 },
+                { note: "A4", number: "6", lyric: "sa", duration: 500 },
+                { note: "G4", number: "5", lyric: "sa-", duration: 500 },
+                { note: "F4", number: "4", lyric: "tu", duration: 500 },
+                { note: "E4", number: "3", lyric: "bangsa", duration: 1000 },
+                { note: "C4", number: "1", lyric: "Sa-", duration: 500 },
+                { note: "E4", number: "3", lyric: "tu", duration: 500 },
+                { note: "G4", number: "5", lyric: "nu-", duration: 500 },
+                { note: "A4", number: "6", lyric: "sa", duration: 500 },
+                { note: "G4", number: "5", lyric: "sa-", duration: 500 },
+                { note: "F4", number: "4", lyric: "tu", duration: 500 },
+                { note: "E4", number: "3", lyric: "bangsa", duration: 1000 }
+            ]
+        };
+
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const songSelect = document.getElementById('songSelect');
+        const noteDisplay = document.getElementById('noteDisplay');
+        const fullNotes = document.getElementById('fullNotes');
+        const keys = document.querySelectorAll('.key');
+        const mobilePopup = document.getElementById('mobilePopup');
+        const playButton = document.getElementById('playButton');
+        let currentSong = songs.bintang_kecil;
+        let currentNoteIndex = 0;
+        let isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+        function playNote(frequency, duration = 500) {
+            try {
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+
+                oscillator.type = 'sine';
+                oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+                gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration / 1000);
+
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+
+                oscillator.start();
+                oscillator.stop(audioContext.currentTime + duration / 1000);
+            } catch (error) {
+                console.error('Error playing note:', error);
+            }
+        }
+
+        function updateNoteDisplay() {
+            if (currentNoteIndex < currentSong.length) {
+                noteDisplay.textContent = `Mainkan nada: ${currentSong[currentNoteIndex].number}`;
+            } else {
+                noteDisplay.textContent = "Lagu selesai! Pilih lagu lagi.";
+            }
+        }
+
+        function highlightCurrentKey() {
+            keys.forEach(key => key.classList.remove('highlight'));
+            if (currentNoteIndex < currentSong.length) {
+                const currentNote = currentSong[currentNoteIndex].note;
+                const keyToHighlight = document.querySelector(`.key[data-note="${currentNote}"]`);
+                if (keyToHighlight) {
+                    keyToHighlight.classList.add('highlight');
+                }
+            }
+        }
+
+        function scrollToCurrentNote() {
+            const currentNoteElement = fullNotes.querySelector('.current');
+            if (currentNoteElement) {
+                currentNoteElement.scrollIntoView({ behavior: 'smooth', inline: 'center' });
+            }
+        }
+
+        function updateFullNotes() {
+            fullNotes.innerHTML = '';
+            currentSong.forEach((note, index) => {
+                const noteSpan = document.createElement('span');
+                const numberDiv = document.createElement('div');
+                numberDiv.textContent = note.number;
+                const lyricDiv = document.createElement('div');
+                lyricDiv.textContent = note.lyric || '';
+                lyricDiv.classList.add('lyric');
+                noteSpan.appendChild(numberDiv);
+                noteSpan.appendChild(lyricDiv);
+                if (index < currentNoteIndex) {
+                    noteSpan.classList.add('played');
+                } else if (index === currentNoteIndex) {
+                    noteSpan.classList.add('current');
+                }
+                fullNotes.appendChild(noteSpan);
+            });
+            scrollToCurrentNote();
+            highlightCurrentKey();
+        }
+
+        function selectSong() {
+            try {
+                currentSong = songs[songSelect.value];
+                currentNoteIndex = 0;
+                updateNoteDisplay();
+                updateFullNotes();
+            } catch (error) {
+                console.error('Error selecting song:', error);
+            }
+        }
+
+        function startGame() {
+            mobilePopup.style.display = 'none';
+            selectSong();
+            if (audioContext.state === 'suspended') {
+                audioContext.resume().catch(error => console.error('Error resuming audio context:', error));
+            }
+        }
+
+        songSelect.addEventListener('change', selectSong);
+
+        keys.forEach(key => {
+            key.addEventListener('click', () => {
+                try {
+                    const note = key.dataset.note;
+                    const frequency = parseFloat(key.dataset.freq);
+                    if (!note || isNaN(frequency)) {
+                        console.error('Invalid note or frequency:', note, frequency);
+                        return;
+                    }
+                    playNote(frequency, currentSong[currentNoteIndex]?.duration || 500);
+                    if (currentNoteIndex < currentSong.length && note === currentSong[currentNoteIndex].note) {
+                        currentNoteIndex++;
+                        updateNoteDisplay();
+                        updateFullNotes();
+                    }
+                } catch (error) {
+                    console.error('Error handling key click:', error);
+                }
+            });
+        });
+
+        document.addEventListener('click', () => {
+            if (audioContext.state === 'suspended') {
+                audioContext.resume().catch(error => console.error('Error resuming audio context:', error));
+            }
+        }, { once: true });
+
+        function checkOrientation() {
+            if (isMobile) {
+                if (window.innerWidth > window.innerHeight) {
+                    mobilePopup.style.display = 'none';
+                    startGame();
+                } else {
+                    mobilePopup.style.display = 'flex';
+                }
+            } else {
+                mobilePopup.style.display = 'none';
+                startGame();
+            }
+        }
+
+        if (isMobile && screen.orientation && screen.orientation.lock) {
+            screen.orientation.lock('landscape').catch(error => {
+                console.log('Orientation lock failed: ', error);
+            });
+        }
+
+        window.addEventListener('resize', checkOrientation);
+        window.addEventListener('orientationchange', checkOrientation);
+        playButton.addEventListener('click', () => {
+            if (window.innerWidth > window.innerHeight) {
+                mobilePopup.style.display = 'none';
+                startGame();
+            } else {
+                alert('Harap putar perangkat ke mode landscape untuk bermain!');
+            }
+        });
+
+        checkOrientation();
+    </script>
+</body>
+</html>

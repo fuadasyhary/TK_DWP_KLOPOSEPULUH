@@ -1,0 +1,1534 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EDUKASI PAUD & TK</title>
+  <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/260/260205.png"> <!-- Favicon ramah anak -->
+  <!-- CDN Tailwind CSS dengan fallback -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    window.addEventListener('load', () => {
+      if (typeof tailwind === 'undefined') {
+        console.warn('Tailwind CSS gagal dimuat, menggunakan gaya fallback.');
+        document.body.classList.add('tailwind-fallback');
+      } else {
+        document.body.classList.add('tailwind-loaded');
+      }
+    });
+  </script>
+  <style>
+    /* Fallback CSS jika Tailwind gagal */
+    .tailwind-fallback .bg-gray-900 { background-color: #1F2937; }
+    .tailwind-fallback .text-white { color: #FFFFFF; }
+    .tailwind-fallback .bg-gray-800 { background-color: #374151; }
+    .tailwind-fallback .bg-opacity-80 { opacity: 0.8; }
+    .tailwind-fallback .rounded-lg { border-radius: 0.5rem; }
+    .tailwind-fallback .shadow-lg { box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2); }
+    .tailwind-fallback .p-4 { padding: 1rem; }
+    .tailwind-fallback .text-3xl { font-size: 1.875rem; }
+    .tailwind-fallback .font-bold { font-weight: 700; }
+    .tailwind-fallback .text-center { text-align: center; }
+    .tailwind-fallback .mb-6 { margin-bottom: 1.5rem; }
+    .tailwind-fallback .grid { display: grid; }
+    .tailwind-fallback .grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .tailwind-fallback .gap-4 { gap: 1rem; }
+    .tailwind-fallback .hidden { display: none; }
+    .tailwind-fallback .w-full { width: 100%; }
+    .tailwind-fallback .max-w-md { max-width: 28rem; }
+    .tailwind-fallback .mx-auto { margin-left: auto; margin-right: auto; }
+    .tailwind-fallback .min-h-50px { min-height: 50px; }
+    @media (min-width: 640px) {
+      .tailwind-fallback .sm-grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    }
+    body {
+      background: linear-gradient(135deg, #FFE5B4, #FFB6C1, #B0E0E6); /* Warna ramah anak */
+      font-family: 'Arial', sans-serif;
+      color: #FFFFFF;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .option-btn {
+      transition: background-color 0.3s;
+      min-height: 50px;
+      cursor: pointer;
+    }
+    .option-btn:hover {
+      filter: brightness(1.1);
+    }
+    canvas {
+      border: 2px solid #4B5563;
+      background-color: #fff;
+    }
+    .arabic {
+      font-family: 'Amiri', serif;
+      direction: rtl;
+      font-size: 1.5rem;
+    }
+    .indonesian {
+      direction: ltr;
+    }
+    .watermark {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      color: rgba(0, 0, 0, 0.3);
+      font-size: 12px;
+      font-family: Arial, sans-serif;
+      z-index: 1000;
+    }
+    .watermark a {
+      color: rgba(0, 0, 0, 0.5);
+      text-decoration: none;
+    }
+    .watermark a:hover {
+      color: rgba(0, 0, 0, 0.8);
+      text-decoration: underline;
+    }
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    .modal-content {
+      background-color: white;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      max-width: 90%;
+      width: 400px;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    }
+    .animate-fade-in {
+      animation: fadeIn 0.3s ease-in;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.8); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    @font-face {
+      font-family: 'Amiri';
+      src: url('https://fonts.gstatic.com/s/amiri/v27/J7aRnpd8CGxBHpUrtLMT7J4.woff2') format('woff2');
+      font-weight: normal;
+      font-style: normal;
+    }
+    input[type="text"], input[type="number"] {
+      padding: 8px;
+      font-size: 1rem;
+      border-radius: 0.25rem;
+      border: 1px solid #4B5563;
+      width: 100%;
+      max-width: 200px;
+      margin: 0 auto;
+    }
+    input[type="text"]:focus, input[type="number"]:focus {
+      outline: none;
+      border-color: #3B82F6;
+      box-shadow: 0 0 5px rgba(59, 130, 246, 0.5);
+    }
+  </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen flex flex-col items-center justify-content">
+  <audio id="clickSound" src="https://freesound.org/data/previews/171/171671_2437358-lq.mp3"></audio>
+  <audio id="correctSound" src="https://freesound.org/data/previews/553/553112_7038676-lq.mp3"></audio>
+  <audio id="wrongSound" src="https://freesound.org/data/previews/476/476057_5294180-lq.mp3"></audio>
+
+  <div class="w-full max-w-4xl p-4 bg-gray-800 bg-opacity-80 rounded-lg shadow-lg">
+    <h1 class="text-3xl md:text-4xl font-bold text-center text-yellow-300 mb-6">EDUKASI PAUD & TK</h1>
+    <div id="mainMenu" class="grid grid-cols-2 gap-4 mb-6">
+      <button type="button" onclick="playClickSound(); showLearningMenu()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg min-h-50px font-bold cursor-pointer">Belajar</button>
+      <button type="button" onclick="playClickSound(); showPlayingMenu()" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg min-h-50px font-bold cursor-pointer">Bermain</button>
+    </div>
+    <div id="learningMenu" class="grid grid-cols-2 sm:grid-cols-4 gap-4 hidden">
+      <button type="button" onclick="playClickSound(); startGame('learnLetters')" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg min-h-50px font-bold cursor-pointer">Belajar Huruf</button>
+      <button type="button" onclick="playClickSound(); startGame('learnNumbers')" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg min-h-50px font-bold cursor-pointer">Belajar Angka</button>
+      <button type="button" onclick="playClickSound(); startGame('learnColors')" class="bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-6 rounded-lg min-h-50px font-bold cursor-pointer">Belajar Warna</button>
+      <button type="button" onclick="playClickSound(); startGame('learnArabic')" class="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-lg min-h-50px font-bold cursor-pointer">Belajar Bahasa Arab</button>
+      <button type="button" onclick="playClickSound(); startGame('learnArabicPunctuation')" class="bg-cyan-600 hover:bg-cyan-700 text-white font-semibold py-3 px-6 rounded-lg min-h-50px font-bold cursor-pointer">Belajar Tanda Baca Arab</button>
+      <button type="button" onclick="playClickSound(); startGame('learnIndonesianPunctuation')" class="bg-teal-600 hover:bg-teal-700 text-white font-semibold py-3 px-6 rounded-lg min-h-50px font-bold cursor-pointer">Belajar Tanda Baca Indonesia</button>
+      <button type="button" onclick="playClickSound(); startGame('learnBodyParts')" class="bg-rose-600 hover:bg-rose-700 text-white font-semibold py-3 px-6 rounded-lg min-h-50px font-bold cursor-pointer">Belajar Anggota Tubuh</button>
+      <button type="button" onclick="playClickSound(); startGame('learnFruits')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-lg min-h-50px font-bold cursor-pointer">Belajar Buah</button>
+      <button type="button" onclick="playClickSound(); startGame('learnVegetables')" class="bg-lime-600 hover:bg-lime-700 text-white font-semibold py-3 px-6 rounded-lg min-h-50px font-bold cursor-pointer">Belajar Sayuran</button>
+      <button type="button" onclick="playClickSound(); startGame('learnVehicles')" class="bg-orange-600 hover:bg-orange-700 text-white font-semibold py-3 px-6 rounded-lg min-h-50px font-bold cursor-pointer">Belajar Kendaraan</button>
+      <button type="button" onclick="playClickSound(); startGame('learnItems')" class="bg-amber-600 hover:bg-amber-700 text-white font-semibold py-3 px-6 rounded-lg min-h-50px font-bold cursor-pointer">Belajar 100 Nama Barang</button>
+      <button type="button" onclick="playClickSound(); backToMainMenu()" class="bg-gray-600 hover:bg-gray-500 text-white font-semibold py-2 px-4 rounded-lg min-h-50px font-bold cursor-pointer">Kembali ke Menu Utama</button>
+    </div>
+    <div id="playingMenu" class="grid grid-cols-2 sm:grid-cols-4 gap-4 hidden">
+      <button type="button" onclick="playClickSound(); startGame('writeLetters')" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg min-h-50px font-bold cursor-pointer">Belajar Nulis Huruf</button>
+      <button type="button" onclick="playClickSound(); startGame('writeNumbers')" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg min-h-50px font-bold cursor-pointer">Belajar Nulis Angka</button>
+      <button type="button" onclick="playClickSound(); startGame('writeWords')" class="bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-6 rounded-lg min-h-50px font-bold cursor-pointer">Belajar Nulis Kata</button>
+      <button type="button" onclick="playClickSound(); startGame('guessLetters')" class="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-lg min-h-50px font-bold cursor-pointer">Tebak Huruf</button>
+      <button type="button" onclick="playClickSound(); startGame('guessNumbers')" class="bg-yellow-600 hover:bg-yellow-700 text-white font-semibold py-3 px-6 rounded-lg min-h-50px font-bold cursor-pointer">Tebak Angka</button>
+      <button type="button" onclick="playClickSound(); startGame('guessColors')" class="bg-pink-600 hover:bg-pink-700 text-white font-semibold py-3 px-6 rounded-lg min-h-50px font-bold cursor-pointer">Tebak 20 Warna</button>
+      <button type="button" onclick="playClickSound(); startGame('guessArabic')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-lg min-h-50px font-bold cursor-pointer">Tebak Bahasa Arab</button>
+      <button type="button" onclick="playClickSound(); startGame('guessArabicPunctuation')" class="bg-lime-600 hover:bg-lime-700 text-white font-semibold py-3 px-6 rounded-lg min-h-50px font-bold cursor-pointer">Tebak Tanda Baca Arab</button>
+      <button type="button" onclick="playClickSound(); startGame('guessIndonesianPunctuation')" class="bg-orange-600 hover:bg-orange-700 text-white font-semibold py-3 px-6 rounded-lg min-h-50px font-bold cursor-pointer">Tebak Tanda Baca Indonesia</button>
+      <button type="button" onclick="playClickSound(); startGame('guessBodyParts')" class="bg-rose-600 hover:bg-rose-700 text-white font-semibold py-3 px-6 rounded-lg min-h-50px font-bold cursor-pointer">Tebak Anggota Tubuh</button>
+      <button type="button" onclick="playClickSound(); startGame('guessFruits')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-lg min-h-50px font-bold cursor-pointer">Tebak 30 Buah</button>
+      <button type="button" onclick="playClickSound(); startGame('guessVegetables')" class="bg-lime-600 hover:bg-lime-700 text-white font-semibold py-3 px-6 rounded-lg min-h-50px font-bold cursor-pointer">Tebak 30 Sayuran</button>
+      <button type="button" onclick="playClickSound(); startGame('guessVehicles')" class="bg-orange-600 hover:bg-orange-700 text-white font-semibold py-3 px-6 rounded-lg min-h-50px font-bold cursor-pointer">Tebak Kendaraan</button>
+      <button type="button" onclick="playClickSound(); startGame('wordConnect')" class="bg-teal-600 hover:bg-teal-700 text-white font-semibold py-3 px-6 rounded-lg min-h-50px font-bold cursor-pointer">Sambung Huruf Jadi Kata</button>
+      <button type="button" onclick="playClickSound(); startGame('mathAdditionOneDigit')" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg min-h-50px font-bold cursor-pointer">Penjumlahan Angka 1 Digit</button>
+      <button type="button" onclick="playClickSound(); startGame('mathAdditionTwoDigit')" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg min-h-50px font-bold cursor-pointer">Penjumlahan Angka 2 Digit</button>
+      <button type="button" onclick="playClickSound(); startGame('guessItems')" class="bg-amber-600 hover:bg-amber-700 text-white font-semibold py-3 px-6 rounded-lg min-h-50px font-bold cursor-pointer">Tebak 100 Nama Barang</button>
+      <button type="button" onclick="playClickSound(); backToMainMenu()" class="bg-gray-600 hover:bg-gray-500 text-white font-semibold py-2 px-4 rounded-lg min-h-50px font-bold cursor-pointer">Kembali ke Menu Utama</button>
+    </div>
+    <div id="gameArea" class="hidden mt-6 p-4 bg-gray-700 rounded-lg font-bold"></div>
+    <div id="gameControls" class="hidden mt-4 flex justify-center gap-4">
+      <button type="button" id="backButton" onclick="playClickSound(); backToMenu()" class="bg-gray-600 hover:bg-gray-500 text-white font-semibold py-2 px-4 rounded-lg min-h-50px font-bold cursor-pointer">Kembali ke Menu</button>
+    </div>
+    <div id="resultModal" class="modal hidden">
+      <div class="modal-content animate-fade-in">
+        <p id="modalMessage" class="text-2xl font-bold mb-4"></p>
+        <button type="button" id="modalButton" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg min-h-50px font-bold cursor-pointer">Lanjut</button>
+      </div>
+    </div>
+  </div>
+  <div class="watermark"><a href="https://id.linkedin.com/in/mochamad-fuad-asyhary">By Mochamad Fuad Asyhary</a></div>
+
+  <script>
+    window.onload = () => {
+      console.log("Dokumen dimuat, memulai inisialisasi...");
+      initGame();
+    };
+
+    let currentGameType = '';
+    let currentMenu = 'main';
+    let score = 0;
+    let canvas = null, ctx = null, isDrawing = false;
+
+    function initGame() {
+      try {
+        const mainMenu = document.getElementById('mainMenu');
+        const learningMenu = document.getElementById('learningMenu');
+        const playingMenu = document.getElementById('playingMenu');
+        const gameArea = document.getElementById('gameArea');
+        const gameControls = document.getElementById('gameControls');
+        const resultModal = document.getElementById('resultModal');
+        if (!mainMenu || !learningMenu || !playingMenu || !gameArea || !gameControls || !resultModal) {
+          throw new Error("Elemen DOM utama tidak ditemukan.");
+        }
+      } catch (error) {
+        console.error("Error in initGame:", error);
+        alert("Gagal menginisialisasi permainan. Silakan muat ulang halaman.");
+      }
+    }
+
+    function showLearningMenu() {
+      try {
+        const mainMenu = document.getElementById('mainMenu');
+        const learningMenu = document.getElementById('learningMenu');
+        const playingMenu = document.getElementById('playingMenu');
+        if (!mainMenu || !learningMenu || !playingMenu) throw new Error("Elemen menu tidak ditemukan.");
+        mainMenu.classList.add('hidden');
+        learningMenu.classList.remove('hidden');
+        playingMenu.classList.add('hidden');
+        currentMenu = 'learning';
+      } catch (error) {
+        console.error("Error in showLearningMenu:", error);
+        alert("Gagal menampilkan menu belajar. Silakan coba lagi.");
+      }
+    }
+
+    function showPlayingMenu() {
+      try {
+        const mainMenu = document.getElementById('mainMenu');
+        const learningMenu = document.getElementById('learningMenu');
+        const playingMenu = document.getElementById('playingMenu');
+        if (!mainMenu || !learningMenu || !playingMenu) throw new Error("Elemen menu tidak ditemukan.");
+        mainMenu.classList.add('hidden');
+        learningMenu.classList.add('hidden');
+        playingMenu.classList.remove('hidden');
+        currentMenu = 'playing';
+      } catch (error) {
+        console.error("Error in showPlayingMenu:", error);
+        alert("Gagal menampilkan menu bermain. Silakan coba lagi.");
+      }
+    }
+
+    function backToMainMenu() {
+      try {
+        const mainMenu = document.getElementById('mainMenu');
+        const learningMenu = document.getElementById('learningMenu');
+        const playingMenu = document.getElementById('playingMenu');
+        const gameArea = document.getElementById('gameArea');
+        const gameControls = document.getElementById('gameControls');
+        const resultModal = document.getElementById('resultModal');
+        if (!mainMenu || !learningMenu || !playingMenu || !gameArea || !gameControls || !resultModal) {
+          throw new Error("Elemen DOM tidak ditemukan.");
+        }
+        mainMenu.classList.remove('hidden');
+        learningMenu.classList.add('hidden');
+        playingMenu.classList.add('hidden');
+        gameArea.classList.add('hidden');
+        gameControls.classList.add('hidden');
+        resultModal.classList.add('hidden');
+        currentMenu = 'main';
+        score = 0;
+        if (canvas && ctx) {
+          canvas.removeEventListener('mousedown', startDrawing);
+          canvas.removeEventListener('mousemove', draw);
+          canvas.removeEventListener('mouseup', stopDrawing);
+          canvas.removeEventListener('mouseout', stopDrawing);
+          canvas.removeEventListener('touchstart', startDrawingTouch);
+          canvas.removeEventListener('touchmove', drawTouch);
+          canvas.removeEventListener('touchend', stopDrawing);
+          canvas = null;
+          ctx = null;
+        }
+      } catch (error) {
+        console.error("Error in backToMainMenu:", error);
+        alert("Gagal kembali ke menu utama. Silakan muat ulang halaman.");
+      }
+    }
+
+    function backToMenu() {
+      try {
+        if (currentMenu === 'learning') {
+          showLearningMenu();
+        } else {
+          showPlayingMenu();
+        }
+        document.getElementById('gameArea').classList.add('hidden');
+        document.getElementById('gameControls').classList.add('hidden');
+        document.getElementById('resultModal').classList.add('hidden');
+        if (canvas && ctx) {
+          canvas.removeEventListener('mousedown', startDrawing);
+          canvas.removeEventListener('mousemove', draw);
+          canvas.removeEventListener('mouseup', stopDrawing);
+          canvas.removeEventListener('mouseout', stopDrawing);
+          canvas.removeEventListener('touchstart', startDrawingTouch);
+          canvas.removeEventListener('touchmove', drawTouch);
+          canvas.removeEventListener('touchend', stopDrawing);
+          canvas = null;
+          ctx = null;
+        }
+      } catch (error) {
+        console.error("Error in backToMenu:", error);
+        alert("Gagal kembali ke menu. Silakan coba lagi.");
+      }
+    }
+
+    function playSound(soundId) {
+      try {
+        const sound = document.getElementById(soundId);
+        if (sound) {
+          sound.currentTime = 0;
+          sound.play().catch(e => console.warn(`Gagal memutar suara ${soundId}:`, e));
+        } else {
+          console.warn(`Elemen suara ${soundId} tidak ditemukan.`);
+        }
+      } catch (error) {
+        console.warn(`Error memutar suara ${soundId}:`, error);
+      }
+    }
+
+    function playClickSound() { playSound('clickSound'); }
+    function playCorrectSound() { playSound('correctSound'); }
+    function playWrongSound() { playSound('wrongSound'); }
+
+    function showModal(message, isCorrect, gameType) {
+      try {
+        const modal = document.getElementById('resultModal');
+        const modalMessage = document.getElementById('modalMessage');
+        const modalButton = document.getElementById('modalButton');
+        if (!modal || !modalMessage || !modalButton) {
+          throw new Error("Elemen modal tidak ditemukan.");
+        }
+        modalMessage.innerHTML = `${message}<br>Skor: ${score}`;
+        modalMessage.className = `text-2xl font-bold mb-4 ${isCorrect ? 'text-green-600' : 'text-red-600'}`;
+        modalButton.textContent = isCorrect ? 'Lanjut' : 'Coba Lagi';
+        modalButton.onclick = () => {
+          playClickSound();
+          modal.classList.add('hidden');
+          startGame(gameType);
+        };
+        modal.classList.remove('hidden');
+        if (isCorrect) playCorrectSound();
+        else playWrongSound();
+      } catch (error) {
+        console.error("Error in showModal:", error);
+        alert("Gagal menampilkan hasil. Silakan coba lagi.");
+      }
+    }
+
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+    }
+
+    function startGame(gameType) {
+      try {
+        const gameArea = document.getElementById('gameArea');
+        const gameControls = document.getElementById('gameControls');
+        if (!gameArea || !gameControls) throw new Error("Elemen gameArea atau gameControls tidak ditemukan.");
+        currentGameType = gameType;
+        gameArea.innerHTML = games[gameType].content();
+        gameArea.classList.remove('hidden');
+        gameControls.classList.remove('hidden');
+        if (gameType.includes('write')) {
+          setupCanvas();
+        }
+      } catch (error) {
+        console.error(`Error in startGame (${gameType}):`, error);
+        alert(`Gagal memulai permainan ${gameType}. Silakan coba lagi.`);
+      }
+    }
+
+    function setupCanvas() {
+      try {
+        canvas = document.getElementById('writeCanvas');
+        if (!canvas) throw new Error("Canvas tidak ditemukan.");
+        ctx = canvas.getContext('2d');
+        if (!ctx) throw new Error("Konteks canvas tidak tersedia.");
+        ctx.lineWidth = 5;
+        ctx.lineCap = 'round';
+        ctx.strokeStyle = '#000';
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('mouseout', stopDrawing);
+        canvas.addEventListener('touchstart', startDrawingTouch);
+        canvas.addEventListener('touchmove', drawTouch);
+        canvas.addEventListener('touchend', stopDrawing);
+      } catch (error) {
+        console.error("Error in setupCanvas:", error);
+        alert("Gagal mengatur canvas. Silakan coba lagi.");
+      }
+    }
+
+    function startDrawing(e) {
+      isDrawing = true;
+      ctx.beginPath();
+      draw(e);
+    }
+
+    function draw(e) {
+      if (!isDrawing) return;
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      ctx.lineTo(x, y);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+    }
+
+    function stopDrawing() {
+      isDrawing = false;
+      ctx.beginPath();
+    }
+
+    function startDrawingTouch(e) {
+      e.preventDefault();
+      isDrawing = true;
+      drawTouch(e);
+    }
+
+    function drawTouch(e) {
+      if (!isDrawing) return;
+      const rect = canvas.getBoundingClientRect();
+      const x = e.touches[0].clientX - rect.left;
+      const y = e.touches[0].clientY - rect.top;
+      ctx.lineTo(x, y);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+    }
+
+    function clearCanvas() {
+      if (ctx) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+    }
+
+    function nextWriteItem(gameType) {
+      startGame(gameType);
+    }
+
+    function checkGuessLetter(correct, guess) {
+      const isCorrect = correct === guess;
+      score = isCorrect ? score + 1 : Math.max(0, score - 1);
+      showModal(isCorrect ? "Benar! Huruf yang dipilih sesuai." : "Salah! Coba lagi.", isCorrect, 'guessLetters');
+    }
+
+    function checkGuessNumber(correct, guess) {
+      const isCorrect = parseInt(correct) === parseInt(guess);
+      score = isCorrect ? score + 1 : Math.max(0, score - 1);
+      showModal(isCorrect ? "Benar! Angka yang dipilih sesuai." : "Salah! Coba lagi.", isCorrect, 'guessNumbers');
+    }
+
+    function checkGuessColor(correct, guess) {
+      const isCorrect = correct === guess;
+      score = isCorrect ? score + 1 : Math.max(0, score - 1);
+      showModal(isCorrect ? "Benar! Warna yang dipilih sesuai." : "Salah! Coba lagi.", isCorrect, 'guessColors');
+    }
+
+    function checkGuessArabic(correct, guess) {
+      const isCorrect = correct === guess;
+      score = isCorrect ? score + 1 : Math.max(0, score - 1);
+      showModal(isCorrect ? "Benar! Huruf Arab yang dipilih sesuai." : "Salah! Coba lagi.", isCorrect, 'guessArabic');
+    }
+
+    function checkGuessArabicPunctuation(correct, guess) {
+      const isCorrect = correct === guess;
+      score = isCorrect ? score + 1 : Math.max(0, score - 1);
+      showModal(isCorrect ? "Benar! Tanda baca Arab yang dipilih sesuai." : "Salah! Coba lagi.", isCorrect, 'guessArabicPunctuation');
+    }
+
+    function checkGuessIndonesianPunctuation(correct, guess) {
+      const isCorrect = correct === guess;
+      score = isCorrect ? score + 1 : Math.max(0, score - 1);
+      showModal(isCorrect ? "Benar! Tanda baca Indonesia yang dipilih sesuai." : "Salah! Coba lagi.", isCorrect, 'guessIndonesianPunctuation');
+    }
+
+    function checkGuessBodyPart(correct, guess) {
+      const isCorrect = correct === guess;
+      score = isCorrect ? score + 1 : Math.max(0, score - 1);
+      showModal(isCorrect ? "Benar! Anggota tubuh yang dipilih sesuai." : "Salah! Coba lagi.", isCorrect, 'guessBodyParts');
+    }
+
+    function checkGuessFruit(correct, guess) {
+      const isCorrect = correct === guess;
+      score = isCorrect ? score + 1 : Math.max(0, score - 1);
+      showModal(isCorrect ? "Benar! Buah yang dipilih sesuai." : "Salah! Coba lagi.", isCorrect, 'guessFruits');
+    }
+
+    function checkGuessVegetable(correct, guess) {
+      const isCorrect = correct === guess;
+      score = isCorrect ? score + 1 : Math.max(0, score - 1);
+      showModal(isCorrect ? "Benar! Sayuran yang dipilih sesuai." : "Salah! Coba lagi.", isCorrect, 'guessVegetables');
+    }
+
+    function checkGuessVehicle(correct, guess) {
+      const isCorrect = correct === guess;
+      score = isCorrect ? score + 1 : Math.max(0, score - 1);
+      showModal(isCorrect ? "Benar! Kendaraan yang dipilih sesuai." : "Salah! Coba lagi.", isCorrect, 'guessVehicles');
+    }
+
+    function checkGuessItem(correct, guess) {
+      const isCorrect = correct === guess;
+      score = isCorrect ? score + 1 : Math.max(0, score - 1);
+      showModal(isCorrect ? "Benar! Barang yang dipilih sesuai." : "Salah! Coba lagi.", isCorrect, 'guessItems');
+    }
+
+    function checkWordConnect(correct, guess) {
+      const isCorrect = correct.toLowerCase() === guess.toLowerCase();
+      score = isCorrect ? score + 1 : Math.max(0, score - 1);
+      showModal(isCorrect ? "Benar! Kata yang dipilih sesuai." : "Salah! Coba lagi.", isCorrect, 'wordConnect');
+    }
+
+    function checkMathAddition(correct, guess) {
+      const isCorrect = correct === parseInt(guess);
+      score = isCorrect ? score + 1 : Math.max(0, score - 1);
+      showModal(isCorrect ? "Benar! Hasil penjumlahan sesuai." : "Salah! Coba lagi.", isCorrect, currentGameType);
+    }
+
+    const games = {
+      learnLetters: {
+        name: "Belajar Huruf",
+        content: () => {
+          const letters = "abcdefghijklmnopqrstuvwxyz".split("").map((lower, i) => ({
+            lower,
+            upper: "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("")[i]
+          }));
+          return `<h2 class="text-2xl font-bold text-center mb-4">${games.learnLetters.name}</h2>
+                  <p class="text-xl font-bold mb-4">Pelajari huruf kecil dan besar:</p>
+                  <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">${letters.map(l => `<div class="bg-blue-500 p-4 text-center rounded-lg text-xl font-bold">${l.lower} - ${l.upper}</div>`).join('')}</div>`;
+        }
+      },
+      learnNumbers: {
+        name: "Belajar Angka",
+        content: () => {
+          const numbers = [
+            {num: 0, name: "nol"}, {num: 1, name: "satu"}, {num: 2, name: "dua"}, {num: 3, name: "tiga"},
+            {num: 4, name: "empat"}, {num: 5, name: "lima"}, {num: 6, name: "enam"}, {num: 7, name: "tujuh"},
+            {num: 8, name: "delapan"}, {num: 9, name: "sembilan"}, {num: 10, name: "sepuluh"},
+            {num: 11, name: "sebelas"}, {num: 12, name: "dua belas"}, {num: 13, name: "tiga belas"},
+            {num: 14, name: "empat belas"}, {num: 15, name: "lima belas"}, {num: 16, name: "enam belas"},
+            {num: 17, name: "tujuh belas"}, {num: 18, name: "delapan belas"}, {num: 19, name: "sembilan belas"},
+            {num: 20, name: "dua puluh"}
+          ];
+          return `<h2 class="text-2xl font-bold text-center mb-4">${games.learnNumbers.name}</h2>
+                  <p class="text-xl font-bold mb-4">Pelajari angka 0-20:</p>
+                  <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">${numbers.map(n => `<div class="bg-green-500 p-4 text-center rounded-lg text-xl font-bold">${n.num} - ${n.name}</div>`).join('')}</div>`;
+        }
+      },
+      learnColors: {
+        name: "Belajar Warna",
+        content: () => {
+          const colors = [
+            {name: "Merah", code: "#FF0000", textColor: "#FFFFFF"},
+            {name: "Biru", code: "#0000FF", textColor: "#FFFFFF"},
+            {name: "Hijau", code: "#00FF00", textColor: "#FFFFFF"},
+            {name: "Kuning", code: "#FFFF00", textColor: "#000000"},
+            {name: "Ungu", code: "#800080", textColor: "#FFFFFF"},
+            {name: "Jingga", code: "#FFA500", textColor: "#FFFFFF"},
+            {name: "Hitam", code: "#000000", textColor: "#FFFFFF"},
+            {name: "Putih", code: "#FFFFFF", textColor: "#000000"},
+            {name: "Coklat", code: "#A52A2A", textColor: "#FFFFFF"},
+            {name: "Abu-abu", code: "#808080", textColor: "#FFFFFF"},
+            {name: "Pink", code: "#FFC1CC", textColor: "#000000"},
+            {name: "Toska", code: "#00CED1", textColor: "#000000"},
+            {name: "Emas", code: "#FFD700", textColor: "#000000"},
+            {name: "Perak", code: "#C0C0C0", textColor: "#000000"},
+            {name: "Nila", code: "#4B0082", textColor: "#FFFFFF"},
+            {name: "Magenta", code: "#FF00FF", textColor: "#FFFFFF"},
+            {name: "Krem", code: "#FFFDD0", textColor: "#000000"},
+            {name: "Marun", code: "#800000", textColor: "#FFFFFF"},
+            {name: "Zaitun", code: "#808000", textColor: "#FFFFFF"},
+            {name: "Teal", code: "#008080", textColor: "#FFFFFF"}
+          ];
+          return `<h2 class="text-2xl font-bold text-center mb-4">${games.learnColors.name}</h2>
+                  <p class="text-xl font-bold mb-4">Pelajari 20 warna:</p>
+                  <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">${colors.map(c => `<div class="p-4 text-center rounded-lg text-xl font-bold" style="background-color:${c.code};color:${c.textColor}">${c.name}</div>`).join('')}</div>`;
+        }
+      },
+      learnArabic: {
+        name: "Belajar Bahasa Arab",
+        content: () => {
+          const arabicLetters = [
+            {symbol: "ا", name: "Alif", transliteration: "A"},
+            {symbol: "ب", name: "Ba", transliteration: "B"},
+            {symbol: "ت", name: "Ta", transliteration: "T"},
+            {symbol: "ث", name: "Tsa", transliteration: "Th"},
+            {symbol: "ج", name: "Jim", transliteration: "J"},
+            {symbol: "ح", name: "Ha", transliteration: "H"},
+            {symbol: "خ", name: "Kha", transliteration: "Kh"},
+            {symbol: "د", name: "Dal", transliteration: "D"},
+            {symbol: "ذ", name: "Dzal", transliteration: "Dh"},
+            {symbol: "ر", name: "Ra", transliteration: "R"},
+            {symbol: "ز", name: "Zai", transliteration: "Z"},
+            {symbol: "س", name: "Sin", transliteration: "S"},
+            {symbol: "ش", name: "Syin", transliteration: "Sh"},
+            {symbol: "ص", name: "Shad", transliteration: "S"},
+            {symbol: "ض", name: "Dhad", transliteration: "D"},
+            {symbol: "ط", name: "Tha", transliteration: "T"},
+            {symbol: "ظ", name: "Zha", transliteration: "Zh"},
+            {symbol: "ع", name: "Ain", transliteration: "‘"},
+            {symbol: "غ", name: "Ghain", transliteration: "Gh"},
+            {symbol: "ف", name: "Fa", transliteration: "F"},
+            {symbol: "ق", name: "Qaf", transliteration: "Q"},
+            {symbol: "ك", name: "Kaf", transliteration: "K"},
+            {symbol: "ل", name: "Lam", transliteration: "L"},
+            {symbol: "م", name: "Mim", transliteration: "M"},
+            {symbol: "ن", name: "Nun", transliteration: "N"},
+            {symbol: "ه", name: "Ha", transliteration: "H"},
+            {symbol: "و", name: "Waw", transliteration: "W"},
+            {symbol: "ي", name: "Ya", transliteration: "Y"}
+          ];
+          return `<h2 class="text-2xl font-bold text-center mb-4">${games.learnArabic.name}</h2>
+                  <p class="text-xl font-bold mb-4">Pelajari huruf-huruf Arab:</p>
+                  <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">${arabicLetters.map(l => `<div class="bg-purple-500 p-4 text-center rounded-lg text-xl font-bold"><span class="arabic">${l.symbol}</span><br><span class="indonesian">${l.name} (${l.transliteration})</span></div>`).join('')}</div>`;
+        }
+      },
+      learnArabicPunctuation: {
+        name: "Belajar Tanda Baca Arab",
+        content: () => {
+          const arabicPunctuation = [
+            {symbol: "َ", name: "Fathah", example: "بَ", description: "Memberikan bunyi 'a'"},
+            {symbol: "ِ", name: "Kasrah", example: "بِ", description: "Memberikan bunyi 'i'"},
+            {symbol: "ُ", name: "Dammah", example: "بُ", description: "Memberikan bunyi 'u'"},
+            {symbol: "ً", name: "Fathatain", example: "بًا", description: "Memberikan bunyi 'an'"},
+            {symbol: "ٍ", name: "Kasratain", example: "بٍ", description: "Memberikan bunyi 'in'"},
+            {symbol: "ٌ", name: "Dammatain", example: "بٌ", description: "Memberikan bunyi 'un'"},
+            {symbol: "ْ", name: "Sukun", example: "بْ", description: "Menghilangkan bunyi vokal"},
+            {symbol: "ّ", name: "Shadda", example: "بّ", description: "Menggandakan bunyi huruf"}
+          ];
+          return `<h2 class="text-2xl font-bold text-center mb-4">${games.learnArabicPunctuation.name}</h2>
+                  <p class="text-xl font-bold mb-4">Pelajari tanda baca Arab (harakat):</p>
+                  <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">${arabicPunctuation.map(p => `<div class="bg-cyan-500 p-4 text-center rounded-lg text-xl font-bold"><span class="arabic">${p.example}</span><br><span class="indonesian">${p.name} (${p.description})</span></div>`).join('')}</div>`;
+        }
+      },
+      learnIndonesianPunctuation: {
+        name: "Belajar Tanda Baca Indonesia",
+        content: () => {
+          const indonesianPunctuation = [
+            {name: "Titik", symbol: "."}, {name: "Koma", symbol: ","}, {name: "Tanda Tanya", symbol: "?"},
+            {name: "Tanda Seru", symbol: "!"}, {name: "Titik Dua", symbol: ":"}, {name: "Titik Koma", symbol: ";"},
+            {name: "Tanda Kurung", symbol: "()"}, {name: "Tanda Kutip", symbol: '"'}, {name: "Tanda Hubung", symbol: "-"},
+            {name: "Elipsis", symbol: "..."}
+          ];
+          return `<h2 class="text-2xl font-bold text-center mb-4">${games.learnIndonesianPunctuation.name}</h2>
+                  <p class="text-xl font-bold mb-4">Pelajari tanda baca Indonesia:</p>
+                  <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">${indonesianPunctuation.map(p => `<div class="bg-teal-500 p-4 text-center rounded-lg text-xl font-bold">${p.symbol} (${p.name})</div>`).join('')}</div>`;
+        }
+      },
+      learnBodyParts: {
+        name: "Belajar Anggota Tubuh",
+        content: () => {
+          const bodyParts = [
+            {name: "Kepala", description: "Bagian tubuh untuk berpikir dan melihat"},
+            {name: "Rambut", description: "Tumbuh di kepala, melindungi kulit kepala"},
+            {name: "Mata", description: "Untuk melihat dunia di sekitar"},
+            {name: "Hidung", description: "Untuk mencium bau dan bernapas"},
+            {name: "Telinga", description: "Untuk mendengar suara"},
+            {name: "Mulut", description: "Untuk berbicara dan makan"},
+            {name: "Gigi", description: "Untuk mengunyah makanan"},
+            {name: "Lidah", description: "Untuk merasakan rasa makanan"},
+            {name: "Leher", description: "Menghubungkan kepala dengan badan"},
+            {name: "Bahu", description: "Bagian atas lengan untuk mengangkat"},
+            {name: "Lengan", description: "Untuk menggerakkan tangan"},
+            {name: "Siku", description: "Bagian lengan yang bisa ditekuk"},
+            {name: "Tangan", description: "Untuk memegang dan menyentuh"},
+            {name: "Jari", description: "Bagian tangan untuk menunjuk"},
+            {name: "Dada", description: "Bagian tubuh tempat jantung berada"},
+            {name: "Perut", description: "Tempat mencerna makanan"},
+            {name: "Punggung", description: "Bagian belakang tubuh"},
+            {name: "Pinggul", description: "Bagian tubuh untuk duduk"},
+            {name: "Kaki", description: "Untuk berjalan dan berlari"},
+            {name: "Lutut", description: "Bagian kaki yang bisa ditekuk"},
+            {name: "Pergelangan Kaki", description: "Menghubungkan kaki dan telapak kaki"},
+            {name: "Telapak Kaki", description: "Bagian bawah kaki untuk berpijak"},
+            {name: "Jari Kaki", description: "Bagian ujung kaki"}
+          ];
+          return `<h2 class="text-2xl font-bold text-center mb-4">${games.learnBodyParts.name}</h2>
+                  <p class="text-xl font-bold mb-4">Pelajari anggota tubuh manusia:</p>
+                  <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">${bodyParts.map(b => `<div class="bg-rose-500 p-4 text-center rounded-lg text-xl font-bold">${b.name}<br><span class="text-sm">${b.description}</span></div>`).join('')}</div>`;
+        }
+      },
+      learnFruits: {
+        name: "Belajar Buah",
+        content: () => {
+          const fruits = [
+            {name: "Apel", description: "Buah merah atau hijau, manis dan renyah"},
+            {name: "Pisang", description: "Buah panjang kuning, lembut dan manis"},
+            {name: "Mangga", description: "Buah tropis, manis dan berair"},
+            {name: "Jeruk", description: "Buah bulat, kaya vitamin C"},
+            {name: "Nanas", description: "Buah tropis dengan rasa manis-asam"},
+            {name: "Anggur", description: "Buah kecil bulat, merah atau hijau"},
+            {name: "Semangka", description: "Buah besar dengan daging merah dan biji hitam"},
+            {name: "Melon", description: "Buah bulat dengan daging manis"},
+            {name: "Pepaya", description: "Buah oranye, kaya enzim pencernaan"},
+            {name: "Jambu", description: "Buah hijau atau merah, manis"},
+            {name: "Durian", description: "Buah berduri dengan aroma kuat"},
+            {name: "Rambutan", description: "Buah berduri merah, manis"},
+            {name: "Kelapa", description: "Buah dengan air dan daging putih"},
+            {name: "Lemon", description: "Buah kuning asam, kaya vitamin C"},
+            {name: "Manggis", description: "Buah ungu dengan daging putih manis"},
+            {name: "Sirsak", description: "Buah hijau dengan daging putih asam"},
+            {name: "Alpukat", description: "Buah hijau dengan daging lembut"},
+            {name: "Sawo", description: "Buah cokelat dengan rasa manis"},
+            {name: "Delima", description: "Buah merah dengan biji kecil manis"},
+            {name: "Kiwi", description: "Buah cokelat berbulu dengan daging hijau"},
+            {name: "Stroberi", description: "Buah merah kecil dengan biji di luar"},
+            {name: "Ceri", description: "Buah merah kecil, manis atau asam"},
+            {name: "Pir", description: "Buah hijau atau kuning, manis dan renyah"},
+            {name: "Kurma", description: "Buah kering manis dari Timur Tengah"},
+            {name: "Tomat", description: "Buah merah yang sering dianggap sayuran"},
+            {name: "Salak", description: "Buah bersisik cokelat, manis-asam"},
+            {name: "Duku", description: "Buah kecil bulat, manis"},
+            {name: "Markisa", description: "Buah dengan biji dan jus asam"},
+            {name: "Naga", description: "Buah merah atau kuning dengan daging berbiji"},
+            {name: "Srikaya", description: "Buah hijau dengan daging manis"}
+          ];
+          return `<h2 class="text-2xl font-bold text-center mb-4">${games.learnFruits.name}</h2>
+                  <p class="text-xl font-bold mb-4">Pelajari 30 buah:</p>
+                  <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">${fruits.map(f => `<div class="bg-indigo-500 p-4 text-center rounded-lg text-xl font-bold">${f.name}<br><span class="text-sm">${f.description}</span></div>`).join('')}</div>`;
+        }
+      },
+      learnVegetables: {
+        name: "Belajar Sayuran",
+        content: () => {
+          const vegetables = [
+            {name: "Kolplay", description: "Sayuran hijau berlapis"},
+            {name: "Bayam", description: "Sayuran hijau kaya zat besi"},
+            {name: "Wortel", description: "Sayuran oranye kaya vitamin A"},
+            {name: "Kentang", description: "Sayuran umbi untuk karbohidrat"},
+            {name: "Tomat", description: "Sayuran merah yang sering dianggap buah"},
+            {name: "Kubis", description: "Sayuran bulat hijau atau ungu"},
+            {name: "Buncis", description: "Sayuran hijau panjang"},
+            {name: "Terong", description: "Sayuran ungu atau hijau"},
+            {name: "Sawi", description: "Sayuran hijau untuk sup atau tumis"},
+            {name: "Kembang Kol", description: "Sayuran putih seperti bunga"},
+            {name: "Brokoli", description: "Sayuran hijau kaya nutrisi"},
+            {name: "Selada", description: "Sayuran hijau untuk salad"},
+            {name: "Timun", description: "Sayuran hijau segar dan renyah"},
+            {name: "Labu", description: "Sayuran besar untuk sup atau kolplay"},
+            {name: "Pare", description: "Sayuran hijau dengan rasa pahit"},
+            {name: "Kacang Panjang", description: "Sayuran hijau panjang"},
+            {name: "Oyong", description: "Sayuran hijau untuk sup"},
+            {name: "Daun Bawang", description: "Sayuran untuk penyedap masakan"},
+            {name: "Seledri", description: "Sayuran hijau untuk sup atau jus"},
+            {name: "Paprika", description: "Sayuran warna-warni, manis atau pedas"},
+            {name: "Jamur", description: "Sayuran yang sebenarnya adalah fungi"},
+            {name: "Lobak", description: "Sayuran putih atau merah, renyah"},
+            {name: "Bawang Merah", description: "Sayuran umbi untuk bumbu"},
+            {name: "Bawang Putih", description: "Sayuran umbi untuk bumbu"},
+            {name: "Cabai", description: "Sayuran pedas untuk bumbu"},
+            {name: "Kangkung", description: "Sayuran hijau untuk tumis"},
+            {name: "Petai", description: "Sayuran berbiji dengan aroma kuat"},
+            {name: "Jengkol", description: "Sayuran berbiji dengan bau khas"},
+            {name: "Kedelai", description: "Sayuran untuk tahu atau tempe"},
+            {name: "Bayam-bayam", description: "Sayuran hijau kecil"}
+          ];
+          return `<h2 class="text-2xl font-bold text-center mb-4">${games.learnVegetables.name}</h2>
+                  <p class="text-xl font-bold mb-4">Pelajari 30 sayuran:</p>
+                  <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">${vegetables.map(v => `<div class="bg-lime-500 p-4 text-center rounded-lg text-xl font-bold">${v.name}<br><span class="text-sm">${v.description}</span></div>`).join('')}</div>`;
+        }
+      },
+      learnVehicles: {
+        name: "Belajar Kendaraan",
+        content: () => {
+          const vehicles = [
+            {name: "Mobil", description: "Kendaraan roda empat untuk perjalanan darat"},
+            {name: "Sepeda", description: "Kendaraan roda dua dengan pedal"},
+            {name: "Motor", description: "Kendaraan roda dua bermesin"},
+            {name: "Bus", description: "Kendaraan besar untuk banyak penumpang"},
+            {name: "Truk", description: "Kendaraan besar untuk mengangkut barang"},
+            {name: "Kereta Api", description: "Kendaraan rel untuk perjalanan jauh"},
+            {name: "Pesawat", description: "Kendaraan udara untuk penerbangan"},
+            {name: "Kapal", description: "Kendaraan air untuk perjalanan laut"},
+            {name: "Perahu", description: "Kendaraan air kecil untuk sungai"},
+            {name: "Helikopter", description: "Kendaraan udara dengan baling-baling"},
+            {name: "Bajaj", description: "Kendaraan roda tiga untuk transportasi kota"},
+            {name: "Becak", description: "Kendaraan roda tiga dengan pengayuh"},
+            {name: "Traktor", description: "Kendaraan untuk pertanian"},
+            {name: "Ambulans", description: "Kendaraan darurat untuk pasien"},
+            {name: "Mobil Polisi", description: "Kendaraan untuk petugas polisi"}
+          ];
+          return `<h2 class="text-2xl font-bold text-center mb-4">${games.learnVehicles.name}</h2>
+                  <p class="text-xl font-bold mb-4">Pelajari berbagai kendaraan:</p>
+                  <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">${vehicles.map(v => `<div class="bg-orange-500 p-4 text-center rounded-lg text-xl font-bold">${v.name}<br><span class="text-sm">${v.description}</span></div>`).join('')}</div>`;
+        }
+      },
+      learnItems: {
+        name: "Belajar 100 Nama Barang",
+        content: () => {
+          const items = [
+            {name: "Buku", description: "Untuk membaca dan belajar"},
+            {name: "Pensil", description: "Alat tulis untuk menulis atau menggambar"},
+            {name: "Penghapus", description: "Untuk menghapus tulisan pensil"},
+            {name: "Pulpen", description: "Alat tulis dengan tinta"},
+            {name: "Penggaris", description: "Untuk menggambar garis lurus"},
+            {name: "Gunting", description: "Untuk memotong kertas"},
+            {name: "Lem", description: "Untuk merekatkan kertas atau benda"},
+            {name: "Meja", description: "Tempat untuk menulis atau makan"},
+            {name: "Kursi", description: "Tempat untuk duduk"},
+            {name: "Lemari", description: "Tempat menyimpan pakaian atau barang"},
+            {name: "Kasur", description: "Tempat untuk tidur"},
+            {name: "Bantal", description: "Penopang kepala saat tidur"},
+            {name: "Selimut", description: "Untuk menjaga tubuh tetap hangat"},
+            {name: "Cermin", description: "Untuk melihat bayangan diri"},
+            {name: "Jam", description: "Menunjukkan waktu"},
+            {name: "Lampu", description: "Memberikan cahaya di malam hari"},
+            {name: "Kipas Angin", description: "Untuk memberikan angin sejuk"},
+            {name: "Televisi", description: "Alat untuk menonton acara"},
+            {name: "Radio", description: "Alat untuk mendengar musik atau berita"},
+            {name: "Kamera", description: "Untuk mengambil foto"},
+            {name: "Ponsel", description: "Alat komunikasi dan hiburan"},
+            {name: "Komputer", description: "Alat untuk bekerja atau bermain game"},
+            {name: "Laptop", description: "Komputer yang bisa dibawa-bawa"},
+            {name: "Kulkas", description: "Tempat menyimpan makanan agar tetap segar"},
+            {name: "Kompor", description: "Alat untuk memasak makanan"},
+            {name: "Panci", description: "Wadah untuk memasak sup atau air"},
+            {name: "Wajan", description: "Untuk menggoreng makanan"},
+            {name: "Piring", description: "Tempat untuk menyajikan makanan"},
+            {name: "Gelas", description: "Wadah untuk minum air"},
+            {name: "Sendok", description: "Alat untuk makan atau menyendok"},
+            {name: "Garpu", description: "Alat untuk menyantap makanan"},
+            {name: "Pisau", description: "Untuk memotong makanan"},
+            {name: "Sapu", description: "Untuk membersihkan lantai"},
+            {name: "Pel", description: "Untuk mengepel lantai"},
+            {name: "Ember", description: "Wadah untuk air atau barang"},
+            {name: "Sikat", description: "Untuk menggosok atau membersihkan"},
+            {name: "Sabun", description: "Untuk mencuci atau membersihkan"},
+            {name: "Sampo", description: "Untuk mencuci rambut"},
+            {name: "Handuk", description: "Untuk mengeringkan tubuh"},
+            {name: "Sikat Gigi", description: "Untuk membersihkan gigi"},
+            {name: "Pasta Gigi", description: "Pembersih untuk gigi"},
+            {name: "Sisir", description: "Untuk merapikan rambut"},
+            {name: "Kaca Mata", description: "Untuk membantu penglihatan"},
+            {name: "Topi", description: "Pelindung kepala dari matahari"},
+            {name: "Baju", description: "Pakaian untuk tubuh bagian atas"},
+            {name: "Celana", description: "Pakaian untuk tubuh bagian bawah"},
+            {name: "Sepatu", description: "Pelindung kaki saat berjalan"},
+            {name: "Sandal", description: "Alas kaki ringan"},
+            {name: "Kaos Kaki", description: "Pelindung kaki dalam sepatu"},
+            {name: "Tas", description: "Untuk membawa barang"},
+            {name: "Dompet", description: "Tempat menyimpan uang"},
+            {name: "Payung", description: "Pelindung dari hujan atau matahari"},
+            {name: "Kunci", description: "Untuk membuka atau mengunci pintu"},
+            {name: "Pintu", description: "Jalan masuk atau keluar ruangan"},
+            {name: "Jendela", description: "Untuk melihat keluar atau ventilasi"},
+            {name: "Kipas", description: "Alat untuk mengusir nyamuk"},
+            {name: "Bola", description: "Mainan untuk olahraga atau bermain"},
+            {name: "Boneka", description: "Mainan berbentuk manusia atau hewan"},
+            {name: "Balok", description: "Mainan untuk membangun struktur"},
+            {name: "Puzzle", description: "Mainan untuk melatih otak"},
+            {name: "Krayon", description: "Alat untuk mewarnai gambar"},
+            {name: "Cat Air", description: "Warna untuk melukis di kertas"},
+            {name: "Kuwas", description: "Alat untuk melukis"},
+            {name: "Kertas", description: "Media untuk menulis atau menggambar"},
+            {name: "Map", description: "Tempat menyimpan dokumen"},
+            {name: "Stapler", description: "Alat untuk menyatukan kertas"},
+            {name: "Jepitan", description: "Untuk menjepit kertas atau pakaian"},
+            {name: "Selotip", description: "Perekat untuk kertas atau barang"},
+            {name: "Baterai", description: "Sumber daya untuk alat elektronik"},
+            {name: "Kabel", description: "Untuk menghubungkan listrik"},
+            {name: "Stopkontak", description: "Tempat colokan listrik"},
+            {name: "Senter", description: "Alat untuk menerangi dalam gelap"},
+            {name: "Termos", description: "Wadah untuk menyimpan air panas"},
+            {name: "Botol", description: "Wadah untuk minuman"},
+            {name: "Kotak", description: "Wadah untuk menyimpan barang"},
+            {name: "Keranjang", description: "Wadah anyaman untuk barang"},
+            {name: "Timbangan", description: "Alat untuk mengukur berat"},
+            {name: "Termometer", description: "Alat untuk mengukur suhu"},
+            {name: "Kalkulator", description: "Alat untuk menghitung"},
+            {name: "Jam Dinding", description: "Penunjuk waktu di dinding"},
+            {name: "Kalender", description: "Untuk melihat tanggal dan hari"},
+            {name: "Bingkai Foto", description: "Tempat meletakkan foto"},
+            {name: "Vas Bunga", description: "Wadah untuk bunga"},
+            {name: "Bunga Plastik", description: "Hiasan menyerupai bunga"},
+            {name: "Karpet", description: "Alas lantai untuk kenyamanan"},
+            {name: "Taplak Meja", description: "Penutup meja untuk dekorasi"},
+            {name: "Gorden", description: "Penutup jendela untuk privasi"},
+            {name: "Rak Buku", description: "Tempat menyimpan buku"},
+            {name: "Rak Sepatu", description: "Tempat menyimpan sepatu"},
+            {name: "Hanger", description: "Untuk menggantung pakaian"},
+            {name: "Setrika", description: "Alat untuk merapikan pakaian"},
+            {name: "Mesin Cuci", description: "Alat untuk mencuci pakaian"},
+            {name: "Penanak Nasi", description: "Alat untuk memasak nasi"},
+            {name: "Blender", description: "Alat untuk menghaluskan makanan"},
+            {name: "Mixer", description: "Alat untuk mengaduk adonan"},
+            {name: "Oven", description: "Alat untuk memanggang kue"},
+            {name: "Toaster", description: "Alat untuk memanggang roti"},
+            {name: "Koper", description: "Tas besar untuk perjalanan"},
+            {name: "Kereta Mainan", description: "Mainan berbentuk kereta"},
+            {name: "Mobil Mainan", description: "Mainan berbentuk mobil"},
+            {name: "Pesawat Mainan", description: "Mainan berbentuk pesawat"}
+          ];
+          return `<h2 class="text-2xl font-bold text-center mb-4">${games.learnItems.name}</h2>
+                  <p class="text-xl font-bold mb-4">Pelajari 100 nama barang:</p>
+                  <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">${items.map(i => `<div class="bg-amber-500 p-4 text-center rounded-lg text-xl font-bold">${i.name}<br><span class="text-sm">${i.description}</span></div>`).join('')}</div>`;
+        }
+      },
+      writeLetters: {
+        name: "Belajar Nulis Huruf",
+        content: () => {
+          const letters = "abcdefghijklmnopqrstuvwxyz".split("");
+          const randomIndex = Math.floor(Math.random() * letters.length);
+          const randomLetter = { lower: letters[randomIndex], upper: "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("")[randomIndex] };
+          return `<h2 class="text-2xl font-bold text-center mb-4">${games.writeLetters.name}</h2>
+                  <p class="text-xl font-bold mb-4">Latihan menulis huruf: <span class="text-4xl font-bold">${randomLetter.lower} - ${randomLetter.upper}</span></p>
+                  <canvas id="writeCanvas" width="400" height="300" class="bg-white w-full max-w-md mx-auto mb-4"></canvas>
+                  <div class="flex justify-center gap-4">
+                    <button type="button" onclick="playClickSound(); clearCanvas()" class="bg-gray-600 hover:bg-gray-500 text-white font-semibold py-2 px-4 rounded-lg min-h-50px font-bold cursor-pointer">Hapus</button>
+                    <button type="button" onclick="playClickSound(); nextWriteItem('writeLetters')" class="bg-cyan-600 hover:bg-cyan-700 text-white font-semibold py-2 px-4 rounded-lg min-h-50px font-bold cursor-pointer">Selanjutnya</button>
+                  </div>`;
+        }
+      },
+      writeNumbers: {
+        name: "Belajar Nulis Angka",
+        content: () => {
+          const numbers = [
+            {num: 0, name: "nol"}, {num: 1, name: "satu"}, {num: 2, name: "dua"}, {num: 3, name: "tiga"},
+            {num: 4, name: "empat"}, {num: 5, name: "lima"}, {num: 6, name: "enam"}, {num: 7, name: "tujuh"},
+            {num: 8, name: "delapan"}, {num: 9, name: "sembilan"}, {num: 10, name: "sepuluh"},
+            {num: 11, name: "sebelas"}, {num: 12, name: "dua belas"}, {num: 13, name: "tiga belas"},
+            {num: 14, name: "empat belas"}, {num: 15, name: "lima belas"}, {num: 16, name: "enam belas"},
+            {num: 17, name: "tujuh belas"}, {num: 18, name: "delapan belas"}, {num: 19, name: "sembilan belas"},
+            {num: 20, name: "dua puluh"}
+          ];
+          const randomNumber = numbers[Math.floor(Math.random() * numbers.length)];
+          return `<h2 class="text-2xl font-bold text-center mb-4">${games.writeNumbers.name}</h2>
+                  <p class="text-xl font-bold mb-4">Latihan menulis angka: <span class="text-4xl font-bold">${randomNumber.num} - ${randomNumber.name}</span></p>
+                  <canvas id="writeCanvas" width="400" height="300" class="bg-white w-full max-w-md mx-auto mb-4"></canvas>
+                  <div class="flex justify-center gap-4">
+                    <button type="button" onclick="playClickSound(); clearCanvas()" class="bg-gray-600 hover:bg-gray-500 text-white font-semibold py-2 px-4 rounded-lg min-h-50px font-bold cursor-pointer">Hapus</button>
+                    <button type="button" onclick="playClickSound(); nextWriteItem('writeNumbers')" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg min-h-50px font-bold cursor-pointer">Selanjutnya</button>
+                  </div>`;
+        }
+      },
+      writeWords: {
+        name: "Belajar Nulis Kata",
+        content: () => {
+          const words = [
+            "apel", "buku", "cinta", "domba", "elang", "fajar", "gajah", "hutan", "ikan", "jambu",
+            "kamera", "lemon", "mangga", "nanas", "obat", "padi", "quran", "rumah", "sapi", "taman"
+          ];
+          const randomWord = words[Math.floor(Math.random() * words.length)];
+          return `<h2 class="text-2xl font-bold text-center mb-4">${games.writeWords.name}</h2>
+                  <p class="text-xl font-bold mb-4">Latihan menulis kata: <span class="text-2xl font-bold">${randomWord}</span></p>
+                  <canvas id="writeCanvas" width="400" height="300" class="bg-white w-full max-w-md mx-auto mb-4"></canvas>
+                  <div class="flex justify-center gap-4">
+                    <button type="button" onclick="playClickSound(); clearCanvas()" class="bg-gray-600 hover:bg-gray-500 text-white font-semibold py-2 px-4 rounded-lg min-h-50px font-bold cursor-pointer">Hapus</button>
+                    <button type="button" onclick="playClickSound(); nextWriteItem('writeWords')" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg min-h-50px font-bold cursor-pointer">Selanjutnya</button>
+                  </div>`;
+        }
+      },
+      guessLetters: {
+        name: "Tebak Huruf",
+        content: () => {
+          const letters = "abcdefghijklmnopqrstuvwxyz".split("").map((lower, i) => ({
+            lower,
+            upper: "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("")[i]
+          }));
+          const randomLetter = letters[Math.floor(Math.random() * letters.length)];
+          const isLower = Math.random() > 0.5;
+          const displayLetter = isLower ? randomLetter.lower : randomLetter.upper;
+          const options = [randomLetter.upper];
+          const upperLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+          while (options.length < 4) {
+            const opt = upperLetters[Math.floor(Math.random() * upperLetters.length)];
+            if (!options.includes(opt)) options.push(opt);
+          }
+          shuffleArray(options);
+          return `<h2 class="text-2xl font-bold text-center mb-4">${games.guessLetters.name}</h2>
+                  <p class="text-2xl font-bold text-center mb-4">Skor: ${score}</p>
+                  <p class="text-xl font-bold mb-4">Pilih huruf yang benar: <span class="text-4xl font-bold">${displayLetter}</span></p>
+                  <div id="guessLetterOptions" class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">${options.map(opt => `<button type="button" onclick="playClickSound(); checkGuessLetter('${randomLetter.upper}', '${opt}')" class="option-btn bg-blue-500 p-4 text-center rounded-lg text-xl font-bold min-h-50px cursor-pointer">${opt}</button>`).join('')}</div>`;
+        }
+      },
+      guessNumbers: {
+        name: "Tebak Angka",
+        content: () => {
+          const numbers = [
+            {num: 0, name: "nol"}, {num: 1, name: "satu"}, {num: 2, name: "dua"}, {num: 3, name: "tiga"},
+            {num: 4, name: "empat"}, {num: 5, name: "lima"}, {num: 6, name: "enam"}, {num: 7, name: "tujuh"},
+            {num: 8, name: "delapan"}, {num: 9, name: "sembilan"}, {num: 10, name: "sepuluh"},
+            {num: 11, name: "sebelas"}, {num: 12, name: "dua belas"}, {num: 13, name: "tiga belas"},
+            {num: 14, name: "empat belas"}, {num: 15, name: "lima belas"}, {num: 16, name: "enam belas"},
+            {num: 17, name: "tujuh belas"}, {num: 18, name: "delapan belas"}, {num: 19, name: "sembilan belas"},
+            {num: 20, name: "dua puluh"}
+          ];
+          const randomNumber = numbers[Math.floor(Math.random() * numbers.length)];
+          const options = [randomNumber.num];
+          while (options.length < 4) {
+            const opt = numbers[Math.floor(Math.random() * numbers.length)].num;
+            if (!options.includes(opt)) options.push(opt);
+          }
+          shuffleArray(options);
+          return `<h2 class="text-2xl font-bold text-center mb-4">${games.guessNumbers.name}</h2>
+                  <p class="text-2xl font-bold text-center mb-4">Skor: ${score}</p>
+                  <p class="text-xl font-bold mb-4">Pilih angka yang benar untuk: <span class="text-4xl font-bold">${randomNumber.name}</span></p>
+                  <div id="guessNumberOptions" class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">${options.map(opt => `<button type="button" onclick="playClickSound(); checkGuessNumber('${randomNumber.num}', '${opt}')" class="option-btn bg-green-500 p-4 text-center rounded-lg text-xl font-bold min-h-50px cursor-pointer">${opt}</button>`).join('')}</div>`;
+        }
+      },
+      guessColors: {
+        name: "Tebak 20 Warna",
+        content: () => {
+          const colors = [
+            {name: "Merah", code: "#FF0000", textColor: "#FFFFFF"},
+            {name: "Biru", code: "#0000FF", textColor: "#FFFFFF"},
+            {name: "Hijau", code: "#00FF00", textColor: "#FFFFFF"},
+            {name: "Kuning", code: "#FFFF00", textColor: "#000000"},
+            {name: "Ungu", code: "#800080", textColor: "#FFFFFF"},
+            {name: "Jingga", code: "#FFA500", textColor: "#FFFFFF"},
+            {name: "Hitam", code: "#000000", textColor: "#FFFFFF"},
+            {name: "Putih", code: "#FFFFFF", textColor: "#000000"},
+            {name: "Coklat", code: "#A52A2A", textColor: "#FFFFFF"},
+            {name: "Abu-abu", code: "#808080", textColor: "#FFFFFF"},
+            {name: "Pink", code: "#FFC1CC", textColor: "#000000"},
+            {name: "Toska", code: "#00CED1", textColor: "#000000"},
+            {name: "Emas", code: "#FFD700", textColor: "#000000"},
+            {name: "Perak", code: "#C0C0C0", textColor: "#000000"},
+            {name: "Nila", code: "#4B0082", textColor: "#FFFFFF"},
+            {name: "Magenta", code: "#FF00FF", textColor: "#FFFFFF"},
+            {name: "Krem", code: "#FFFDD0", textColor: "#000000"},
+            {name: "Marun", code: "#800000", textColor: "#FFFFFF"},
+            {name: "Zaitun", code: "#808000", textColor: "#FFFFFF"},
+            {name: "Teal", code: "#008080", textColor: "#FFFFFF"}
+          ];
+          const randomColor = colors[Math.floor(Math.random() * colors.length)];
+          const options = [randomColor.name];
+          while (options.length < 4) {
+            const opt = colors[Math.floor(Math.random() * colors.length)].name;
+            if (!options.includes(opt)) options.push(opt);
+          }
+          shuffleArray(options);
+          return `<h2 class="text-2xl font-bold text-center mb-4">${games.guessColors.name}</h2>
+                  <p class="text-2xl font-bold text-center mb-4">Skor: ${score}</p>
+                  <p class="text-xl font-bold mb-4">Pilih warna yang benar:</p>
+                  <div class="w-32 h-32 mx-auto mb-4 rounded" style="background-color:${randomColor.code}"></div>
+                  <div id="guessColorOptions" class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">${options.map(opt => `<button type="button" onclick="playClickSound(); checkGuessColor('${randomColor.name}', '${opt}')" class="option-btn bg-red-500 p-4 text-center rounded-lg text-xl font-bold min-h-50px cursor-pointer">${opt}</button>`).join('')}</div>`;
+        }
+      },
+      guessArabic: {
+        name: "Tebak Bahasa Arab",
+        content: () => {
+          const arabicLetters = [
+            {symbol: "ا", name: "Alif", transliteration: "A"},
+            {symbol: "ب", name: "Ba", transliteration: "B"},
+            {symbol: "ت", name: "Ta", transliteration: "T"},
+            {symbol: "ث", name: "Tsa", transliteration: "Th"},
+            {symbol: "ج", name: "Jim", transliteration: "J"},
+            {symbol: "ح", name: "Ha", transliteration: "H"},
+            {symbol: "خ", name: "Kha", transliteration: "Kh"},
+            {symbol: "د", name: "Dal", transliteration: "D"},
+            {symbol: "ذ", name: "Dzal", transliteration: "Dh"},
+            {symbol: "ر", name: "Ra", transliteration: "R"},
+            {symbol: "ز", name: "Zai", transliteration: "Z"},
+            {symbol: "س", name: "Sin", transliteration: "S"},
+            {symbol: "ش", name: "Syin", transliteration: "Sh"},
+            {symbol: "ص", name: "Shad", transliteration: "S"},
+            {symbol: "ض", name: "Dhad", transliteration: "D"},
+            {symbol: "ط", name: "Tha", transliteration: "T"},
+            {symbol: "ظ", name: "Zha", transliteration: "Zh"},
+            {symbol: "ع", name: "Ain", transliteration: "‘"},
+            {symbol: "غ", name: "Ghain", transliteration: "Gh"},
+            {symbol: "ف", name: "Fa", transliteration: "F"},
+            {symbol: "ق", name: "Qaf", transliteration: "Q"},
+            {symbol: "ك", name: "Kaf", transliteration: "K"},
+            {symbol: "ل", name: "Lam", transliteration: "L"},
+            {symbol: "م", name: "Mim", transliteration: "M"},
+            {symbol: "ن", name: "Nun", transliteration: "N"},
+            {symbol: "ه", name: "Ha", transliteration: "H"},
+            {symbol: "و", name: "Waw", transliteration: "W"},
+            {symbol: "ي", name: "Ya", transliteration: "Y"}
+          ];
+          const randomLetter = arabicLetters[Math.floor(Math.random() * arabicLetters.length)];
+          const options = [randomLetter.name];
+          while (options.length < 4) {
+            const opt = arabicLetters[Math.floor(Math.random() * arabicLetters.length)].name;
+            if (!options.includes(opt)) options.push(opt);
+          }
+          shuffleArray(options);
+          return `<h2 class="text-2xl font-bold text-center mb-4">${games.guessArabic.name}</h2>
+                  <p class="text-2xl font-bold text-center mb-4">Skor: ${score}</p>
+                  <p class="text-xl font-bold mb-4">Pilih nama huruf yang benar untuk: <span class="text-4xl font-bold arabic">${randomLetter.symbol}</span></p>
+                  <div id="guessArabicOptions" class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">${options.map(opt => `<button type="button" onclick="playClickSound(); checkGuessArabic('${randomLetter.name}', '${opt}')" class="option-btn bg-indigo-500 p-4 text-center rounded-lg text-xl font-bold min-h-50px cursor-pointer indonesian">${opt}</button>`).join('')}</div>`;
+        }
+      },
+      guessArabicPunctuation: {
+        name: "Tebak Tanda Baca Arab",
+        content: () => {
+          const arabicPunctuation = [
+            {symbol: "َ", name: "Fathah", example: "بَ", description: "Memberikan bunyi 'a'"},
+            {symbol: "ِ", name: "Kasrah", example: "بِ", description: "Memberikan bunyi 'i'"},
+            {symbol: "ُ", name: "Dammah", example: "بُ", description: "Memberikan bunyi 'u'"},
+            {symbol: "ً", name: "Fathatain", example: "بًا", description: "Memberikan bunyi 'an'"},
+            {symbol: "ٍ", name: "Kasratain", example: "بٍ", description: "Memberikan bunyi 'in'"},
+            {symbol: "ٌ", name: "Dammatain", example: "بٌ", description: "Memberikan bunyi 'un'"},
+            {symbol: "ْ", name: "Sukun", example: "بْ", description: "Menghilangkan bunyi vokal"},
+            {symbol: "ّ", name: "Shadda", example: "بّ", description: "Menggandakan bunyi huruf"}
+          ];
+          const randomPunctuation = arabicPunctuation[Math.floor(Math.random() * arabicPunctuation.length)];
+          const options = [randomPunctuation.name];
+          while (options.length < 4) {
+            const opt = arabicPunctuation[Math.floor(Math.random() * arabicPunctuation.length)].name;
+            if (!options.includes(opt)) options.push(opt);
+          }
+          shuffleArray(options);
+          return `<h2 class="text-2xl font-bold text-center mb-4">${games.guessArabicPunctuation.name}</h2>
+                  <p class="text-2xl font-bold text-center mb-4">Skor: ${score}</p>
+                  <p class="text-xl font-bold mb-4">Pilih nama tanda baca yang benar untuk: <span class="text-4xl font-bold arabic">${randomPunctuation.example}</span></p>
+                  <div id="guessArabicPunctuationOptions" class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">${options.map(opt => `<button type="button" onclick="playClickSound(); checkGuessArabicPunctuation('${randomPunctuation.name}', '${opt}')" class="option-btn bg-cyan-500 p-4 text-center rounded-lg text-xl font-bold min-h-50px cursor-pointer indonesian">${opt}</button>`).join('')}</div>`;
+        }
+      },
+      guessIndonesianPunctuation: {
+        name: "Tebak Tanda Baca Indonesia",
+        content: () => {
+          const indonesianPunctuation = [
+            {name: "Titik", symbol: "."}, {name: "Koma", symbol: ","}, {name: "Tanda Tanya", symbol: "?"},
+            {name: "Tanda Seru", symbol: "!"}, {name: "Titik Dua", symbol: ":"}, {name: "Titik Koma", symbol: ";"},
+            {name: "Tanda Kurung", symbol: "()"}, {name: "Tanda Kutip", symbol: '"'}, {name: "Tanda Hubung", symbol: "-"},
+            {name: "Elipsis", symbol: "..."}
+          ];
+          const randomPunctuation = indonesianPunctuation[Math.floor(Math.random() * indonesianPunctuation.length)];
+          const options = [randomPunctuation.name];
+          while (options.length < 4) {
+            const opt = indonesianPunctuation[Math.floor(Math.random() * indonesianPunctuation.length)].name;
+            if (!options.includes(opt)) options.push(opt);
+          }
+          shuffleArray(options);
+          return `<h2 class="text-2xl font-bold text-center mb-4">${games.guessIndonesianPunctuation.name}</h2>
+                  <p class="text-2xl font-bold text-center mb-4">Skor: ${score}</p>
+                  <p class="text-xl font-bold mb-4">Pilih nama tanda baca yang benar untuk: <span class="text-4xl font-bold">${randomPunctuation.symbol}</span></p>
+                  <div id="guessIndonesianPunctuationOptions" class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">${options.map(opt => `<button type="button" onclick="playClickSound(); checkGuessIndonesianPunctuation('${randomPunctuation.name}', '${opt}')" class="option-btn bg-teal-500 p-4 text-center rounded-lg text-xl font-bold min-h-50px cursor-pointer">${opt}</button>`).join('')}</div>`;
+        }
+      },
+      guessBodyParts: {
+        name: "Tebak Anggota Tubuh",
+        content: () => {
+          const bodyParts = [
+            {name: "Kepala", description: "Bagian tubuh untuk berpikir dan melihat"},
+            {name: "Rambut", description: "Tumbuh di kepala, melindungi kulit kepala"},
+            {name: "Mata", description: "Untuk melihat dunia di sekitar"},
+            {name: "Hidung", description: "Untuk mencium bau dan bernapas"},
+            {name: "Telinga", description: "Untuk mendengar suara"},
+            {name: "Mulut", description: "Untuk berbicara dan makan"},
+            {name: "Gigi", description: "Untuk mengunyah makanan"},
+            {name: "Lidah", description: "Untuk merasakan rasa makanan"},
+            {name: "Leher", description: "Menghubungkan kepala dengan badan"},
+            {name: "Bahu", description: "Bagian atas lengan untuk mengangkat"},
+            {name: "Lengan", description: "Untuk menggerakkan tangan"},
+            {name: "Siku", description: "Bagian lengan yang bisa ditekuk"},
+            {name: "Tangan", description: "Untuk memegang dan menyentuh"},
+            {name: "Jari", description: "Bagian tangan untuk menunjuk"},
+            {name: "Dada", description: "Bagian tubuh tempat jantung berada"},
+            {name: "Perut", description: "Tempat mencerna makanan"},
+            {name: "Punggung", description: "Bagian belakang tubuh"},
+            {name: "Pinggul", description: "Bagian tubuh untuk duduk"},
+            {name: "Kaki", description: "Untuk berjalan dan berlari"},
+            {name: "Lutut", description: "Bagian kaki yang bisa ditekuk"},
+            {name: "Pergelangan Kaki", description: "Menghubungkan kaki dan telapak kaki"},
+            {name: "Telapak Kaki", description: "Bagian bawah kaki untuk berpijak"},
+            {name: "Jari Kaki", description: "Bagian ujung kaki"}
+          ];
+          const randomBodyPart = bodyParts[Math.floor(Math.random() * bodyParts.length)];
+          const options = [randomBodyPart.name];
+          while (options.length < 4) {
+            const opt = bodyParts[Math.floor(Math.random() * bodyParts.length)].name;
+            if (!options.includes(opt)) options.push(opt);
+          }
+          shuffleArray(options);
+          return `<h2 class="text-2xl font-bold text-center mb-4">${games.guessBodyParts.name}</h2>
+                  <p class="text-2xl font-bold text-center mb-4">Skor: ${score}</p>
+                  <p class="text-xl font-bold mb-4">Pilih anggota tubuh yang sesuai dengan deskripsi: <span class="text-lg">${randomBodyPart.description}</span></p>
+                  <div id="guessBodyPartOptions" class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">${options.map(opt => `<button type="button" onclick="playClickSound(); checkGuessBodyPart('${randomBodyPart.name}', '${opt}')" class="option-btn bg-rose-500 p-4 text-center rounded-lg text-xl font-bold min-h-50px cursor-pointer">${opt}</button>`).join('')}</div>`;
+        }
+      },
+      guessFruits: {
+        name: "Tebak 30 Buah",
+        content: () => {
+          const fruits = [
+            {name: "Apel", description: "Buah merah atau hijau, manis dan renyah"},
+            {name: "Pisang", description: "Buah panjang kuning, lembut dan manis"},
+            {name: "Mangga", description: "Buah tropis, manis dan berair"},
+            {name: "Jeruk", description: "Buah bulat, kaya vitamin C"},
+            {name: "Nanas", description: "Buah tropis dengan rasa manis-asam"},
+            {name: "Anggur", description: "Buah kecil bulat, merah atau hijau"},
+            {name: "Semangka", description: "Buah besar dengan daging merah dan biji hitam"},
+            {name: "Melon", description: "Buah bulat dengan daging manis"},
+            {name: "Pepaya", description: "Buah oranye, kaya enzim pencernaan"},
+            {name: "Jambu", description: "Buah hijau atau merah, manis"},
+            {name: "Durian", description: "Buah berduri dengan aroma kuat"},
+            {name: "Rambutan", description: "Buah berduri merah, manis"},
+            {name: "Kelapa", description: "Buah dengan air dan daging putih"},
+            {name: "Lemon", description: "Buah kuning asam, kaya vitamin C"},
+            {name: "Manggis", description: "Buah ungu dengan daging putih manis"},
+            {name: "Sirsak", description: "Buah hijau dengan daging putih asam"},
+            {name: "Alpukat", description: "Buah hijau dengan daging lembut"},
+            {name: "Sawo", description: "Buah cokelat dengan rasa manis"},
+            {name: "Delima", description: "Buah merah dengan biji kecil manis"},
+            {name: "Kiwi", description: "Buah cokelat berbulu dengan daging hijau"},
+            {name: "Stroberi", description: "Buah merah kecil dengan biji di luar"},
+            {name: "Ceri", description: "Buah merah kecil, manis atau asam"},
+            {name: "Pir", description: "Buah hijau atau kuning, manis dan renyah"},
+            {name: "Kurma", description: "Buah kering manis dari Timur Tengah"},
+            {name: "Tomat", description: "Buah merah yang sering dianggap sayuran"},
+            {name: "Salak", description: "Buah bersisik cokelat, manis-asam"},
+            {name: "Duku", description: "Buah kecil bulat, manis"},
+            {name: "Markisa", description: "Buah dengan biji dan jus asam"},
+            {name: "Naga", description: "Buah merah atau kuning dengan daging berbiji"},
+            {name: "Srikaya", description: "Buah hijau dengan daging manis"}
+          ];
+          const randomFruit = fruits[Math.floor(Math.random() * fruits.length)];
+          const options = [randomFruit.name];
+          while (options.length < 4) {
+            const opt = fruits[Math.floor(Math.random() * fruits.length)].name;
+            if (!options.includes(opt)) options.push(opt);
+          }
+          shuffleArray(options);
+          return `<h2 class="text-2xl font-bold text-center mb-4">${games.guessFruits.name}</h2>
+                  <p class="text-2xl font-bold text-center mb-4">Skor: ${score}</p>
+                  <p class="text-xl font-bold mb-4">Pilih buah yang sesuai dengan deskripsi: <span class="text-lg">${randomFruit.description}</span></p>
+                  <div id="guessFruitOptions" class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">${options.map(opt => `<button type="button" onclick="playClickSound(); checkGuessFruit('${randomFruit.name}', '${opt}')" class="option-btn bg-indigo-500 p-4 text-center rounded-lg text-xl font-bold min-h-50px cursor-pointer">${opt}</button>`).join('')}</div>`;
+        }
+      },
+      guessVegetables: {
+        name: "Tebak 30 Sayuran",
+        content: () => {
+          const vegetables = [
+            {name: "Kolplay", description: "Sayuran hijau berlapis"},
+            {name: "Bayam", description: "Sayuran hijau kaya zat besi"},
+            {name: "Wortel", description: "Sayuran oranye kaya vitamin A"},
+            {name: "Kentang", description: "Sayuran umbi untuk karbohidrat"},
+            {name: "Tomat", description: "Sayuran merah yang sering dianggap buah"},
+            {name: "Kubis", description: "Sayuran bulat hijau atau ungu"},
+            {name: "Buncis", description: "Sayuran hijau panjang"},
+            {name: "Terong", description: "Sayuran ungu atau hijau"},
+            {name: "Sawi", description: "Sayuran hijau untuk sup atau tumis"},
+            {name: "Kembang Kol", description: "Sayuran putih seperti bunga"},
+            {name: "Brokoli", description: "Sayuran hijau kaya nutrisi"},
+            {name: "Selada", description: "Sayuran hijau untuk salad"},
+            {name: "Timun", description: "Sayuran hijau segar dan renyah"},
+            {name: "Labu", description: "Sayuran besar untuk sup atau kolplay"},
+            {name: "Pare", description: "Sayuran hijau dengan rasa pahit"},
+            {name: "Kacang Panjang", description: "Sayuran hijau panjang"},
+            {name: "Oyong", description: "Sayuran hijau untuk sup"},
+            {name: "Daun Bawang", description: "Sayuran untuk penyedap masakan"},
+            {name: "Seledri", description: "Sayuran hijau untuk sup atau jus"},
+            {name: "Paprika", description: "Sayuran warna-warni, manis atau pedas"},
+            {name: "Jamur", description: "Sayuran yang sebenarnya adalah fungi"},
+            {name: "Lobak", description: "Sayuran putih atau merah, renyah"},
+            {name: "Bawang Merah", description: "Sayuran umbi untuk bumbu"},
+            {name: "Bawang Putih", description: "Sayuran umbi untuk bumbu"},
+            {name: "Cabai", description: "Sayuran pedas untuk bumbu"},
+            {name: "Kangkung", description: "Sayuran hijau untuk tumis"},
+            {name: "Petai", description: "Sayuran berbiji dengan aroma kuat"},
+            {name: "Jengkol", description: "Sayuran berbiji dengan bau khas"},
+            {name: "Kedelai", description: "Sayuran untuk tahu atau tempe"},
+            {name: "Bayam-bayam", description: "Sayuran hijau kecil"}
+          ];
+          const randomVegetable = vegetables[Math.floor(Math.random() * vegetables.length)];
+          const options = [randomVegetable.name];
+          while (options.length < 4) {
+            const opt = vegetables[Math.floor(Math.random() * vegetables.length)].name;
+            if (!options.includes(opt)) options.push(opt);
+          }
+          shuffleArray(options);
+          return `<h2 class="text-2xl font-bold text-center mb-4">${games.guessVegetables.name}</h2>
+                  <p class="text-2xl font-bold text-center mb-4">Skor: ${score}</p>
+                  <p class="text-xl font-bold mb-4">Pilih sayuran yang sesuai dengan deskripsi: <span class="text-lg">${randomVegetable.description}</span></p>
+                  <div id="guessVegetableOptions" class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">${options.map(opt => `<button type="button" onclick="playClickSound(); checkGuessVegetable('${randomVegetable.name}', '${opt}')" class="option-btn bg-lime-500 p-4 text-center rounded-lg text-xl font-bold min-h-50px cursor-pointer">${opt}</button>`).join('')}</div>`;
+        }
+      },
+      guessVehicles: {
+        name: "Tebak Kendaraan",
+        content: () => {
+          const vehicles = [
+            {name: "Mobil", description: "Kendaraan roda empat untuk perjalanan darat"},
+            {name: "Sepeda", description: "Kendaraan roda dua dengan pedal"},
+            {name: "Motor", description: "Kendaraan roda dua bermesin"},
+            {name: "Bus", description: "Kendaraan besar untuk banyak penumpang"},
+            {name: "Truk", description: "Kendaraan besar untuk mengangkut barang"},
+            {name: "Kereta Api", description: "Kendaraan rel untuk perjalanan jauh"},
+            {name: "Pesawat", description: "Kendaraan udara untuk penerbangan"},
+            {name: "Kapal", description: "Kendaraan air untuk perjalanan laut"},
+            {name: "Perahu", description: "Kendaraan air kecil untuk sungai"},
+            {name: "Helikopter", description: "Kendaraan udara dengan baling-baling"},
+            {name: "Bajaj", description: "Kendaraan roda tiga untuk transportasi kota"},
+            {name: "Becak", description: "Kendaraan roda tiga dengan pengayuh"},
+            {name: "Traktor", description: "Kendaraan untuk pertanian"},
+            {name: "Ambulans", description: "Kendaraan darurat untuk pasien"},
+            {name: "Mobil Polisi", description: "Kendaraan untuk petugas polisi"}
+          ];
+          const randomVehicle = vehicles[Math.floor(Math.random() * vehicles.length)];
+          const options = [randomVehicle.name];
+          while (options.length < 4) {
+            const opt = vehicles[Math.floor(Math.random() * vehicles.length)].name;
+            if (!options.includes(opt)) options.push(opt);
+          }
+          shuffleArray(options);
+          return `<h2 class="text-2xl font-bold text-center mb-4">${games.guessVehicles.name}</h2>
+                  <p class="text-2xl font-bold text-center mb-4">Skor: ${score}</p>
+                  <p class="text-xl font-bold mb-4">Pilih kendaraan yang sesuai dengan deskripsi: <span class="text-lg">${randomVehicle.description}</span></p>
+                  <div id="guessVehicleOptions" class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">${options.map(opt => `<button type="button" onclick="playClickSound(); checkGuessVehicle('${randomVehicle.name}', '${opt}')" class="option-btn bg-orange-500 p-4 text-center rounded-lg text-xl font-bold min-h-50px cursor-pointer">${opt}</button>`).join('')}</div>`;
+        }
+      },wordConnect: {
+  name: "Sambung Huruf Jadi Kata",
+  content: () => {
+    const words = [
+      {word: "apel", description: "Buah merah atau hijau yang renyah"},
+      {word: "buku", description: "Untuk membaca dan belajar"},
+      {word: "cinta", description: "Perasaan kasih sayang"},
+      {word: "domba", description: "Hewan berbulu yang lembut"},
+      {word: "elang", description: "Burung besar yang terbang tinggi"},
+      {word: "fajar", description: "Waktu saat matahari terbit"},
+      {word: "gajah", description: "Hewan besar dengan belalai"},
+      {word: "hutan", description: "Tempat banyak pohon"},
+      {word: "ikan", description: "Hewan yang hidup di air"},
+      {word: "jambu", description: "Buah manis berwarna merah atau hijau"},
+      {word: "kamera", description: "Alat untuk mengambil foto"},
+      {word: "lemon", description: "Buah kuning yang asam"},
+      {word: "mangga", description: "Buah tropis yang manis"},
+      {word: "nanas", description: "Buah tropis dengan kulit berduri"},
+      {word: "obat", description: "Untuk menyembuhkan sakit"},
+      {word: "padi", description: "Tumbuhan yang menghasilkan beras"},
+      {word: "quran", description: "Kitab suci umat Islam"},
+      {word: "rumah", description: "Tempat tinggal keluarga"},
+      {word: "sapi", description: "Hewan yang menghasilkan susu"},
+      {word: "taman", description: "Tempat bermain dengan bunga"}
+    ];
+    const randomWord = words[Math.floor(Math.random() * words.length)];
+    const letters = randomWord.word.split("");
+    shuffleArray(letters);
+    const options = [randomWord.word];
+    while (options.length < 4) {
+      const opt = words[Math.floor(Math.random() * words.length)].word;
+      if (!options.includes(opt)) options.push(opt);
+    }
+    shuffleArray(options);
+    return `<h2 class="text-2xl font-bold text-center mb-4">${games.wordConnect.name}</h2>
+            <p class="text-2xl font-bold text-center mb-4">Skor: ${score}</p>
+            <p class="text-xl font-bold mb-4">Pilih kata yang sesuai dengan petunjuk: <span class="text-lg">${randomWord.description}</span></p>
+            <p class="text-xl font-bold mb-4">Huruf: ${letters.join(" ")}</p>
+            <div id="wordConnectOptions" class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">${options.map(opt => `<button type="button" onclick="playClickSound(); checkWordConnect('${randomWord.word}', '${opt}')" class="option-btn bg-teal-500 p-4 text-center rounded-lg text-xl font-bold min-h-50px cursor-pointer">${opt}</button>`).join('')}</div>`;
+  }
+},
+guessItems: {
+  name: "Tebak 100 Nama Barang",
+  content: () => {
+    const items = [
+      {name: "Buku", description: "Untuk membaca dan belajar"},
+      {name: "Pensil", description: "Alat tulis untuk menulis atau menggambar"},
+      {name: "Penghapus", description: "Untuk menghapus tulisan pensil"},
+      {name: "Pulpen", description: "Alat tulis dengan tinta"},
+      {name: "Penggaris", description: "Untuk menggambar garis lurus"},
+      {name: "Gunting", description: "Untuk memotong kertas"},
+      {name: "Lem", description: "Untuk merekatkan kertas atau benda"},
+      {name: "Meja", description: "Tempat untuk menulis atau makan"},
+      {name: "Kursi", description: "Tempat untuk duduk"},
+      {name: "Lemari", description: "Tempat menyimpan pakaian atau barang"},
+      {name: "Kasur", description: "Tempat untuk tidur"},
+      {name: "Bantal", description: "Penopang kepala saat tidur"},
+      {name: "Selimut", description: "Untuk menjaga tubuh tetap hangat"},
+      {name: "Cermin", description: "Untuk melihat bayangan diri"},
+      {name: "Jam", description: "Menunjukkan waktu"},
+      {name: "Lampu", description: "Memberikan cahaya di malam hari"},
+      {name: "Kipas Angin", description: "Untuk memberikan angin sejuk"},
+      {name: "Televisi", description: "Alat untuk menonton acara"},
+      {name: "Radio", description: "Alat untuk mendengar musik atau berita"},
+      {name: "Kamera", description: "Untuk mengambil foto"},
+      {name: "Ponsel", description: "Alat komunikasi dan hiburan"},
+      {name: "Komputer", description: "Alat untuk bekerja atau bermain game"},
+      {name: "Laptop", description: "Komputer yang bisa dibawa-bawa"},
+      {name: "Kulkas", description: "Tempat menyimpan makanan agar tetap segar"},
+      {name: "Kompor", description: "Alat untuk memasak makanan"},
+      {name: "Panci", description: "Wadah untuk memasak sup atau air"},
+      {name: "Wajan", description: "Untuk menggoreng makanan"},
+      {name: "Piring", description: "Tempat untuk menyajikan makanan"},
+      {name: "Gelas", description: "Wadah untuk minum air"},
+      {name: "Sendok", description: "Alat untuk makan atau menyendok"},
+      {name: "Garpu", description: "Alat untuk menyantap makanan"},
+      {name: "Pisau", description: "Untuk memotong makanan"},
+      {name: "Sapu", description: "Untuk membersihkan lantai"},
+      {name: "Pel", description: "Untuk mengepel lantai"},
+      {name: "Ember", description: "Wadah untuk air atau barang"},
+      {name: "Sikat", description: "Untuk menggosok atau membersihkan"},
+      {name: "Sabun", description: "Untuk mencuci atau membersihkan"},
+      {name: "Sampo", description: "Untuk mencuci rambut"},
+      {name: "Handuk", description: "Untuk mengeringkan tubuh"},
+      {name: "Sikat Gigi", description: "Untuk membersihkan gigi"},
+      {name: "Pasta Gigi", description: "Pembersih untuk gigi"},
+      {name: "Sisir", description: "Untuk merapikan rambut"},
+      {name: "Kaca Mata", description: "Untuk membantu penglihatan"},
+      {name: "Topi", description: "Pelindung kepala dari matahari"},
+      {name: "Baju", description: "Pakaian untuk tubuh bagian atas"},
+      {name: "Celana", description: "Pakaian untuk tubuh bagian bawah"},
+      {name: "Sepatu", description: "Pelindung kaki saat berjalan"},
+      {name: "Sandal", description: "Alas kaki ringan"},
+      {name: "Kaos Kaki", description: "Pelindung kaki dalam sepatu"},
+      {name: "Tas", description: "Untuk membawa barang"},
+      {name: "Dompet", description: "Tempat menyimpan uang"},
+      {name: "Payung", description: "Pelindung dari hujan atau matahari"},
+      {name: "Kunci", description: "Untuk membuka atau mengunci pintu"},
+      {name: "Pintu", description: "Jalan masuk atau keluar ruangan"},
+      {name: "Jendela", description: "Untuk melihat keluar atau ventilasi"},
+      {name: "Kipas", description: "Alat untuk mengusir nyamuk"},
+      {name: "Bola", description: "Mainan untuk olahraga atau bermain"},
+      {name: "Boneka", description: "Mainan berbentuk manusia atau hewan"},
+      {name: "Balok", description: "Mainan untuk membangun struktur"},
+      {name: "Puzzle", description: "Mainan untuk melatih otak"},
+      {name: "Krayon", description: "Alat untuk mewarnai gambar"},
+      {name: "Cat Air", description: "Warna untuk melukis di kertas"},
+      {name: "Kuwas", description: "Alat untuk melukis"},
+      {name: "Kertas", description: "Media untuk menulis atau menggambar"},
+      {name: "Map", description: "Tempat menyimpan dokumen"},
+      {name: "Stapler", description: "Alat untuk menyatukan kertas"},
+      {name: "Jepitan", description: "Untuk menjepit kertas atau pakaian"},
+      {name: "Selotip", description: "Perekat untuk kertas atau barang"},
+      {name: "Baterai", description: "Sumber daya untuk alat elektronik"},
+      {name: "Kabel", description: "Untuk menghubungkan listrik"},
+      {name: "Stopkontak", description: "Tempat colokan listrik"},
+      {name: "Senter", description: "Alat untuk menerangi dalam gelap"},
+      {name: "Termos", description: "Wadah untuk menyimpan air panas"},
+      {name: "Botol", description: "Wadah untuk minuman"},
+      {name: "Kotak", description: "Wadah untuk menyimpan barang"},
+      {name: "Keranjang", description: "Wadah anyaman untuk barang"},
+      {name: "Timbangan", description: "Alat untuk mengukur berat"},
+      {name: "Termometer", description: "Alat untuk mengukur suhu"},
+      {name: "Kalkulator", description: "Alat untuk menghitung"},
+      {name: "Jam Dinding", description: "Penunjuk waktu di dinding"},
+      {name: "Kalender", description: "Untuk melihat tanggal dan hari"},
+      {name: "Bingkai Foto", description: "Tempat meletakkan foto"},
+      {name: "Vas Bunga", description: "Wadah untuk bunga"},
+      {name: "Bunga Plastik", description: "Hiasan menyerupai bunga"},
+      {name: "Karpet", description: "Alas lantai untuk kenyamanan"},
+      {name: "Taplak Meja", description: "Penutup meja untuk dekorasi"},
+      {name: "Gorden", description: "Penutup jendela untuk privasi"},
+      {name: "Rak Buku", description: "Tempat menyimpan buku"},
+      {name: "Rak Sepatu", description: "Tempat menyimpan sepatu"},
+      {name: "Hanger", description: "Untuk menggantung pakaian"},
+      {name: "Setrika", description: "Alat untuk merapikan pakaian"},
+      {name: "Mesin Cuci", description: "Alat untuk mencuci pakaian"},
+      {name: "Penanak Nasi", description: "Alat untuk memasak nasi"},
+      {name: "Blender", description: "Alat untuk menghaluskan makanan"},
+      {name: "Mixer", description: "Alat untuk mengaduk adonan"},
+      {name: "Oven", description: "Alat untuk memanggang kue"},
+      {name: "Toaster", description: "Alat untuk memanggang roti"},
+      {name: "Koper", description: "Tas besar untuk perjalanan"},
+      {name: "Kereta Mainan", description: "Mainan berbentuk kereta"},
+      {name: "Mobil Mainan", description: "Mainan berbentuk mobil"},
+      {name: "Pesawat Mainan", description: "Mainan berbentuk pesawat"}
+    ];
+    const randomItem = items[Math.floor(Math.random() * items.length)];
+    const options = [randomItem.name];
+    while (options.length < 4) {
+      const opt = items[Math.floor(Math.random() * items.length)].name;
+      if (!options.includes(opt)) options.push(opt);
+    }
+    shuffleArray(options);
+    return `<h2 class="text-2xl font-bold text-center mb-4">${games.guessItems.name}</h2>
+            <p class="text-2xl font-bold text-center mb-4">Skor: ${score}</p>
+            <p class="text-xl font-bold mb-4">Pilih barang yang sesuai dengan deskripsi: <span class="text-lg">${randomItem.description}</span></p>
+            <div id="guessItemOptions" class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">${options.map(opt => `<button type="button" onclick="playClickSound(); checkGuessItem('${randomItem.name}', '${opt}')" class="option-btn bg-amber-500 p-4 text-center rounded-lg text-xl font-bold min-h-50px cursor-pointer">${opt}</button>`).join('')}</div>`;
+  }
+},
+      mathAdditionOneDigit: {
+        name: "Penjumlahan Angka 1 Digit",
+        content: () => {
+          const num1 = Math.floor(Math.random() * 10);
+          const num2 = Math.floor(Math.random() * (10 - num1));
+          const correctAnswer = num1 + num2;
+          const options = [correctAnswer];
+          while (options.length < 4) {
+            const opt = Math.floor(Math.random() * 20);
+            if (!options.includes(opt)) options.push(opt);
+          }
+          shuffleArray(options);
+          return `<h2 class="text-2xl font-bold text-center mb-4">${games.mathAdditionOneDigit.name}</h2>
+                  <p class="text-2xl font-bold text-center mb-4">Skor: ${score}</p>
+                  <p class="text-xl font-bold mb-4">Berapakah hasil dari: <span class="text-2xl font-bold">${num1} + ${num2} = ?</span></p>
+                  <div id="mathAdditionOneDigitOptions" class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">${options.map(opt => `<button type="button" onclick="playClickSound(); checkMathAddition(${correctAnswer}, ${opt})" class="option-btn bg-blue-500 p-4 text-center rounded-lg text-xl font-bold min-h-50px cursor-pointer">${opt}</button>`).join('')}</div>`;
+        }
+      },
+      mathAdditionTwoDigit: {
+        name: "Penjumlahan Angka 2 Digit",
+        content: () => {
+          const num1 = Math.floor(Math.random() * 20);
+          const num2 = Math.floor(Math.random() * (21 - num1));
+          const correctAnswer = num1 + num2;
+          const options = [correctAnswer];
+          while (options.length < 4) {
+            const opt = Math.floor(Math.random() * 18) + 2;
+            if (!options.includes(opt)) options.push(opt);
+          }
+          shuffleArray(options);
+          return `<h2 class="text-2xl font-bold text-center mb-4">${games.mathAdditionTwoDigit.name}</h2>
+                  <p class="text-2xl font-bold text-center mb-4">Skor: ${score}</p>
+                  <p class="text-xl font-bold mb-4">Berapakah hasil dari: <span class="text-2xl font-bold">${num1} + ${num2} = ?</span></p>
+                  <div id="mathAdditionTwoDigitOptions" class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">${options.map(opt => `<button type="button" onclick="playClickSound(); checkMathAddition(${correctAnswer}, ${opt})" class="option-btn bg-green-500 p-4 text-center rounded-lg text-xl font-bold min-h-50px cursor-pointer">${opt}</button>`).join('')}</div>`;
+        }
+      }
+    };
+  </script>
+  <!-- AUDIO -->
+  <audio id="bg-audio" src="skyhigh.mp3" loop hidden></audio>
+  <!-- SCRIPT UNTUK AUTOPLAY SETELAH KLIK -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.body.addEventListener('click', function () {
+        var audio = document.getElementById('bg-audio');
+        audio.play().catch(err => {
+          console.log('Autoplay diblokir:', err);
+        });
+      }, { once: true });
+    });
+  </script>
+</body>
+</html>

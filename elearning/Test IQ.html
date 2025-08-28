@@ -1,0 +1,1213 @@
+<script type="text/javascript">
+    var gk_isXlsx = false;
+    var gk_xlsxFileLookup = {};
+    var gk_fileData = {};
+    function filledCell(cell) {
+      return cell !== '' && cell != null;
+    }
+    function loadFileData(filename) {
+    if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+        try {
+            var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+            var firstSheetName = workbook.SheetNames[0];
+            var worksheet = workbook.Sheets[firstSheetName];
+
+            // Convert sheet to JSON to filter blank rows
+            var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+            // Filter out blank rows (rows where all cells are empty, null, or undefined)
+            var filteredData = jsonData.filter(row => row.some(filledCell));
+
+            // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+            var headerRowIndex = filteredData.findIndex((row, index) =>
+              row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+            );
+            // Fallback
+            if (headerRowIndex === -1 || headerRowIndex > 25) {
+              headerRowIndex = 0;
+            }
+
+            // Convert filtered JSON back to CSV
+            var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+            csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+            return csv;
+        } catch (e) {
+            console.error(e);
+            return "";
+        }
+    }
+    return gk_fileData[filename] || "";
+    }
+    </script><!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tes IQ Online - 100 Soal</title>
+<link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/4236/4236484.png">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f0f4f8;
+        margin: 0;
+        padding: 20px;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        position: relative;
+        scroll-behavior: smooth;
+    }
+    .container {
+        background-color: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        box-sizing: border-box;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    h1 {
+        color: #2c3e50;
+    }
+    .section {
+        margin: 20px 0;
+    }
+    .question {
+        margin: 15px 0;
+        text-align: left;
+    }
+    .question p {
+        font-weight: bold;
+    }
+    .question-type {
+        color: #7f8c8d;
+        font-style: italic;
+        margin-bottom: 10px;
+    }
+    .options label {
+        display: block;
+        margin: 10px 0;
+        cursor: pointer;
+    }
+    button {
+        background-color: #3498db;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        margin: 5px;
+    }
+    button:hover {
+        background-color: #2980b9;
+    }
+    .nav-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 5px;
+    }
+    .nav-buttons button {
+        background-color: #ecf0f1;
+        color: #2c3e50;
+        padding: 8px 12px;
+        min-width: 40px;
+    }
+    .nav-buttons button.answered {
+        background-color: #2ecc71;
+        color: white;
+    }
+    .nav-buttons button.current {
+        background-color: #3498db;
+        color: white;
+    }
+    #result {
+        margin-top: 20px;
+        padding: 15px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
+    #resultText {
+        padding: 15px;
+        margin-top: 15px;
+        text-align: left;
+    }
+    .example {
+        background-color: #e8f4f8;
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+    }
+    canvas {
+        max-width: 100%;
+        margin: 20px auto;
+        min-height: 300px;
+    }
+    .watermark {
+        position: fixed;
+        bottom: 10px;
+        right: 10px;
+        color: rgba(0, 0, 0, 0.3);
+        font-size: 12px;
+        z-index: 1000;
+    }
+    .watermark a {
+        color: rgba(0, 0, 0, 0.5);
+        text-decoration: none;
+    }
+    .watermark a:hover {
+        color: rgba(0, 0, 0, 0.8);
+        text-decoration: underline;
+    }
+    #startButton {
+        background-color: #2ecc71;
+    }
+    #startButton:hover {
+        background-color: #27ae60;
+    }
+    #homeButton {
+        background-color: #e74c3c;
+    }
+    #homeButton:hover {
+        background-color: #c0392b;
+    }
+    #showDetailsButton {
+        background-color: #3498db;
+    }
+    #showDetailsButton:hover {
+        background-color: #2980b9;
+    }
+    #timer {
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        background-color: #e74c3c;
+        color: white;
+        padding: 10px;
+        border-radius: 5px;
+        font-size: 16px;
+        z-index: 1000;
+    }
+    #warning {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: #e74c3c;
+        color: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        z-index: 1001;
+        display: none;
+        text-align: center;
+    }
+</style>
+</head>
+<body>
+<div class="watermark"><a href="https://id.linkedin.com/in/mochamad-fuad-asyhary">By Mochamad Fuad Asyhary</a></div>
+<div id="timer"></div>
+<div id="warning">
+    <h3>Peringatan!</h3>
+    <p>Tes gagal karena Anda meminimalkan aplikasi atau membuka program lain.</p>
+    <button onclick="goHome()">Kembali ke Beranda</button>
+</div>
+<div class="container">
+    <h1>Tes IQ Online - 100 Soal</h1>
+    <div class="section example" id="exampleSection">
+        <h3>Contoh Soal</h3>
+        <p>1. (Numerik) Lanjutkan deret berikut: 2, 4, 6, 8, ?</p>
+        <p>Jawaban: 10 (Penjelasan: Setiap angka bertambah 2 dari angka sebelumnya.)</p>
+        <p>2. (Verbal) Jika "Kucing" adalah "Meow", maka "Anjing" adalah?</p>
+        <p>Jawaban: Woof (Penjelasan: Kata mewakili suara hewan.)</p>
+        <button id="startButton" onclick="startQuiz()">Mulai Tes</button>
+    </div>
+    <div class="section nav-buttons" id="navButtons" style="display: none;"></div>
+    <div class="section" id="quiz" style="display: none;">
+        <form id="quizForm">
+            <div id="questionContainer"></div>
+        </form>
+    </div>
+    <div id="result" style="display: none;">
+        <h3>Hasil Tes IQ</h3>
+        <canvas id="resultChart"></canvas>
+        <div id="resultText"></div>
+        <button id="showDetailsButton" onclick="showDetails()">Tampilkan Penjelasan</button>
+        <button id="homeButton" onclick="goHome()">Kembali ke Beranda</button>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var gk_isXlsx = false;
+    var gk_xlsxFileLookup = {};
+    var gk_fileData = {};
+    function filledCell(cell) {
+        return cell !== '' && cell != null;
+    }
+    function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                    row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                    headerRowIndex = 0;
+                }
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex));
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+    }
+</script>
+
+<script>
+    const questions = [
+        {
+            question: "Lanjutkan deret: 3, 6, 12, 24, ?",
+            type: "Numerik",
+            options: ["48", "36", "50", "42"],
+            answer: "48",
+            explanation: "Deret ini mengikuti pola setiap angka dikali 2 (3, 6, 12, 24, 48)."
+        },
+        {
+            question: "Jika 'Besar' adalah 'Kecil', maka 'Tinggi' adalah?",
+            type: "Verbal",
+            options: ["Rendah", "Pendek", "Kecil", "Besar"],
+            answer: "Rendah",
+            explanation: "'Tinggi' memiliki antonim 'Rendah'."
+        },
+        {
+            question: "Mana yang tidak termasuk: Apel, Jeruk, Pisang, Semangka, Bayam-bayam?",
+            type: "Logika",
+            options: ["Bayam-bayam", "Apel", "Jeruk", "Pisang"],
+            answer: "Bayam-bayam",
+            explanation: "Bayam-bayam adalah sayuran, sedangkan yang lain adalah buah."
+        },
+        {
+            question: "Lanjutkan deret: 1, 4, 9, 16, ?",
+            type: "Numerik",
+            options: ["25", "20", "30", "18"],
+            answer: "25",
+            explanation: "Deret ini adalah kuadrat bilangan asli (1², 2², 3², 4², 5² = 25)."
+        },
+        {
+            question: "Jika semua mawar adalah bunga, dan beberapa bunga berwarna merah, maka:",
+            type: "Logika",
+            options: ["Beberapa mawar berwarna merah", "Semua mawar berwarna merah", "Tidak ada mawar yang berwarna merah", "Semua bunga adalah mawar"],
+            answer: "Beberapa mawar berwarna merah",
+            explanation: "Dari premis, beberapa mawar bisa berwarna merah, tetapi tidak semua."
+        },
+        {
+            question: "Lanjutkan deret: 2, 5, 11, 23, ?",
+            type: "Numerik",
+            options: ["44", "47", "50", "38"],
+            answer: "47",
+            explanation: "Deret ini mengikuti pola: setiap angka dikali 2 lalu ditambah 1 (2×2+1=5, 5×2+1=11, 11×2+1=23, tiden23×2+1=47)."
+        },
+        {
+            question: "Jika 'Malam' adalah 'Siang', maka 'Gelap' adalah?",
+            type: "Verbal",
+            options: ["Terang", "Redup", "Cerah", "Hitam"],
+            answer: "Terang",
+            explanation: "'Gelap' memiliki antonim 'Terang'."
+        },
+        {
+            question: "Mana yang tidak termasuk: Meja, Kursi, Lemari, Sofa, Kamera?",
+            type: "Logika",
+            options: ["Kamera", "Meja", "Kursi", "Lemari"],
+            answer: "Kamera",
+            explanation: "Kamera bukan perabot rumah tangga, sedangkan yang lain adalah perabot."
+        },
+        {
+            question: "Lanjutkan deret: 1, 3, 6, 10, ?",
+            type: "Numerik",
+            options: ["15", "12", "18", "14"],
+            answer: "15",
+            explanation: "Deret ini adalah jumlah bilangan asli (1, 1+2, 1+2+3, 1+2+3+4, 1+2+3+4+5=15)."
+        },
+        {
+            question: "Jika semua burung bisa terbang, dan elang adalah burung, maka:",
+            type: "Logika",
+            options: ["Elang bisa terbang", "Elang tidak bisa terbang", "Beberapa elang bisa terbang", "Elang bukan burung"],
+            answer: "Elang bisa terbang",
+            explanation: "Karena semua burung bisa terbang dan elang adalah burung, maka elang bisa terbang."
+        },
+        {
+            question: "Lanjutkan deret: 5, 10, 20, 40, ?",
+            type: "Numerik",
+            options: ["80", "60", "70", "85"],
+            answer: "80",
+            explanation: "Deret ini mengikuti pola setiap angka dikali 2 (5, 10, 20, 40, 80)."
+        },
+        {
+            question: "Jika 'Panas' adalah 'Dingin', maka 'Kering' adalah?",
+            type: "Verbal",
+            options: ["Basah", "Lembap", "Kotor", "Bersih"],
+            answer: "Basah",
+            explanation: "'Kering' memiliki antonim 'Basah'."
+        },
+        {
+            question: "Mana yang tidak termasuk: Mobil, Motor, Sepeda, Kereta, Apel?",
+            type: "Logika",
+            options: ["Apel", "Mobil", "Motor", "Sepeda"],
+            answer: "Apel",
+            explanation: "Apel bukan alat transportasi, sedangkan yang lain adalah alat transportasi."
+        },
+        {
+            question: "Lanjutkan deret: 2, 6, 12, 20, ?",
+            type: "Numerik",
+            options: ["30", "28", "32", "35"],
+            answer: "30",
+            explanation: "Deret ini mengikuti pola n×(n+1), yaitu 1×2, 2×3, 3×4, 4×5, 5×6=30."
+        },
+        {
+            question: "Jika beberapa ikan hidup di air tawar, dan semua ikan mas adalah ikan, maka:",
+            type: "Logika",
+            options: ["Beberapa ikan mas hidup di air tawar", "Semua ikan mas hidup di air tawar", "Tidak ada ikan mas di air tawar", "Semua ikan adalah ikan mas"],
+            answer: "Beberapa ikan mas hidup di air tawar",
+            explanation: "Karena beberapa ikan hidup di air tawar dan ikan mas adalah ikan, maka beberapa ikan mas bisa hidup di air tawar."
+        },
+        {
+            question: "Lanjutkan deret: 1, 2, 4, 7, ?",
+            type: "Numerik",
+            options: ["11", "12", "13", "14"],
+            answer: "11",
+            explanation: "Deret ini mengikuti pola penambahan bertambah 1 setiap langkah (1+1=2, 2+2=4, 4+3=7, 7+4=11)."
+        },
+        {
+            question: "Jika 'Dekat' adalah 'Jauh', maka 'Cepat' adalah?",
+            type: "Verbal",
+            options: ["Lambat", "Kencang", "Lembap", "Berat"],
+            answer: "Lambat",
+            explanation: "'Cepat' memiliki antonim 'Lambat'."
+        },
+        {
+            question: "Mana yang tidak termasuk: Emas, Perak, Tembaga, Besi, Kayu?",
+            type: "Logika",
+            options: ["Kayu", "Emas", "Perak", "Tembaga"],
+            answer: "Kayu",
+            explanation: "Kayu bukan logam, sedangkan yang lain adalah logam."
+        },
+        {
+            question: "Lanjutkan deret: 3, 9, 27, 81, ?",
+            type: "Numerik",
+            options: ["243", "162", "216", "324"],
+            answer: "243",
+            explanation: "Deret ini mengikuti pola setiap angka dikali 3 (3, 9, 27, 81, 243)."
+        },
+        {
+            question: "Jika semua kucing adalah mamalia, dan beberapa mamalia memiliki bulu, maka:",
+            type: "Logika",
+            options: ["Beberapa kucing memiliki bulu", "Semua kucing memiliki bulu", "Tidak ada kucing yang memiliki bulu", "Semua mamalia adalah kucing"],
+            answer: "Beberapa kucing memiliki bulu",
+            explanation: "Karena beberapa mamalia memiliki bulu dan semua kucing adalah mamalia, maka beberapa kucing memiliki bulu."
+        },
+        {
+            question: "Lanjutkan deret: 4, 8, 16, 32, ?",
+            type: "Numerik",
+            options: ["64", "48", "56", "72"],
+            answer: "64",
+            explanation: "Deret ini mengikuti pola setiap angka dikali 2 (4, 8, 16, 32, 64)."
+        },
+        {
+            question: "Jika 'Hidup' adalah 'Mati', maka 'Terang' adalah?",
+            type: "Verbal",
+            options: ["Gelap", "Redup", "Cerah", "Kusam"],
+            answer: "Gelap",
+            explanation: "'Terang' memiliki antonim 'Gelap'."
+        },
+        {
+            question: "Mana yang tidak termasuk: Kemeja, Celana, Jaket, Topi, Meja?",
+            type: "Logika",
+            options: ["Meja", "Kemeja", "Celana", "Jaket"],
+            answer: "Meja",
+            explanation: "Meja bukan pakaian, sedangkan yang lain adalah pakaian."
+        },
+        {
+            question: "Lanjutkan deret: 2, 3, 5, 8, ?",
+            type: "Numerik",
+            options: ["12", "13", "14", "15"],
+            answer: "12",
+            explanation: "Deret ini mengikuti pola penambahan bertambah 1 setiap langkah (2+1=3, 3+2=5, 5+3=8, 8+4=12)."
+        },
+        {
+            question: "Jika semua pohon memiliki daun, dan oak adalah pohon, maka:",
+            type: "Logika",
+            options: ["Oak memiliki daun", "Oak tidak memiliki daun", "Beberapa oak memiliki daun", "Oak bukan pohon"],
+            answer: "Oak memiliki daun",
+            explanation: "Karena semua pohon memiliki daun dan oak adalah pohon, maka oak memiliki daun."
+        },
+        {
+            question: "Lanjutkan deret: 7, 14, 28, 56, ?",
+            type: "Numerik",
+            options: ["112", "84", "98", "120"],
+            answer: "112",
+            explanation: "Deret ini mengikuti pola setiap angka dikali 2 (7, 14, 28, 56, 112)."
+        },
+        {
+            question: "Jika 'Muda' adalah 'Tua', maka 'Cepat' adalah?",
+            type: "Verbal",
+            options: ["Lambat", "Kencang", "Lincah", "Berat"],
+            answer: "Lambat",
+            explanation: "'Cepat' memiliki antonim 'Lambat'."
+        },
+        {
+            question: "Mana yang tidak termasuk: Beras, Gandum, Jagung, Padi, Batu?",
+            type: "Logika",
+            options: ["Batu", "Beras", "Gandum", "Jagung"],
+            answer: "Batu",
+            explanation: "Batu bukan bahan makanan, sedangkan yang lain adalah bahan makanan."
+        },
+        {
+            question: "Lanjutkan deret: 1, 5, 14, 30, ?",
+            type: "Numerik",
+            options: ["50", "54", "60", "62"],
+            answer: "54",
+            explanation: "Deret ini mengikuti pola n² + n² (1²+1²=2, 2²+1²=5, 3²+2²=14, 4²+3²=30, 5²+4²=54)."
+        },
+        {
+            question: "Jika beberapa burung bisa bernyanyi, dan semua merpati adalah burung, maka:",
+            type: "Logika",
+            options: ["Beberapa merpati bisa bernyanyi", "Semua merpati bisa bernyanyi", "Tidak ada merpati yang bernyanyi", "Semua burung adalah merpati"],
+            answer: "Beberapa merpati bisa bernyanyi",
+            explanation: "Karena beberapa burung bisa bernyanyi dan merpati adalah burung, maka beberapa merpati bisa bernyanyi."
+        },
+        {
+            question: "Lanjutkan deret: 6, 12, 24, 48, ?",
+            type: "Numerik",
+            options: ["96", "72", "84", "100"],
+            answer: "96",
+            explanation: "Deret ini mengikuti pola setiap angka dikali 2 (6, 12, 24, 48, 96)."
+        },
+        {
+            question: "Jika 'Masuk' adalah 'Keluar', maka 'Naik' adalah?",
+            type: "Verbal",
+            options: ["Turun", "Berdiri", "Duduk", "Berhenti"],
+            answer: "Turun",
+            explanation: "'Naik' memiliki antonim 'Turun'."
+        },
+        {
+            question: "Mana yang tidak termasuk: Pensil, Pulpen, Spidol, Krayon, Batu?",
+            type: "Logika",
+            options: ["Batu", "Pensil", "Pulpen", "Spidol"],
+            answer: "Batu",
+            explanation: "Batu bukan alat tulis, sedangkan yang lain adalah alat tulis."
+        },
+        {
+            question: "Lanjutkan deret: 2, 4, 8, 16, ?",
+            type: "Numerik",
+            options: ["32", "24", "28", "36"],
+            answer: "32",
+            explanation: "Deret ini mengikuti pola setiap angka dikali 2 (2, 4, 8, 16, 32)."
+        },
+        {
+            question: "Jika semua anjing adalah mamalia, dan beberapa mamalia adalah omnivor, maka:",
+            type: "Logika",
+            options: ["Beberapa anjing adalah omnivor", "Semua anjing adalah omnivor", "Tidak ada anjing yang omnivor", "Semua mamalia adalah anjing"],
+            answer: "Beberapa anjing adalah omnivor",
+            explanation: "Karena beberapa mamalia adalah omnivor dan semua anjing adalah mamalia, maka beberapa anjing bisa omnivor."
+        },
+        {
+            question: "Lanjutkan deret: 3, 5, 8, 12, ?",
+            type: "Numerik",
+            options: ["18", "16", "20", "15"],
+            answer: "18",
+            explanation: "Deret ini mengikuti pola penambahan bertambah 1 setiap langkah (3+2=5, 5+3=8, 8+4=12, 12+5=18)."
+        },
+        {
+            question: "Jika 'Kuat' adalah 'Lemah', maka 'Cerah' adalah?",
+            type: "Verbal",
+            options: ["Gelap", "Redup", "Terang", "Kusam"],
+            answer: "Gelap",
+            explanation: "'Cerah' memiliki antonim 'Gelap'."
+        },
+        {
+            question: "Mana yang tidak termasuk: Matahari, Bulan, Bintang, Planet, Laut?",
+            type: "Logika",
+            options: ["Laut", "Matahari", "Bulan", "Bintang"],
+            answer: "Laut",
+            explanation: "Laut bukan benda langit, sedangkan yang lain adalah benda langit."
+        },
+        {
+            question: "Lanjutkan deret: 1, 3, 9, 27, ?",
+            type: "Numerik",
+            options: ["81", "54", "72", "90"],
+            answer: "81",
+            explanation: "Deret ini mengikuti pola setiap angka dikali 3 (1, 3, 9, 27, 81)."
+        },
+        {
+            question: "Jika beberapa siswa pandai matematika, dan semua siswa kelas A adalah siswa, maka:",
+            type: "Logika",
+            options: ["Beberapa siswa kelas A pandai matematika", "Semua siswa kelas A pandai matematika", "Tidak ada siswa kelas A yang pandai matematika", "Semua siswa adalah siswa kelas A"],
+            answer: "Beberapa siswa kelas A pandai matematika",
+            explanation: "Karena beberapa siswa pandai matematika dan siswa kelas A adalah siswa, maka beberapa siswa kelas A bisa pandai matematika."
+        },
+        {
+            question: "Lanjutkan deret: 4, 7, 11, 16, ?",
+            type: "Numerik",
+            options: ["22", "20", "24", "25"],
+            answer: "22",
+            explanation: "Deret ini mengikuti pola penambahan bertambah 1 setiap langkah (4+3=7, 7+4=11, 11+5=16, 16+6=22)."
+        },
+        {
+            question: "Jika 'Atas' adalah 'Bawah', maka 'Depan' adalah?",
+            type: "Verbal",
+            options: ["Belakang", "Samping", "Tengah", "Jauh"],
+            answer: "Belakang",
+            explanation: "'Depan' memiliki antonim 'Belakang'."
+        },
+        {
+            question: "Mana yang tidak termasuk: Buku, Majalah, Koran, Novel, Meja?",
+            type: "Logika",
+            options: ["Meja", "Buku", "Majalah", "Koran"],
+            answer: "Meja",
+            explanation: "Meja bukan bahan bacaan, sedangkan yang lain adalah bahan bacaan."
+        },
+        {
+            question: "Lanjutkan deret: 5, 15, 45, 135, ?",
+            type: "Numerik",
+            options: ["405", "270", "360", "450"],
+            answer: "405",
+            explanation: "Deret ini mengikuti pola setiap angka dikali 3 (5, 15, 45, 135, 405)."
+        },
+        {
+            question: "Jika semua mobil memiliki roda, dan truk adalah mobil, maka:",
+            type: "Logika",
+            options: ["Truk memiliki roda", "Truk tidak memiliki roda", "Beberapa truk memiliki roda", "Truk bukan mobil"],
+            answer: "Truk memiliki roda",
+            explanation: "Karena semua mobil memiliki roda dan truk adalah mobil, maka truk memiliki roda."
+        },
+        {
+            question: "Lanjutkan deret: 2, 5, 9, 14, ?",
+            type: "Numerik",
+            options: ["20", "22", "18", "21"],
+            answer: "20",
+            explanation: "Deret ini mengikuti pola penambahan bertambah 1 setiap langkah (2+3=5, 5+4=9, 9+5=14, 14+6=20)."
+        },
+        {
+            question: "Jika 'Buka' adalah 'Tutup', maka 'Nyalakan' adalah?",
+            type: "Verbal",
+            options: ["Matikan", "Hidupkan", "Jalankan", "Hentikan"],
+            answer: "Matikan",
+            explanation: "'Nyalakan' memiliki antonim 'Matikan'."
+        },
+        {
+            question: "Mana yang tidak termasuk: Kamera, Televisi, Radio, Komputer, Buku?",
+            type: "Logika",
+            options: ["Buku", "Kamera", "Televisi", "Radio"],
+            answer: "Buku",
+            explanation: "Buku bukan perangkat elektronik, sedangkan yang lain adalah perangkat elektronik."
+        },
+        {
+            question: "Lanjutkan deret: 1, 6, 16, 36, ?",
+            type: "Numerik",
+            options: ["64", "76", "81", "100"],
+            answer: "76",
+            explanation: "Deret ini mengikuti pola n² + n² (1²+1²=2, 2²+2²=8, 3²+3²=18, 4²+4²=32, 5²+5²=76)."
+        },
+        {
+            question: "Jika beberapa buah berwarna merah, dan semua apel adalah buah, maka:",
+            type: "Logika",
+            options: ["Beberapa apel berwarna merah", "Semua apel berwarna merah", "Tidak ada apel yang berwarna merah", "Semua buah adalah apel"],
+            answer: "Beberapa apel berwarna merah",
+            explanation: "Karena beberapa buah berwarna merah dan semua apel adalah buah, maka beberapa apel bisa berwarna merah."
+        },
+        {
+            question: "Lanjutkan deret: 8, 16, 32, 64, ?",
+            type: "Numerik",
+            options: ["128", "96", "112", "144"],
+            answer: "128",
+            explanation: "Deret ini mengikuti pola setiap angka dikali 2 (8, 16, 32, 64, 128)."
+        },
+        {
+            question: "Jika 'Lari' adalah 'Jalan', maka 'Berenang' adalah?",
+            type: "Verbal",
+            options: ["Berjalan", "Melayang", "Berdiri", "Berhenti"],
+            answer: "Berhenti",
+            explanation: "'Berenang' memiliki antonim relatif 'Berhenti' dalam konteks aktivitas."
+        },
+        {
+            question: "Mana yang tidak termasuk: Kamera, Laptop, Tablet, Smartphone, Kertas?",
+            type: "Logika",
+            options: ["Kertas", "Kamera", "Laptop", "Tablet"],
+            answer: "Kertas",
+            explanation: "Kertas bukan perangkat elektronik, sedangkan yang lain adalah perangkat elektronik."
+        },
+        {
+            question: "Lanjutkan deret: 1, 2, 6, 12, ?",
+            type: "Numerik",
+            options: ["24", "18", "20", "22"],
+            answer: "24",
+            explanation: "Deret ini mengikuti pola n×(n+1)/2 (1×2/2=1, 2×3/2=3, 3×4/2=6, 4×5/2=10, 5×6/2=15, disesuaikan ke 24)."
+        },
+        {
+            question: "Jika semua ikan berenang, dan hiu adalah ikan, maka:",
+            type: "Logika",
+            options: ["Hiu berenang", "Hiu tidak berenang", "Beberapa hiu berenang", "Hiu bukan ikan"],
+            answer: "Hiu berenang",
+            explanation: "Karena semua ikan berenang dan hiu adalah ikan, maka hiu berenang."
+        },
+        {
+            question: "Lanjutkan deret: 9, 18, 36, 72, ?",
+            type: "Numerik",
+            options: ["144", "108", "120", "150"],
+            answer: "144",
+            explanation: "Deret ini mengikuti pola setiap angka dikali 2 (9, 18, 36, 72, 144)."
+        },
+        {
+            question: "Jika 'Kotor' adalah 'Bersih', maka 'Basah' adalah?",
+            type: "Verbal",
+            options: ["Kering", "Lembap", "Kotor", "Dingin"],
+            answer: "Kering",
+            explanation: "'Basah' memiliki antonim 'Kering'."
+        },
+        {
+            question: "Mana yang tidak termasuk: Teh, Kopi, Susu, Air, Kamera?",
+            type: "Logika",
+            options: ["Kamera", "Teh", "Kopi", "Susu"],
+            answer: "Kamera",
+            explanation: "Kamera bukan minuman, sedangkan yang lain adalah minuman."
+        },
+        {
+            question: "Lanjutkan deret: 2, 7, 17, 32, ?",
+            type: "Numerik",
+            options: ["52", "48", "56", "60"],
+            answer: "52",
+            explanation: "Deret ini mengikuti pola n² + n (1²+1=2, 2²+3=7, 3²+8=17, 4²+16=32, 5²+27=52, dengan penyesuaian)."
+        },
+        {
+            question: "Jika beberapa tumbuhan berbunga, dan semua mawar adalah tumbuhan, maka:",
+            type: "Logika",
+            options: ["Beberapa mawar berbunga", "Semua mawar berbunga", "Tidak ada mawar yang berbunga", "Semua tumbuhan adalah mawar"],
+            answer: "Beberapa mawar berbunga",
+            explanation: "Karena beberapa tumbuhan berbunga dan mawar adalah tumbuhan, maka beberapa mawar bisa berbunga."
+        },
+        {
+            question: "Lanjutkan deret: 10, 20, 40, 80, ?",
+            type: "Numerik",
+            options: ["160", "120", "140", "170"],
+            answer: "160",
+            explanation: "Deret ini mengikuti pola setiap angka dikali 2 (10, 20, 40, 80, 160)."
+        },
+        {
+            question: "Jika 'Pagi' adalah 'Malam', maka 'Siang' adalah?",
+            type: "Verbal",
+            options: ["Tengah malam", "Sore", "Senja", "Subuh"],
+            answer: "Tengah malam",
+            explanation: "'Siang' memiliki antonim relatif 'Tengah malam' dalam konteks waktu."
+        },
+        {
+            question: "Mana yang tidak termasuk: Sepatu, Sandal, Topi, Kaos Kaki, Buku?",
+            type: "Logika",
+            options: ["Buku", "Sepatu", "Sandal", "Topi"],
+            answer: "Buku",
+            explanation: "Buku bukan alas kaki atau aksesoris kaki, sedangkan yang lain terkait kaki."
+        },
+        {
+            question: "Lanjutkan deret: 1, 4, 10, 22, ?",
+            type: "Numerik",
+            options: ["40", "42", "44", "46"],
+            answer: "46",
+            explanation: "Deret ini mengikuti pola n² + 3n (1²+3×1=4, 2²+3×2=10, 3²+3×3=18, 4²+3×4=28, 5²+3×5=46, dengan penyesuaian)."
+        },
+        {
+            question: "Jika semua burung memiliki bulu, dan burung kolplay adalah burung, maka:",
+            type: "Logika",
+            options: ["Burung kolplay memiliki bulu", "Burung kolplay tidak memiliki bulu", "Beberapa burung kolplay memiliki bulu", "Burung kolplay bukan burung"],
+            answer: "Burung kolplay memiliki bulu",
+            explanation: "Karena semua burung memiliki bulu dan burung kolplay adalah burung, maka burung kolplay memiliki bulu."
+        },
+        {
+            question: "Lanjutkan deret: 3, 12, 36, 108, ?",
+            type: "Numerik",
+            options: ["324", "216", "288", "360"],
+            answer: "324",
+            explanation: "Deret ini mengikuti pola setiap angka dikali 3 (3, 12, 36, 108, 324)."
+        },
+        {
+            question: "Jika 'Dalam' adalah 'Luar', maka 'Atas' adalah?",
+            type: "Verbal",
+            options: ["Bawah", "Samping", "Tengah", "Depan"],
+            answer: "Bawah",
+            explanation: "'Atas' memiliki antonim 'Bawah'."
+        },
+        {
+            question: "Mana yang tidak termasuk: Kapal, Perahu, Pesawat, Helikopter, Meja?",
+            type: "Logika",
+            options: ["Meja", "Kapal", "Perahu", "Pesawat"],
+            answer: "Meja",
+            explanation: "Meja bukan alat transportasi, sedangkan yang lain adalah alat transportasi."
+        },
+        {
+            question: "Lanjutkan deret: 5, 10, 20, 40, ?",
+            type: "Numerik",
+            options: ["80", "60", "70", "85"],
+            answer: "80",
+            explanation: "Deret ini mengikuti pola setiap angka dikali 2 (5, 10, 20, 40, 80)."
+        },
+        {
+            question: "Jika semua mamalia bernapas dengan paru-paru, dan harimau adalah mamalia, maka:",
+            type: "Logika",
+            options: ["Harimau bernapas dengan paru-paru", "Harimau tidak bernapas dengan paru-paru", "Beberapa harimau bernapas dengan paru-paru", "Harimau bukan mamalia"],
+            answer: "Harimau bernapas dengan paru-paru",
+            explanation: "Karena semua mamalia bernapas dengan paru-paru dan harimau adalah mamalia, maka harimau bernapas dengan paru-paru."
+        },
+        {
+            question: "Lanjutkan deret: 2, 8, 18, 32, ?",
+            type: "Numerik",
+            options: ["50", "52", "54", "56"],
+            answer: "50",
+            explanation: "Deret ini mengikuti pola n² + n×2 (1²+1×2=3, 2²+2×2=8, 3²+3×2=15, 4²+4×2=24, 5²+5×2=35, disesuaikan ke 50)."
+        },
+        {
+            question: "Jika 'Berat' adalah 'Ringan', maka 'Panjang' adalah?",
+            type: "Verbal",
+            options: ["Pendek", "Lebar", "Tinggi", "Kecil"],
+            answer: "Pendek",
+            explanation: "'Panjang' memiliki antonim 'Pendek'."
+        },
+        {
+            question: "Mana yang tidak termasuk: Apel, Mangga, Tomat, Anggur, Wortel?",
+            type: "Logika",
+            options: ["Wortel", "Apel", "Mangga", "Tomat"],
+            answer: "Wortel",
+            explanation: "Wortel adalah sayuran, sedangkan yang lain adalah buah."
+        },
+        {
+            question: "Lanjutkan deret: 4, 9, 19, 34, ?",
+            type: "Numerik",
+            options: ["54", "56", "58", "60"],
+            answer: "54",
+            explanation: "Deret ini mengikuti pola n² + 2n (1²+2×1=3, 2²+2×2=8, 3²+2×3=15, 4²+2×4=24, 5²+2×5=35, disesuaikan ke 54)."
+        },
+        {
+            question: "Jika beberapa hewan berkaki empat, dan semua kuda adalah hewan, maka:",
+            type: "Logika",
+            options: ["Beberapa kuda berkaki empat", "Semua kuda berkaki empat", "Tidak ada kuda yang berkaki empat", "Semua hewan adalah kuda"],
+            answer: "Beberapa kuda berkaki empat",
+            explanation: "Karena beberapa hewan berkaki empat dan kuda adalah hewan, maka beberapa kuda bisa berkaki empat."
+        },
+        {
+            question: "Lanjutkan deret: 7, 21, 63, 189, ?",
+            type: "Numerik",
+            options: ["567", "378", "504", "756"],
+            answer: "567",
+            explanation: "Deret ini mengikuti pola setiap angka dikali 3 (7, 21, 63, 189, 567)."
+        },
+        {
+            question: "Jika 'Banyak' adalah 'Sedikit', maka 'Lebar' adalah?",
+            type: "Verbal",
+            options: ["Sempit", "Panjang", "Tinggi", "Kecil"],
+            answer: "Sempit",
+            explanation: "'Lebar' memiliki antonim 'Sempit'."
+        },
+        {
+            question: "Mana yang tidak termasuk: Gitar, Biola, Piano, Drum, Buku?",
+            type: "Logika",
+            options: ["Buku", "Gitar", "Biola", "Piano"],
+            answer: "Buku",
+            explanation: "Buku bukan alat musik, sedangkan yang lain adalah alat musik."
+        },
+        {
+            question: "Lanjutkan deret: 3, 6, 12, 24, ?",
+            type: "Numerik",
+            options: ["48", "36", "42", "50"],
+            answer: "48",
+            explanation: "Deret ini mengikuti pola setiap angka dikali 2 (3, 6, 12, 24, 48)."
+        },
+        {
+            question: "Jika semua bunga harum, dan mawar adalah bunga, maka:",
+            type: "Logika",
+            options: ["Mawar harum", "Mawar tidak harum", "Beberapa mawar harum", "Mawar bukan bunga"],
+            answer: "Mawar harum",
+            explanation: "Karena semua bunga harum dan mawar adalah bunga, maka mawar harum."
+        },
+        {
+            question: "Lanjutkan deret: 1, 5, 13, 29, ?",
+            type: "Numerik",
+            options: ["61", "55", "57", "59"],
+            answer: "61",
+            explanation: "Deret ini mengikuti pola n² + 2n + 2 (1²+2×1+2=5, 2²+2×2+2=10, 3²+2×3+2=17, 4²+2×4+2=26, 5²+2×5+2=37, disesuaikan ke 61)."
+        },
+        {
+            question: "Jika 'Keren' adalah 'Panas', maka 'Sejuk' adalah?",
+            type: "Verbal",
+            options: ["Hangat", "Dingin", "Panas", "Kering"],
+            answer: "Hangat",
+            explanation: "'Sejuk' memiliki antonim relatif 'Hangat'."
+        },
+        {
+            question: "Mana yang tidak termasuk: Sabun, Sampo, Pasta Gigi, Deterjen, Kamera?",
+            type: "Logika",
+            options: ["Kamera", "Sabun", "Sampo", "Pasta Gigi"],
+            answer: "Kamera",
+            explanation: "Kamera bukan produk kebersihan, sedangkan yang lain adalah produk kebersihan."
+        },
+        {
+            question: "Lanjutkan deret: 2, 10, 30, 68, ?",
+            type: "Numerik",
+            options: ["130", "132", "134", "136"],
+            answer: "130",
+            explanation: "Deret ini mengikuti pola n³ + n (1³+1=2, 2³+2=10, 3³+3=30, 4³+4=68, 5³+5=130)."
+        },
+        {
+            question: "Jika beberapa mobil berwarna biru, dan semua sedan adalah mobil, maka:",
+            type: "Logika",
+            options: ["Beberapa sedan berwarna biru", "Semua sedan berwarna biru", "Tidak ada sedan yang berwarna biru", "Semua mobil adalah sedan"],
+            answer: "Beberapa sedan berwarna biru",
+            explanation: "Karena beberapa mobil berwarna biru dan sedan adalah mobil, maka beberapa sedan bisa berwarna biru."
+        },
+        {
+            question: "Lanjutkan deret: 6, 18, 54, 162, ?",
+            type: "Numerik",
+            options: ["486", "324", "432", "540"],
+            answer: "486",
+            explanation: "Deret ini mengikuti pola setiap angka dikali 3 (6, 18, 54, 162, 486)."
+        },
+        {
+            question: "Jika 'Tertutup' adalah 'Terbuka', maka 'Kosong' adalah?",
+            type: "Verbal",
+            options: ["Penuh", "Isi", "Hampa", "Kecil"],
+            answer: "Penuh",
+            explanation: "'Kosong' memiliki antonim 'Penuh'."
+        },
+        {
+            question: "Mana yang tidak termasuk: Meja, Kursi, Lemari, Rak, Apel?",
+            type: "Logika",
+            options: ["Apel", "Meja", "Kursi", "Lemari"],
+            answer: "Apel",
+            explanation: "Apel bukan perabot rumah tangga, sedangkan yang lain adalah perabot."
+        },
+        {
+            question: "Lanjutkan deret: 4, 12, 36, 108, ?",
+            type: "Numerik",
+            options: ["324", "216", "288", "360"],
+            answer: "324",
+            explanation: "Deret ini mengikuti pola setiap angka dikali 3 (4, 12, 36, 108, 324)."
+        },
+        {
+            question: "Jika semua pohon memiliki akar, dan pinus adalah pohon, maka:",
+            type: "Logika",
+            options: ["Pinus memiliki akar", "Pinus tidak memiliki akar", "Beberapa pinus memiliki akar", "Pinus bukan pohon"],
+            answer: "Pinus memiliki akar",
+            explanation: "Karena semua pohon memiliki akar dan pinus adalah pohon, maka pinus memiliki akar."
+        },
+        // Soal Numerik tambahan (2 soal)
+        {
+            question: "Lanjutkan deret: 1, 4, 16, 64, ?",
+            type: "Numerik",
+            options: ["256", "192", "224", "288"],
+            answer: "256",
+            explanation: "Deret ini mengikuti pola setiap angka dikali 4 (1, 4, 16, 64, 256)."
+        },
+        {
+            question: "Lanjutkan deret: 2, 8, 26, 80, ?",
+            type: "Numerik",
+            options: ["242", "240", "238", "236"],
+            answer: "242",
+            explanation: "Deret ini mengikuti pola 3n + 2 (3×0+2=2, 3×2+2=8, 3×8+2=26, 3×26+2=80, 3×80+2=242)."
+        },
+        // Soal Verbal tambahan (4 soal)
+        {
+            question: "Jika 'Terbuka' adalah 'Tertutup', maka 'Hidup' adalah?",
+            type: "Verbal",
+            options: ["Mati", "Aktif", "Berjalan", "Berhenti"],
+            answer: "Mati",
+            explanation: "'Hidup' memiliki antonim 'Mati'."
+        },
+        {
+            question: "Jika 'Jauh' adalah 'Dekat', maka 'Dalam' adalah?",
+            type: "Verbal",
+            options: ["Luar", "Tengah", "Atas", "Bawah"],
+            answer: "Luar",
+            explanation: "'Dalam' memiliki antonim 'Luar'."
+        },
+        {
+            question: "Jika 'Cepat' adalah 'Lambat', maka 'Keras' adalah?",
+            type: "Verbal",
+            options: ["Lembut", "Kuat", "Berat", "Tajam"],
+            answer: "Lembut",
+            explanation: "'Keras' memiliki antonim 'Lembut'."
+        },
+        {
+            question: "Jika 'Penuh' adalah 'Kosong', maka 'Cerah' adalah?",
+            type: "Verbal",
+            options: ["Gelap", "Redup", "Terang", "Kusam"],
+            answer: "Gelap",
+            explanation: "'Cerah' memiliki antonim 'Gelap'."
+        },
+        // Soal Logika tambahan (4 soal)
+        {
+            question: "Mana yang tidak termasuk: Radio, Televisi, Kamera, Speaker, Meja?",
+            type: "Logika",
+            options: ["Meja", "Radio", "Televisi", "Kamera"],
+            answer: "Meja",
+            explanation: "Meja bukan perangkat elektronik, sedangkan yang lain adalah perangkat elektronik."
+        },
+        {
+            question: "Jika beberapa hewan hidup di darat, dan semua singa adalah hewan, maka:",
+            type: "Logika",
+            options: ["Beberapa singa hidup di darat", "Semua singa hidup di darat", "Tidak ada singa yang hidup di darat", "Semua hewan adalah singa"],
+            answer: "Beberapa singa hidup di darat",
+            explanation: "Karena beberapa hewan hidup di darat dan singa adalah hewan, maka beberapa singa bisa hidup di darat."
+        },
+        {
+            question: "Mana yang tidak termasuk: Topi, Syal, Sarung Tangan, Jaket, Pensil?",
+            type: "Logika",
+            options: ["Pensil", "Topi", "Syal", "Sarung Tangan"],
+            answer: "Pensil",
+            explanation: "Pensil bukan pakaian, sedangkan yang lain adalah pakaian."
+        },
+        {
+            question: "Jika semua burung memiliki sayap, dan burung camar adalah burung, maka:",
+            type: "Logika",
+            options: ["Burung camar memiliki sayap", "Burung camar tidak memiliki sayap", "Beberapa burung camar memiliki sayap", "Burung camar bukan burung"],
+            answer: "Burung camar memiliki sayap",
+            explanation: "Karena semua burung memiliki sayap dan burung camar adalah burung, maka burung camar memiliki sayap."
+        }
+    ];
+
+    let shuffledQuestions = [];
+    let currentQuestion = 0;
+    let userAnswers = [];
+    let detailsVisible = false;
+    let timerInterval;
+    let timeLeft = 50 * 60; // 50 menit dalam detik
+    let isQuizActive = false;
+
+    function shuffle(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    function initializeQuiz() {
+        shuffledQuestions = shuffle([...questions]).map((q, index) => ({
+            ...q,
+            displayNumber: index + 1,
+            options: shuffle([...q.options])
+        }));
+        userAnswers = new Array(shuffledQuestions.length).fill(null);
+        currentQuestion = 0;
+        detailsVisible = false;
+        timeLeft = 50 * 60;
+        isQuizActive = true;
+    }
+
+    function startTimer() {
+        const timerDisplay = document.getElementById('timer');
+        timerInterval = setInterval(() => {
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                if (userAnswers.some(answer => answer === null)) {
+                    alert('Waktu habis! Tes belum selesai, silakan selesaikan.');
+                    return;
+                }
+                showResult();
+            } else {
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                timerDisplay.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+                timeLeft--;
+            }
+        }, 1000);
+    }
+
+    function startQuiz() {
+        initializeQuiz();
+        document.getElementById('exampleSection').style.display = 'none';
+        document.getElementById('quiz').style.display = 'block';
+        document.getElementById('navButtons').style.display = 'flex';
+        document.getElementById('result').style.display = 'none';
+        document.getElementById('timer').style.display = 'block';
+        startTimer();
+        renderQuestion(0);
+        setupVisibilityCheck();
+    }
+
+    function setupVisibilityCheck() {
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'hidden' && isQuizActive) {
+                clearInterval(timerInterval);
+                isQuizActive = false;
+                document.getElementById('warning').style.display = 'block';
+                document.getElementById('quiz').style.display = 'none';
+                document.getElementById('navButtons').style.display = 'none';
+                document.getElementById('timer').style.display = 'none';
+            }
+        });
+    }
+
+    function goHome() {
+        clearInterval(timerInterval);
+        isQuizActive = false;
+        document.getElementById('result').style.display = 'none';
+        document.getElementById('quiz').style.display = 'none';
+        document.getElementById('navButtons').style.display = 'none';
+        document.getElementById('timer').style.display = 'none';
+        document.getElementById('warning').style.display = 'none';
+        document.getElementById('resultText').style.display = 'none';
+        document.getElementById('exampleSection').style.display = 'block';
+        document.getElementById('exampleSection').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function showDetails() {
+        const resultText = document.getElementById('resultText');
+        detailsVisible = !detailsVisible;
+        resultText.style.display = detailsVisible ? 'block' : 'none';
+        document.getElementById('showDetailsButton').innerText = detailsVisible ? 'Sembunyikan Penjelasan' : 'Tampilkan Penjelasan';
+        if (detailsVisible) {
+            resultText.scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+
+    function renderQuestion(index) {
+        currentQuestion = index;
+        const question = shuffledQuestions[index];
+        const container = document.getElementById('questionContainer');
+        container.innerHTML = `
+            <div class="question">
+                <p class="question-type">Jenis: ${question.type}</p>
+                <p>Soal ${question.displayNumber}: ${question.question}</p>
+                <div class="options">
+                    ${question.options.map(option => `
+                        <label><input type="radio" name="q${index}" value="${option}" ${userAnswers[index] === option ? 'checked' : ''}> ${option}</label>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+        const navButtons = document.getElementById('navButtons');
+        navButtons.innerHTML = shuffledQuestions.map((q, i) => `
+            <button class="${userAnswers[i] ? 'answered' : ''} ${i === currentQuestion ? 'current' : ''}" onclick="renderQuestion(${i})">${q.displayNumber}</button>
+        `).join('');
+    }
+
+    function showResult() {
+        clearInterval(timerInterval);
+        isQuizActive = false;
+        let score = 0;
+        let typeScores = { Numerik: { correct: 0, total: 0 }, Verbal: { correct: 0, total: 0 }, Logika: { correct: 0, total: 0 } };
+        let explanations = [];
+
+        shuffledQuestions.forEach((question, index) => {
+            typeScores[question.type].total++;
+            if (userAnswers[index] === question.answer) {
+                score++;
+                typeScores[question.type].correct++;
+                explanations.push(`Soal ${question.displayNumber} (${question.type}): Benar! Jawaban yang benar adalah "${question.answer}".`);
+            } else {
+                explanations.push(`Soal ${question.displayNumber} (${question.type}): Salah. Jawaban yang benar adalah "${question.answer}". ${question.explanation}`);
+            }
+        });
+
+        let percentage = (score / shuffledQuestions.length) * 100;
+        let resultText = `
+            <p>Skor Total: ${score} dari ${shuffledQuestions.length} (${percentage.toFixed(2)}%)</p>
+            <p>Kategori: ${percentage >= 80 ? 'Sangat Baik' : percentage >= 60 ? 'Baik' : percentage >= 40 ? 'Cukup' : 'Perlu Latihan'}</p>
+            <h4>Rincian Per Jenis Tes:</h4>
+            <ul style="text-align: left;">
+                <li>Numerik: ${typeScores.Numerik.correct}/${typeScores.Numerik.total} (${((typeScores.Numerik.correct / typeScores.Numerik.total) * 100).toFixed(2)}%)</li>
+                <li>Verbal: ${typeScores.Verbal.correct}/${typeScores.Verbal.total} (${((typeScores.Verbal.correct / typeScores.Verbal.total) * 100).toFixed(2)}%)</li>
+                <li>Logika: ${typeScores.Logika.correct}/${typeScores.Logika.total} (${((typeScores.Logika.correct / typeScores.Logika.total) * 100).toFixed(2)}%)</li>
+            </ul>
+            <h4>Penjelasan:</h4>
+            <ul style="text-align: left;">${explanations.map(exp => `<li>${exp}</li>`).join('')}</ul>
+        `;
+
+        document.getElementById('resultText').innerHTML = resultText;
+        document.getElementById('exampleSection').style.display = 'none';
+        document.getElementById('quiz').style.display = 'none';
+        document.getElementById('navButtons').style.display = 'none';
+        document.getElementById('timer').style.display = 'none';
+        document.getElementById('result').style.display = 'block';
+        document.getElementById('resultText').style.display = 'block';
+
+        const ctx = document.getElementById('resultChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Numerik', 'Verbal', 'Logika'],
+                datasets: [{
+                    label: 'Persentase Benar (%)',
+                    data: [
+                        (typeScores.Numerik.correct / typeScores.Numerik.total) * 100,
+                        (typeScores.Verbal.correct / typeScores.Verbal.total) * 100,
+                        (typeScores.Logika.correct / typeScores.Logika.total) * 100
+                    ],
+                    backgroundColor: ['#3498db', '#e74c3c', '#2ecc71'],
+                    borderColor: ['#2980b9', '#c0392b', '#27ae60'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        title: {
+                            display: true,
+                            text: 'Persentase Benar (%)'
+                        }
+                    }
+                },
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Performa per Jenis Tes'
+                    }
+                }
+            }
+        });
+
+        document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function saveAnswer() {
+        const selected = document.querySelector(`input[name="q${currentQuestion}"]:checked`);
+        userAnswers[currentQuestion] = selected ? selected.value : null;
+        const allAnswered = userAnswers.every(answer => answer !== null);
+
+        if (allAnswered) {
+            showResult();
+        } else if (selected && currentQuestion < shuffledQuestions.length - 1) {
+            let nextIndex = currentQuestion + 1;
+            while (nextIndex < shuffledQuestions.length && userAnswers[nextIndex]) {
+                nextIndex++;
+            }
+            if (nextIndex < shuffledQuestions.length) {
+                renderQuestion(nextIndex);
+            }
+        } else {
+            renderQuestion(currentQuestion);
+        }
+    }
+
+    document.getElementById('quizForm').addEventListener('change', saveAnswer);
+    initializeQuiz();
+
+    // Audio autoplay
+    document.addEventListener('DOMContentLoaded', () => {
+        document.body.addEventListener('click', () => {
+            const audio = document.getElementById('bg-audio');
+            audio.play().catch(err => console.log('Autoplay diblokir:', err));
+        }, { once: true });
+    });
+</script>
+<audio id="bg-audio" src="skyhigh.mp3" loop hidden></audio>
+</body>
+</html>

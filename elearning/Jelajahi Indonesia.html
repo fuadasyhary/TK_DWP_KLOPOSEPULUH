@@ -1,0 +1,1064 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jelajahi Indonesia</title>
+  <link rel="icon" type="image/png" href="https://cdn-icons-png.freepik.com/512/6157/6157721.png">
+  <script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.22.5/babel.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+    .bounce {
+      animation: bounce 1s infinite;
+    }
+    .watermark {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      color: rgba(0, 0, 0, 0.3);
+      font-size: 12px;
+      font-family: Arial, sans-serif;
+      z-index: 1000;
+    }
+    .watermark a {
+      color: rgba(0, 0, 0, 0.5);
+      text-decoration: none;
+    }
+    .watermark a:hover {
+      color: rgba(0, 0, 0, 0.8);
+      text-decoration: underline;
+    }
+    .card:hover {
+      transform: scale(1.05);
+      transition: transform 0.3s ease;
+    }
+    @media (max-width: 640px) {
+      .card {
+        padding: 0.5rem;
+        font-size: 0.9rem;
+      }
+      .card h2 {
+        font-size: 1.1rem;
+      }
+      .card p {
+        font-size: 0.8rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="root">Memuat aplikasi...</div>
+  <div class="watermark"><a href="https://id.linkedin.com/in/mochamad-fuad-asyhary">By Mochamad Fuad Asyhary</a></div>
+  <script type="text/javascript">
+    var gk_isXlsx = false;
+    var gk_xlsxFileLookup = {};
+    var gk_fileData = {};
+    function filledCell(cell) {
+      return cell !== '' && cell != null;
+    }
+    function loadFileData(filename) {
+      if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+        try {
+          var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+          var firstSheetName = workbook.SheetNames[0];
+          var worksheet = workbook.Sheets[firstSheetName];
+          var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+          var filteredData = jsonData.filter(row => row.some(filledCell));
+          var headerRowIndex = filteredData.findIndex((row, index) =>
+            row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+          );
+          if (headerRowIndex === -1 || headerRowIndex > 25) {
+            headerRowIndex = 0;
+          }
+          var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex));
+          csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+          return csv;
+        } catch (e) {
+          console.error(e);
+          return "";
+        }
+      }
+      return gk_fileData[filename] || "";
+    }
+  </script>
+  <script type="text/babel">
+    const dataIndonesia = {
+      nama: "Indonesia",
+      deskripsi: "Indonesia adalah negara kepulauan terbesar di dunia dengan lebih dari 17.000 pulau! Kita punya banyak budaya, makanan lezat, dan alam yang indah seperti pantai, gunung, dan hutan.",
+      provinsi: [
+        {
+          nama: "Nanggroe Aceh Darussalam",
+          deskripsi: "Provinsi di ujung Sumatera dengan budaya Aceh yang kaya!",
+          kota: [
+            { nama: "Banda Aceh", deskripsi: "Ibu kota dengan Masjid Raya Baiturrahman yang indah!" },
+            { nama: "Langsa", deskripsi: "Kota dengan pasar malam yang ramai!" },
+            { nama: "Lhokseumawe", deskripsi: "Kota dengan pantai dan pelabuhan!" },
+            { nama: "Sabang", deskripsi: "Kota di Pulau Weh dengan titik nol kilometer Indonesia!" },
+            { nama: "Subulussalam", deskripsi: "Kota dengan alam hijau dan damai!" }
+          ],
+          kabupaten: [
+            { nama: "Aceh Barat", deskripsi: "Daerah dengan pantai dan hutan yang asri!" },
+            { nama: "Aceh Barat Daya", deskripsi: "Daerah dengan sawah dan bukit hijau!" },
+            { nama: "Aceh Besar", deskripsi: "Daerah dekat Banda Aceh dengan sejarah!" },
+            { nama: "Aceh Jaya", deskripsi: "Daerah dengan pantai yang cantik!" },
+            { nama: "Aceh Selatan", deskripsi: "Daerah dengan kopi Gayo yang terkenal!" },
+            { nama: "Aceh Singkil", deskripsi: "Daerah dengan pulau-pulau kecil!" },
+            { nama: "Aceh Tamiang", deskripsi: "Daerah dengan sungai dan hutan!" },
+            { nama: "Aceh Tengah", deskripsi: "Daerah dengan udara sejuk dan danau!" },
+            { nama: "Aceh Tenggara", deskripsi: "Daerah dengan alam pegunungan!" },
+            { nama: "Aceh Timur", deskripsi: "Daerah dengan sawah dan perkebunan!" },
+            { nama: "Aceh Utara", deskripsi: "Daerah dengan pasar ikan yang ramai!" },
+            { nama: "Bener Meriah", deskripsi: "Daerah dengan kopi yang enak!" },
+            { nama: "Bireuen", deskripsi: "Daerah dengan masjid dan budaya!" },
+            { nama: "Gayo Lues", deskripsi: "Daerah dengan hutan dan pegunungan!" },
+            { nama: "Nagan Raya", deskripsi: "Daerah dengan sawah dan pantai!" },
+            { nama: "Pidie", deskripsi: "Daerah dengan sejarah dan budaya Aceh!" },
+            { nama: "Pidie Jaya", deskripsi: "Daerah dengan pasar tradisional!" },
+            { nama: "Simeulue", deskripsi: "Pulau dengan pantai dan ombak besar!" }
+          ]
+        },
+        {
+          nama: "Sumatera Utara",
+          deskripsi: "Provinsi dengan Danau Toba yang terkenal!",
+          kota: [
+            { nama: "Binjai", deskripsi: "Kota kecil dengan buah rambutan yang manis!" },
+            { nama: "Gunungsitoli", deskripsi: "Kota di Pulau Nias dengan budaya unik!" },
+            { nama: "Medan", deskripsi: "Kota besar dengan makanan enak seperti soto Medan!" },
+            { nama: "Padangsidimpuan", deskripsi: "Kota dengan pasar tradisional yang seru!" },
+            { nama: "Pematangsiantar", deskripsi: "Kota dengan patung Dewi Kwan Im!" },
+            { nama: "Sibolga", deskripsi: "Kota pelabuhan dengan pemandangan laut!" },
+            { nama: "Tanjungbalai", deskripsi: "Kota dengan sungai dan pasar ikan!" },
+            { nama: "Tebing Tinggi", deskripsi: "Kota dengan sejarah kerajaan!" }
+          ],
+          kabupaten: [
+            { nama: "Asahan", deskripsi: "Daerah dengan sungai dan perkebunan!" },
+            { nama: "Batubara", deskripsi: "Daerah dengan pantai dan tambang!" },
+            { nama: "Dairi", deskripsi: "Daerah dengan buah-buahan segar!" },
+            { nama: "Deli Serdang", deskripsi: "Daerah dekat Medan dengan pasar!" },
+            { nama: "Humbang Hasundutan", deskripsi: "Daerah dengan pemandangan danau!" },
+            { nama: "Karo", deskripsi: "Daerah dengan Gunung Sinabung!" },
+            { nama: "Labuhanbatu", deskripsi: "Daerah dengan sawit dan sungai!" },
+            { nama: "Labuhanbatu Selatan", deskripsi: "Daerah dengan perkebunan besar!" },
+            { nama: "Labuhanbatu Utara", deskripsi: "Daerah dengan alam hijau!" },
+            { nama: "Langkat", deskripsi: "Daerah dengan hutan dan air terjun!" },
+            { nama: "Mandailing Natal", deskripsi: "Daerah dengan budaya Mandailing!" },
+            { nama: "Nias", deskripsi: "Pulau dengan tradisi lompat batu!" },
+            { nama: "Nias Barat", deskripsi: "Daerah dengan pantai di Pulau Nias!" },
+            { nama: "Nias Selatan", deskripsi: "Daerah dengan budaya Nias yang kaya!" },
+            { nama: "Nias Utara", deskripsi: "Daerah dengan desa tradisional!" },
+            { nama: "Padang Lawas", deskripsi: "Daerah dengan situs sejarah!" },
+            { nama: "Padang Lawas Utara", deskripsi: "Daerah dengan sawah luas!" },
+            { nama: "Pakpak Bharat", deskripsi: "Daerah dengan budaya Pakpak!" },
+            { nama: "Samosir", deskripsi: "Pulau di tengah Danau Toba!" },
+            { nama: "Serdang Bedagai", deskripsi: "Daerah dengan pantai dan sawah!" },
+            { nama: "Simalungun", deskripsi: "Daerah dengan danau dan perkebunan!" },
+            { nama: "Tapanuli Selatan", deskripsi: "Daerah dengan sungai dan hutan!" },
+            { nama: "Tapanuli Tengah", deskripsi: "Daerah dengan pantai di Sibolga!" },
+            { nama: "Tapanuli Utara", deskripsi: "Daerah dengan bukit dan air terjun!" },
+            { nama: "Toba Samosir", deskripsi: "Daerah dengan pemandangan Danau Toba!" }
+          ]
+        },
+        {
+          nama: "Sumatera Barat",
+          deskripsi: "Provinsi dengan budaya Minang yang unik!",
+          kota: [
+            { nama: "Bukittinggi", deskripsi: "Kota dengan Jam Gadang yang terkenal!" },
+            { nama: "Padang", deskripsi: "Kota rendang dan pantai yang cantik!" },
+            { nama: "Padangpanjang", deskripsi: "Kota kecil dengan udara sejuk!" },
+            { nama: "Pariaman", deskripsi: "Kota dengan festival Tabuik!" },
+            { nama: "Payakumbuh", deskripsi: "Kota dengan makanan galamai yang enak!" },
+            { nama: "Sawahlunto", deskripsi: "Kota dengan sejarah tambang batu bara!" },
+            { nama: "Solok", deskripsi: "Kota dengan danau kembar yang indah!" }
+          ],
+          kabupaten: [
+            { nama: "Agam", deskripsi: "Daerah dengan Danau Maninjau yang cantik!" },
+            { nama: "Dharmasraya", deskripsi: "Daerah dengan hutan dan sungai!" },
+            { nama: "Kepulauan Mentawai", deskripsi: "Pulau dengan ombak untuk selancar!" },
+            { nama: "Lima Puluh Kota", deskripsi: "Daerah dengan Lembah Harau!" },
+            { nama: "Padang Pariaman", deskripsi: "Daerah dengan pantai dan sawah!" },
+            { nama: "Pasaman", deskripsi: "Daerah dengan hutan dan perkebunan!" },
+            { nama: "Pasaman Barat", deskripsi: "Daerah dengan pantai yang luas!" },
+            { nama: "Pesisir Selatan", deskripsi: "Daerah dengan pantai panjang!" },
+            { nama: "Sijunjung", deskripsi: "Daerah dengan bukit dan sawah!" },
+            { nama: "Solok", deskripsi: "Daerah dengan teh dan pegunungan!" },
+            { nama: "Solok Selatan", deskripsi: "Daerah dengan air terjun!" },
+            { nama: "Tanah Datar", deskripsi: "Daerah dengan istana Pagaruyung!" }
+          ]
+        },
+        {
+          nama: "Sumatera Selatan",
+          deskripsi: "Provinsi dengan Sungai Musi yang panjang!",
+          kota: [
+            { nama: "Lubuklinggau", deskripsi: "Kota dengan hutan dan air terjun!" },
+            { nama: "Pagar Alam", deskripsi: "Kota dengan Gunung Dempo yang sejuk!" },
+            { nama: "Palembang", deskripsi: "Kota pempek yang lezat dan Jembatan Ampera!" },
+            { nama: "Prabumulih", deskripsi: "Kota dengan kebun sawit dan minyak!" }
+          ],
+          kabupaten: [
+            { nama: "Banyuasin", deskripsi: "Daerah dengan sungai dan hutan!" },
+            { nama: "Empat Lawang", deskripsi: "Daerah dengan bukit dan air terjun!" },
+            { nama: "Lahat", deskripsi: "Daerah dengan sejarah dan gua!" },
+            { nama: "Muara Enim", deskripsi: "Daerah dengan tambang batu bara!" },
+            { nama: "Musi Banyuasin", deskripsi: "Daerah dengan sungai besar!" },
+            { nama: "Musi Rawas", deskripsi: "Daerah dengan sawah dan hutan!" },
+            { nama: "Musi Rawas Utara", deskripsi: "Daerah dengan alam yang hijau!" },
+            { nama: "Ogan Ilir", deskripsi: "Daerah dengan sawah dan sungai!" },
+            { nama: "Ogan Komering Ilir", deskripsi: "Daerah dengan pantai dan sungai!" },
+            { nama: "Ogan Komering Ulu", deskripsi: "Daerah dengan budaya tradisional!" },
+            { nama: "Ogan Komering Ulu Selatan", deskripsi: "Daerah dengan perkebunan!" },
+            { nama: "Ogan Komering Ulu Timur", deskripsi: "Daerah dengan sawah luas!" },
+            { nama: "Penukal Abab Lematang Ilir", deskripsi: "Daerah dengan sungai dan hutan!" }
+          ]
+        },
+        {
+          nama: "Riau",
+          deskripsi: "Provinsi dengan hutan dan sungai yang luas!",
+          kota: [
+            { nama: "Dumai", deskripsi: "Kota pelabuhan dengan kilang minyak!" },
+            { nama: "Pekanbaru", deskripsi: "Kota modern di tepi Sungai Siak!" }
+          ],
+          kabupaten: [
+            { nama: "Bengkalis", deskripsi: "Daerah dengan pulau dan sungai!" },
+            { nama: "Indragiri Hilir", deskripsi: "Daerah dengan sungai dan hutan!" },
+            { nama: "Indragiri Hulu", deskripsi: "Daerah dengan perkebunan sawit!" },
+            { nama: "Kampar", deskripsi: "Daerah dengan sungai dan air terjun!" },
+            { nama: "Kepulauan Meranti", deskripsi: "Pulau dengan hutan mangrove!" },
+            { nama: "Kuantan Singingi", deskripsi: "Daerah dengan budaya tradisional!" },
+            { nama: "Pelalawan", deskripsi: "Daerah dengan hutan dan sungai!" },
+            { nama: "Rokan Hilir", deskripsi: "Daerah dengan pantai dan sawit!" },
+            { nama: "Rokan Hulu", deskripsi: "Daerah dengan bukit dan hutan!" },
+            { nama: "Siak", deskripsi: "Daerah dengan istana Siak yang bersejarah!" }
+          ]
+        },
+        {
+          nama: "Kepulauan Riau",
+          deskripsi: "Provinsi dengan banyak pulau indah!",
+          kota: [
+            { nama: "Batam", deskripsi: "Kota dengan jembatan Barelang yang keren!" },
+            { nama: "Tanjung Pinang", deskripsi: "Kota dengan wisata laut yang seru!" }
+          ],
+          kabupaten: [
+            { nama: "Bintan", deskripsi: "Pulau dengan pantai dan resor!" },
+            { nama: "Karimun", deskripsi: "Pulau dengan pelabuhan dan pantai!" },
+            { nama: "Kepulauan Anambas", deskripsi: "Pulau dengan laut biru jernih!" },
+            { nama: "Lingga", deskripsi: "Daerah dengan sejarah kerajaan!" },
+            { nama: "Natuna", deskripsi: "Pulau dengan ikan dan laut yang kaya!" }
+          ]
+        },
+        {
+          nama: "Jambi",
+          deskripsi: "Provinsi dengan Candi Muaro Jambi yang bersejarah!",
+          kota: [
+            { nama: "Jambi", deskripsi: "Kota dengan Sungai Batanghari!" },
+            { nama: "Sungai Penuh", deskripsi: "Kota dengan udara sejuk dan pegunungan!" }
+          ],
+          kabupaten: [
+            { nama: "Batanghari", deskripsi: "Daerah dengan sungai dan hutan!" },
+            { nama: "Bungo", deskripsi: "Daerah dengan perkebunan dan sawah!" },
+            { nama: "Kerinci", deskripsi: "Daerah dengan Gunung Kerinci!" },
+            { nama: "Merangin", deskripsi: "Daerah dengan air terjun dan hutan!" },
+            { nama: "Muaro Jambi", deskripsi: "Daerah dengan candi bersejarah!" },
+            { nama: "Sarolangun", deskripsi: "Daerah dengan hutan dan sungai!" },
+            { nama: "Tanjung Jabung Barat", deskripsi: "Daerah dengan pantai dan sungai!" },
+            { nama: "Tanjung Jabung Timur", deskripsi: "Daerah dengan hutan mangrove!" },
+            { nama: "Tebo", deskripsi: "Daerah dengan sawah dan perkebunan!" }
+          ]
+        },
+        {
+          nama: "Bengkulu",
+          deskripsi: "Provinsi dengan bunga Rafflesia Arnoldii!",
+          kota: [
+            { nama: "Bengkulu", deskripsi: "Kota dengan pantai dan Benteng Marlborough!" }
+          ],
+          kabupaten: [
+            { nama: "Bengkulu Selatan", deskripsi: "Daerah dengan pantai yang indah!" },
+            { nama: "Bengkulu Tengah", deskripsi: "Daerah dengan sawah dan bukit!" },
+            { nama: "Bengkulu Utara", deskripsi: "Daerah dengan hutan dan sungai!" },
+            { nama: "Kaur", deskripsi: "Daerah dengan pantai dan hutan!" },
+            { nama: "Kepahiang", deskripsi: "Daerah dengan perkebunan teh!" },
+            { nama: "Lebong", deskripsi: "Daerah dengan udara sejuk!" },
+            { nama: "Mukomuko", deskripsi: "Daerah dengan pantai dan sawit!" },
+            { nama: "Rejang Lebong", deskripsi: "Daerah dengan bukit dan air terjun!" },
+            { nama: "Seluma", deskripsi: "Daerah dengan pantai dan sawah!" }
+          ]
+        },
+        {
+          nama: "Bangka Belitung",
+          deskripsi: "Provinsi dengan pantai pasir putih!",
+          kota: [
+            { nama: "Pangkal Pinang", deskripsi: "Kota dengan kuliner serba ikan!" }
+          ],
+          kabupaten: [
+            { nama: "Bangka", deskripsi: "Daerah dengan pantai dan tambang timah!" },
+            { nama: "Bangka Barat", deskripsi: "Daerah dengan pantai yang tenang!" },
+            { nama: "Bangka Selatan", deskripsi: "Daerah dengan laut dan pulau kecil!" },
+            { nama: "Bangka Tengah", deskripsi: "Daerah dengan sawah dan pantai!" },
+            { nama: "Belitung", deskripsi: "Daerah dengan pantai pasir putih!" },
+            { nama: "Belitung Timur", deskripsi: "Daerah dengan pantai dan batu besar!" }
+          ]
+        },
+        {
+          nama: "Lampung",
+          deskripsi: "Provinsi dengan Teluk Kiluan dan gajah!",
+          kota: [
+            { nama: "Bandar Lampung", deskripsi: "Kota dengan pemandangan bukit yang indah!" },
+            { nama: "Metro", deskripsi: "Kota kecil dengan taman-taman cantik!" }
+          ],
+          kabupaten: [
+            { nama: "Lampung Tengah", deskripsi: "Daerah dengan sawah dan perkebunan!" },
+            { nama: "Lampung Utara", deskripsi: "Daerah dengan hutan dan sungai!" },
+            { nama: "Lampung Selatan", deskripsi: "Daerah dengan pantai dan bukit!" },
+            { nama: "Lampung Barat", deskripsi: "Daerah dengan pegunungan sejuk!" },
+            { nama: "Lampung Timur", deskripsi: "Daerah dengan sawah luas!" },
+            { nama: "Mesuji", deskripsi: "Daerah dengan sungai dan hutan!" },
+            { nama: "Pesawaran", deskripsi: "Daerah dengan pantai dan pulau!" },
+            { nama: "Pesisir Barat", deskripsi: "Daerah dengan pantai yang panjang!" },
+            { nama: "Pringsewu", deskripsi: "Daerah dengan sawah dan budaya!" },
+            { nama: "Tulang Bawang", deskripsi: "Daerah dengan sungai dan perkebunan!" },
+            { nama: "Tulang Bawang Barat", deskripsi: "Daerah dengan sawah dan hutan!" },
+            { nama: "Tanggamus", deskripsi: "Daerah dengan pantai dan air terjun!" },
+            { nama: "Way Kanan", deskripsi: "Daerah dengan hutan dan sungai!" }
+          ]
+        },
+        {
+          nama: "Banten",
+          deskripsi: "Provinsi dengan Pantai Anyer yang indah!",
+          kota: [
+            { nama: "Cilegon", deskripsi: "Kota dengan industri dan pelabuhan!" },
+            { nama: "Serang", deskripsi: "Kota dengan budaya Banten yang kaya!" },
+            { nama: "Tangerang", deskripsi: "Kota dengan pusat perbelanjaan modern!" },
+            { nama: "Tangerang Selatan", deskripsi: "Kota dengan taman dan kuliner!" }
+          ],
+          kabupaten: [
+            { nama: "Lebak", deskripsi: "Daerah dengan sawah dan air terjun!" },
+            { nama: "Pandeglang", deskripsi: "Daerah dengan pantai dan gunung!" },
+            { nama: "Serang", deskripsi: "Daerah dengan budaya dan sejarah!" },
+            { nama: "Tangerang", deskripsi: "Daerah dengan pasar dan industri!" }
+          ]
+        },
+        {
+          nama: "Jawa Barat",
+          deskripsi: "Provinsi dengan budaya Sunda yang seru!",
+          kota: [
+            { nama: "Bandung", deskripsi: "Kota kembang dengan udara sejuk!" },
+            { nama: "Banjar", deskripsi: "Kota kecil dengan wisata alam!" },
+            { nama: "Bekasi", deskripsi: "Kota dengan pusat perbelanjaan besar!" },
+            { nama: "Bogor", deskripsi: "Kota hujan dengan Kebun Raya!" },
+            { nama: "Cimahi", deskripsi: "Kota dengan sejarah militer!" },
+            { nama: "Cirebon", deskripsi: "Kota dengan Keraton Kasepuhan!" },
+            { nama: "Depok", deskripsi: "Kota dengan banyak universitas!" },
+            { nama: "Sukabumi", deskripsi: "Kota dengan pantai dan gunung!" },
+            { nama: "Tasikmalaya", deskripsi: "Kota dengan kerajinan tangan!" }
+          ],
+          kabupaten: [
+            { nama: "Bandung", deskripsi: "Daerah dengan pegunungan dan teh!" },
+            { nama: "Bandung Barat", deskripsi: "Daerah dengan Lembang yang sejuk!" },
+            { nama: "Bekasi", deskripsi: "Daerah dengan industri dan pasar!" },
+            { nama: "Bogor", deskripsi: "Daerah dengan puncak dan air terjun!" },
+            { nama: "Ciamis", deskripsi: "Daerah dengan budaya Sunda!" },
+            { nama: "Cianjur", deskripsi: "Daerah dengan sawah dan gunung!" },
+            { nama: "Cirebon", deskripsi: "Daerah dengan sejarah keraton!" },
+            { nama: "Garut", deskripsi: "Daerah dengan dodol dan gunung!" },
+            { nama: "Indramayu", deskripsi: "Daerah dengan pantai dan sawah!" },
+            { nama: "Karawang", deskripsi: "Daerah dengan lumbung padi!" },
+            { nama: "Kuningan", deskripsi: "Daerah dengan air terjun dan bukit!" },
+            { nama: "Majalengka", deskripsi: "Daerah dengan sawah dan bandara!" },
+            { nama: "Pangandaran", deskripsi: "Daerah dengan pantai yang indah!" },
+            { nama: "Purwakarta", deskripsi: "Daerah dengan waduk dan bukit!" },
+            { nama: "Subang", deskripsi: "Daerah dengan perkebunan dan hutan!" },
+            { nama: "Sukabumi", deskripsi: "Daerah dengan pantai dan pegunungan!" },
+            { nama: "Sumedang", deskripsi: "Daerah dengan tahu dan sejarah!" },
+            { nama: "Tasikmalaya", deskripsi: "Daerah dengan kerajinan dan sawah!" }
+          ]
+        },
+        {
+          nama: "Jawa Tengah",
+          deskripsi: "Provinsi dengan Candi Borobudur yang megah!",
+          kota: [
+            { nama: "Magelang", deskripsi: "Kota dekat Candi Borobudur!" },
+            { nama: "Pekalongan", deskripsi: "Kota dengan batik yang indah!" },
+            { nama: "Salatiga", deskripsi: "Kota kecil dengan udara sejuk!" },
+            { nama: "Semarang", deskripsi: "Kota dengan Lawang Sewu dan lumpia!" },
+            { nama: "Surakarta", deskripsi: "Kota dengan Keraton Solo!" },
+            { nama: "Tegal", deskripsi: "Kota dengan warteg dan sate!" }
+          ],
+          kabupaten: [
+            { nama: "Banjarnegara", deskripsi: "Daerah dengan Dieng yang sejuk!" },
+            { nama: "Banyumas", deskripsi: "Daerah dengan gethuk dan budaya!" },
+            { nama: "Batang", deskripsi: "Daerah dengan pantai dan hutan!" },
+            { nama: "Blora", deskripsi: "Daerah dengan hutan jati!" },
+            { nama: "Boyolali", deskripsi: "Daerah dengan susu sapi segar!" },
+            { nama: "Brebes", deskripsi: "Daerah dengan bawang dan telur asin!" },
+            { nama: "Cilacap", deskripsi: "Daerah dengan pantai dan pelabuhan!" },
+            { nama: "Demak", deskripsi: "Daerah dengan masjid bersejarah!" },
+            { nama: "Grobogan", deskripsi: "Daerah dengan sawah dan bendungan!" },
+            { nama: "Jepara", deskripsi: "Daerah dengan ukiran kayu!" },
+            { nama: "Karanganyar", deskripsi: "Daerah dengan air terjun!" },
+            { nama: "Kebumen", deskripsi: "Daerah dengan pantai dan gua!" },
+            { nama: "Kendal", deskripsi: "Daerah dengan sawah dan industri!" },
+            { nama: "Klaten", deskripsi: "Daerah dengan candi dan mata air!" },
+            { nama: "Kudus", deskripsi: "Daerah dengan kretek dan menara!" },
+            { nama: "Magelang", deskripsi: "Daerah dengan candi dan gunung!" },
+            { nama: "Pati", deskripsi: "Daerah dengan sawah dan pantai!" },
+            { nama: "Pekalongan", deskripsi: "Daerah dengan batik dan laut!" },
+            { nama: "Pemalang", deskripsi: "Daerah dengan pantai dan sawah!" },
+            { nama: "Purbalingga", deskripsi: "Daerah dengan bukit dan sungai!" },
+            { nama: "Purworejo", deskripsi: "Daerah dengan sawah dan gua!" },
+            { nama: "Rembang", deskripsi: "Daerah dengan pantai dan garam!" },
+            { nama: "Semarang", deskripsi: "Daerah dengan sejarah dan bukit!" },
+            { nama: "Sragen", deskripsi: "Daerah dengan sawah dan budaya!" },
+            { nama: "Sukoharjo", deskripsi: "Daerah dengan pasar dan kerajinan!" },
+            { nama: "Tegal", deskripsi: "Daerah dengan pantai dan warteg!" },
+            { nama: "Temanggung", deskripsi: "Daerah dengan tembakau dan bukit!" },
+            { nama: "Wonogiri", deskripsi: "Daerah dengan waduk dan gua!" },
+            { nama: "Wonosobo", deskripsi: "Daerah dengan Dieng dan udara sejuk!" }
+          ]
+        },
+        {
+          nama: "Jawa Timur",
+          deskripsi: "Provinsi dengan Gunung Bromo yang indah!",
+          kota: [
+            { nama: "Batu", deskripsi: "Kota dengan wisata alam dan apel!" },
+            { nama: "Blitar", deskripsi: "Kota dengan makam Bung Karno!" },
+            { nama: "Kediri", deskripsi: "Kota dengan sejarah Kerajaan Kediri!" },
+            { nama: "Madiun", deskripsi: "Kota dengan pecel dan sejarah!" },
+            { nama: "Malang", deskripsi: "Kota dengan udara sejuk dan wisata!" },
+            { nama: "Mojokerto", deskripsi: "Kota dengan situs Trowulan!" },
+            { nama: "Pasuruan", deskripsi: "Kota dengan Gunung Bromo di dekatnya!" },
+            { nama: "Probolinggo", deskripsi: "Kota dengan pelabuhan dan mangga!" },
+            { nama: "Surabaya", deskripsi: "Kota pahlawan dengan Tugu Pahlawan!" }
+          ],
+          kabupaten: [
+            { nama: "Bangkalan", deskripsi: "Daerah di Madura dengan budaya unik!" },
+            { nama: "Banyuwangi", deskripsi: "Daerah dengan Ijen dan pantai!" },
+            { nama: "Blitar", deskripsi: "Daerah dengan candi dan sejarah!" },
+            { nama: "Bojonegoro", deskripsi: "Daerah dengan minyak dan kayu jati!" },
+            { nama: "Bondowoso", deskripsi: "Daerah dengan tape dan pegunungan!" },
+            { nama: "Gresik", deskripsi: "Daerah dengan pelabuhan dan industri!" },
+            { nama: "Jember", deskripsi: "Daerah dengan tembakau dan pantai!" },
+            { nama: "Jombang", deskripsi: "Daerah dengan pesantren dan sejarah!" },
+            { nama: "Kediri", deskripsi: "Daerah dengan candi dan budaya!" },
+            { nama: "Lamongan", deskripsi: "Daerah dengan pantai dan soto!" },
+            { nama: "Lumajang", deskripsi: "Daerah dengan gunung dan pasir!" },
+            { nama: "Madiun", deskripsi: "Daerah dengan pecel dan budaya!" },
+            { nama: "Magetan", deskripsi: "Daerah dengan telaga dan udara sejuk!" },
+            { nama: "Malang", deskripsi: "Daerah dengan pantai dan gunung!" },
+            { nama: "Mojokerto", deskripsi: "Daerah dengan situs bersejarah!" },
+            { nama: "Nganjuk", deskripsi: "Daerah dengan sawah dan tarian!" },
+            { nama: "Ngawi", deskripsi: "Daerah dengan sawah dan bendungan!" },
+            { nama: "Pacitan", deskripsi: "Daerah dengan gua dan pantai!" },
+            { nama: "Pamekasan", deskripsi: "Daerah di Madura dengan batik!" },
+            { nama: "Pasuruan", deskripsi: "Daerah dengan gunung dan pantai!" },
+            { nama: "Ponorogo", deskripsi: "Daerah dengan reog dan budaya!" },
+            { nama: "Probolinggo", deskripsi: "Daerah dengan Gunung Bromo!" },
+            { nama: "Sampang", deskripsi: "Daerah di Madura dengan budaya!" },
+            { nama: "Sidoarjo", deskripsi: "Daerah dengan lumpur dan industri!" },
+            { nama: "Situbondo", deskripsi: "Daerah dengan pantai dan hutan!" },
+            { nama: "Sumenep", deskripsi: "Daerah di Madura dengan keraton!" },
+            { nama: "Trenggalek", deskripsi: "Daerah dengan pantai dan gua!" },
+            { nama: "Tuban", deskripsi: "Daerah dengan pantai dan makam!" },
+            { nama: "Tulungagung", deskripsi: "Daerah dengan pantai dan marmer!" }
+          ]
+        },
+        {
+          nama: "DKI Jakarta",
+          deskripsi: "Ibu kota Indonesia yang ramai!",
+          kota: [
+            { nama: "Jakarta Barat", deskripsi: "Kota dengan pecinan dan sejarah!" },
+            { nama: "Jakarta Pusat", deskripsi: "Kota dengan Monas dan museum!" },
+            { nama: "Jakarta Selatan", deskripsi: "Kota dengan pusat perbelanjaan modern!" },
+            { nama: "Jakarta Timur", deskripsi: "Kota dengan taman dan danau!" },
+            { nama: "Jakarta Utara", deskripsi: "Kota dengan pantai dan pelabuhan!" }
+          ],
+          kabupaten: [
+            { nama: "Kepulauan Seribu", deskripsi: "Pulau dengan pantai dan laut biru!" }
+          ]
+        },
+        {
+          nama: "Daerah Istimewa Yogyakarta",
+          deskripsi: "Provinsi dengan budaya Jawa yang kental!",
+          kota: [
+            { nama: "Yogyakarta", deskripsi: "Kota dengan Malioboro dan Keraton!" }
+          ],
+          kabupaten: [
+            { nama: "Bantul", deskripsi: "Daerah dengan pantai dan kerajinan!" },
+            { nama: "Gunungkidul", deskripsi: "Daerah dengan gua dan pantai!" },
+            { nama: "Kulon Progo", deskripsi: "Daerah dengan sawah dan bukit!" },
+            { nama: "Sleman", deskripsi: "Daerah dengan candi dan gunung!" }
+          ]
+        },
+        {
+          nama: "Bali",
+          deskripsi: "Provinsi dengan pantai dan tari Kecak!",
+          kota: [
+            { nama: "Denpasar", deskripsi: "Ibu kota dengan pasar tradisional!" }
+          ],
+          kabupaten: [
+            { nama: "Badung", deskripsi: "Daerah dengan pantai Kuta yang terkenal!" },
+            { nama: "Bangli", deskripsi: "Daerah dengan gunung dan danau!" },
+            { nama: "Buleleng", deskripsi: "Daerah dengan pantai dan air terjun!" },
+            { nama: "Gianyar", deskripsi: "Daerah dengan seni dan budaya Bali!" },
+            { nama: "Jembrana", deskripsi: "Daerah dengan pantai dan hutan!" },
+            { nama: "Karangasem", deskripsi: "Daerah dengan pura dan pantai!" },
+            { nama: "Klungkung", deskripsi: "Daerah dengan sejarah kerajaan!" },
+            { nama: "Tabanan", deskripsi: "Daerah dengan sawah dan Tanah Lot!" }
+          ]
+        },
+        {
+          nama: "Nusa Tenggara Barat",
+          deskripsi: "Provinsi dengan Gili dan Lombok!",
+          kota: [
+            { nama: "Bima", deskripsi: "Kota dengan sejarah Kesultanan Bima!" },
+            { nama: "Mataram", deskripsi: "Kota dengan budaya Sasak!" }
+          ],
+          kabupaten: [
+            { nama: "Bima", deskripsi: "Daerah dengan budaya dan gunung!" },
+            { nama: "Dompu", deskripsi: "Daerah dengan tambang dan pantai!" },
+            { nama: "Lombok Barat", deskripsi: "Daerah dengan pantai Senggigi!" },
+            { nama: "Lombok Tengah", deskripsi: "Daerah dengan sawah dan budaya!" },
+            { nama: "Lombok Timur", deskripsi: "Daerah dengan pantai dan bukit!" },
+            { nama: "Lombok Utara", deskripsi: "Daerah dengan Gili Trawangan!" },
+            { nama: "Sumbawa", deskripsi: "Daerah dengan pulau dan gunung!" },
+            { nama: "Sumbawa Barat", deskripsi: "Daerah dengan pantai dan tambang!" }
+          ]
+        },
+        {
+          nama: "Nusa Tenggara Timur",
+          deskripsi: "Provinsi dengan Pulau Komodo!",
+          kota: [
+            { nama: "Kupang", deskripsi: "Kota dengan pantai yang cantik!" }
+          ],
+          kabupaten: [
+            { nama: "Alor", deskripsi: "Pulau dengan laut dan budaya!" },
+            { nama: "Belu", deskripsi: "Daerah dengan perbatasan dan budaya!" },
+            { nama: "Ende", deskripsi: "Daerah dengan gunung dan danau!" },
+            { nama: "Flores Timur", deskripsi: "Daerah dengan pulau dan laut!" },
+            { nama: "Kupang", deskripsi: "Daerah dengan pantai dan savana!" },
+            { nama: "Lembata", deskripsi: "Pulau dengan gunung dan laut!" },
+            { nama: "Malaka", deskripsi: "Daerah dengan budaya dan sawah!" },
+            { nama: "Manggarai", deskripsi: "Daerah dengan budaya dan gua!" },
+            { nama: "Manggarai Barat", deskripsi: "Daerah dengan Pulau Komodo!" },
+            { nama: "Manggarai Timur", deskripsi: "Daerah dengan sawah dan bukit!" },
+            { nama: "Ngada", deskripsi: "Daerah dengan desa tradisional!" },
+            { nama: "Nagekeo", deskripsi: "Daerah dengan pantai dan budaya!" },
+            { nama: "Rote Ndao", deskripsi: "Pulau dengan pantai dan budaya!" },
+            { nama: "Sabu Raijua", deskripsi: "Pulau dengan savana dan laut!" },
+            { nama: "Sikka", deskripsi: "Daerah dengan tenun dan pantai!" },
+            { nama: "Sumba Barat", deskripsi: "Daerah dengan savana dan budaya!" },
+            { nama: "Sumba Barat Daya", deskripsi: "Daerah dengan pantai dan bukit!" },
+            { nama: "Sumba Tengah", deskripsi: "Daerah dengan sawah dan tradisi!" },
+            { nama: "Sumba Timur", deskripsi: "Daerah dengan kuda dan budaya!" },
+            { nama: "Timor Tengah Selatan", deskripsi: "Daerah dengan bukit dan sawah!" },
+            { nama: "Timor Tengah Utara", deskripsi: "Daerah dengan budaya dan sawah!" }
+          ]
+        },
+        {
+          nama: "Kalimantan Barat",
+          deskripsi: "Provinsi dengan Sungai Kapuas yang panjang!",
+          kota: [
+            { nama: "Pontianak", deskripsi: "Kota di garis khatulistiwa!" },
+            { nama: "Singkawang", deskripsi: "Kota dengan festival Cap Go Meh!" }
+          ],
+          kabupaten: [
+            { nama: "Bengkayang", deskripsi: "Daerah dengan hutan dan bukit!" },
+            { nama: "Kapuas Hulu", deskripsi: "Daerah dengan sungai dan hutan!" },
+            { nama: "Kayong Utara", deskripsi: "Daerah dengan pantai dan hutan!" },
+            { nama: "Ketapang", deskripsi: "Daerah dengan pantai dan sungai!" },
+            { nama: "Kubu Raya", deskripsi: "Daerah dengan sawah dan sungai!" },
+            { nama: "Landak", deskripsi: "Daerah dengan bukit dan hutan!" },
+            { nama: "Melawi", deskripsi: "Daerah dengan sungai dan sawah!" },
+            { nama: "Mempawah", deskripsi: "Daerah dengan pantai dan sejarah!" },
+            { nama: "Sambas", deskripsi: "Daerah dengan budaya Melayu!" },
+            { nama: "Sanggau", deskripsi: "Daerah dengan hutan dan sungai!" },
+            { nama: "Sekadau", deskripsi: "Daerah dengan sawah dan bukit!" },
+            { nama: "Sintang", deskripsi: "Daerah dengan sungai dan budaya!" }
+          ]
+        },
+        {
+          nama: "Kalimantan Selatan",
+          deskripsi: "Provinsi dengan pasar apung yang unik!",
+          kota: [
+            { nama: "Banjarbaru", deskripsi: "Ibu kota dengan udara segar dan taman!" },
+            { nama: "Banjarmasin", deskripsi: "Kota dengan pasar apung dan Sungai Martapura!" }
+          ],
+          kabupaten: [
+            { nama: "Balangan", deskripsi: "Daerah dengan hutan dan sungai!" },
+            { nama: "Banjar", deskripsi: "Daerah dengan sawah dan budaya!" },
+            { nama: "Barito Kuala", deskripsi: "Daerah dengan sungai dan sawah!" },
+            { nama: "Hulu Sungai Selatan", deskripsi: "Daerah dengan bukit dan sungai!" },
+            { nama: "Hulu Sungai Tengah", deskripsi: "Daerah dengan sawah dan hutan!" },
+            { nama: "Hulu Sungai Utara", deskripsi: "Daerah dengan sungai dan pasar!" },
+            { nama: "Kotabaru", deskripsi: "Daerah dengan pantai dan pulau!" },
+            { nama: "Tabalong", deskripsi: "Daerah dengan hutan dan tambang!" },
+            { nama: "Tanah Bumbu", deskripsi: "Daerah dengan pantai dan tambang!" },
+            { nama: "Tanah Laut", deskripsi: "Daerah dengan pantai dan sawah!" },
+            { nama: "Tapin", deskripsi: "Daerah dengan sawah dan budaya!" }
+          ]
+        },
+        {
+          nama: "Kalimantan Tengah",
+          deskripsi: "Provinsi dengan hutan tropis yang luas!",
+          kota: [
+            { nama: "Palangka Raya", deskripsi: "Kota dengan Sungai Kahayan!" }
+          ],
+          kabupaten: [
+            { nama: "Barito Selatan", deskripsi: "Daerah dengan sungai dan hutan!" },
+            { nama: "Barito Timur", deskripsi: "Daerah dengan sawah dan hutan!" },
+            { nama: "Barito Utara", deskripsi: "Daerah dengan sungai besar!" },
+            { nama: "Gunung Mas", deskripsi: "Daerah dengan bukit dan hutan!" },
+            { nama: "Kapuas", deskripsi: "Daerah dengan sungai Kapuas!" },
+            { nama: "Katingan", deskripsi: "Daerah dengan hutan dan sungai!" },
+            { nama: "Kotawaringin Barat", deskripsi: "Daerah dengan pantai dan hutan!" },
+            { nama: "Kotawaringin Timur", deskripsi: "Daerah dengan sawit dan sungai!" },
+            { nama: "Lamandau", deskripsi: "Daerah dengan hutan dan sawah!" },
+            { nama: "Murung Raya", deskripsi: "Daerah dengan bukit dan hutan!" },
+            { nama: "Pulang Pisau", deskripsi: "Daerah dengan sawah dan sungai!" },
+            { nama: "Sukamara", deskripsi: "Daerah dengan pantai dan hutan!" },
+            { nama: "Seruyan", deskripsi: "Daerah dengan sungai dan sawit!" }
+          ]
+        },
+        {
+          nama: "Kalimantan Timur",
+          deskripsi: "Provinsi dengan hutan dan sungai besar!",
+          kota: [
+            { nama: "Balikpapan", deskripsi: "Kota dengan pantai dan hutan mangrove!" },
+            { nama: "Bontang", deskripsi: "Kota dengan industri dan taman laut!" },
+            { nama: "Samarinda", deskripsi: "Kota dengan Sungai Mahakam!" }
+          ],
+          kabupaten: [
+            { nama: "Berau", deskripsi: "Daerah dengan pantai dan hutan!" },
+            { nama: "Kutai Barat", deskripsi: "Daerah dengan hutan dan sungai!" },
+            { nama: "Kutai Kartanegara", deskripsi: "Daerah dengan sungai dan budaya!" },
+            { nama: "Kutai Timur", deskripsi: "Daerah dengan hutan dan sawit!" },
+            { nama: "Mahakam Ulu", deskripsi: "Daerah dengan hutan dan bukit!" },
+            { nama: "Paser", deskripsi: "Daerah dengan pantai dan tambang!" },
+            { nama: "Penajam Paser Utara", deskripsi: "Daerah dengan IKN Nusantara!" }
+          ]
+        },
+        {
+          nama: "Kalimantan Utara",
+          deskripsi: "Provinsi paling utara di Kalimantan!",
+          kota: [
+            { nama: "Tarakan", deskripsi: "Kota dengan hutan mangrove dan sejarah!" }
+          ],
+          kabupaten: [
+            { nama: "Bulungan", deskripsi: "Daerah dengan sungai dan hutan!" },
+            { nama: "Malinau", deskripsi: "Daerah dengan hutan dan budaya!" },
+            { nama: "Nunukan", deskripsi: "Daerah dengan pulau dan laut!" },
+            { nama: "Tana Tidung", deskripsi: "Daerah dengan pantai dan hutan!" }
+          ]
+        },
+        {
+          nama: "Gorontalo",
+          deskripsi: "Provinsi dengan budaya yang unik!",
+          kota: [
+            { nama: "Gorontalo", deskripsi: "Kota dengan benteng dan pantai!" }
+          ],
+          kabupaten: [
+            { nama: "Boalemo", deskripsi: "Daerah dengan pantai dan sawah!" },
+            { nama: "Bone Bolango", deskripsi: "Daerah dengan bukit dan sungai!" },
+            { nama: "Gorontalo", deskripsi: "Daerah dengan budaya dan sawah!" },
+            { nama: "Gorontalo Utara", deskripsi: "Daerah dengan pantai dan hutan!" },
+            { nama: "Pohuwato", deskripsi: "Daerah dengan sawah dan pantai!" }
+          ]
+        },
+        {
+          nama: "Sulawesi Selatan",
+          deskripsi: "Provinsi dengan budaya Bugis!",
+          kota: [
+            { nama: "Makassar", deskripsi: "Kota dengan Fort Rotterdam!" },
+            { nama: "Palopo", deskripsi: "Kota dengan Sungai Latuppa!" },
+            { nama: "Parepare", deskripsi: "Kota pelabuhan dengan kuliner!" }
+          ],
+          kabupaten: [
+            { nama: "Bantaeng", deskripsi: "Daerah dengan pantai dan bukit!" },
+            { nama: "Barru", deskripsi: "Daerah dengan pantai dan sawah!" },
+            { nama: "Bone", deskripsi: "Daerah dengan budaya Bugis!" },
+            { nama: "Bulukumba", deskripsi: "Daerah dengan pantai dan kapal pinisi!" },
+            { nama: "Enrekang", deskripsi: "Daerah dengan bukit dan udara sejuk!" },
+            { nama: "Gowa", deskripsi: "Daerah dengan sejarah kerajaan!" },
+            { nama: "Jeneponto", deskripsi: "Daerah dengan pantai dan sawah!" },
+            { nama: "Kepulauan Selayar", deskripsi: "Pulau dengan pantai dan laut!" },
+            { nama: "Luwu", deskripsi: "Daerah dengan sawah dan hutan!" },
+            { nama: "Luwu Timur", deskripsi: "Daerah dengan tambang dan hutan!" },
+            { nama: "Luwu Utara", deskripsi: "Daerah dengan sawah dan bukit!" },
+            { nama: "Maros", deskripsi: "Daerah dengan gua dan air terjun!" },
+            { nama: "Pangkajene dan Kepulauan", deskripsi: "Daerah dengan pulau dan laut!" },
+            { nama: "Pinrang", deskripsi: "Daerah dengan sawah dan budaya!" },
+            { nama: "Sidenreng Rappang", deskripsi: "Daerah dengan sawah dan danau!" },
+            { nama: "Sinjai", deskripsi: "Daerah dengan pantai dan budaya!" },
+            { nama: "Soppeng", deskripsi: "Daerah dengan sutera dan budaya!" },
+            { nama: "Takalar", deskripsi: "Daerah dengan pantai dan sawah!" },
+            { nama: "Tana Toraja", deskripsi: "Daerah dengan budaya Toraja!" },
+            { nama: "Toraja Utara", deskripsi: "Daerah dengan rumah adat Tongkonan!" },
+            { nama: "Wajo", deskripsi: "Daerah dengan danau dan budaya!" }
+          ]
+        },
+        {
+          nama: "Sulawesi Tenggara",
+          deskripsi: "Provinsi dengan pulau-pulau kecil!",
+          kota: [
+            { nama: "Bau-Bau", deskripsi: "Kota dengan Benteng Keraton Buton!" },
+            { nama: "Kendari", deskripsi: "Kota dengan Teluk Kendari!" }
+          ],
+          kabupaten: [
+            { nama: "Bombana", deskripsi: "Daerah dengan tambang dan pantai!" },
+            { nama: "Buton", deskripsi: "Daerah dengan benteng dan budaya!" },
+            { nama: "Buton Selatan", deskripsi: "Daerah dengan pantai dan pulau!" },
+            { nama: "Buton Tengah", deskripsi: "Daerah dengan laut dan budaya!" },
+            { nama: "Buton Utara", deskripsi: "Daerah dengan hutan dan pantai!" },
+            { nama: "Kolaka", deskripsi: "Daerah dengan tambang dan pantai!" },
+            { nama: "Kolaka Timur", deskripsi: "Daerah dengan sawah dan hutan!" },
+            { nama: "Kolaka Utara", deskripsi: "Daerah dengan pantai dan bukit!" },
+            { nama: "Konawe", deskripsi: "Daerah dengan sawah dan sungai!" },
+            { nama: "Konawe Kepulauan", deskripsi: "Pulau dengan laut jernih!" },
+            { nama: "Konawe Selatan", deskripsi: "Daerah dengan pantai dan hutan!" },
+            { nama: "Konawe Utara", deskripsi: "Daerah dengan hutan dan sungai!" },
+            { nama: "Muna", deskripsi: "Daerah dengan gua dan budaya!" },
+            { nama: "Muna Barat", deskripsi: "Daerah dengan sawah dan pantai!" },
+            { nama: "Wakatobi", deskripsi: "Pulau dengan taman laut yang indah!" }
+          ]
+        },
+        {
+          nama: "Sulawesi Tengah",
+          deskripsi: "Provinsi dengan Danau Poso!",
+          kota: [
+            { nama: "Palu", deskripsi: "Kota dengan Teluk Palu yang indah!" }
+          ],
+          kabupaten: [
+            { nama: "Banggai", deskripsi: "Daerah dengan pulau dan laut!" },
+            { nama: "Banggai Kepulauan", deskripsi: "Pulau dengan pantai jernih!" },
+            { nama: "Banggai Laut", deskripsi: "Daerah dengan laut dan pulau!" },
+            { nama: "Buol", deskripsi: "Daerah dengan pantai dan hutan!" },
+            { nama: "Donggala", deskripsi: "Daerah dengan pantai dan sejarah!" },
+            { nama: "Morowali", deskripsi: "Daerah dengan tambang dan hutan!" },
+            { nama: "Morowali Utara", deskripsi: "Daerah dengan hutan dan sungai!" },
+            { nama: "Parigi Moutong", deskripsi: "Daerah dengan pantai dan bukit!" },
+            { nama: "Poso", deskripsi: "Daerah dengan Danau Poso yang indah!" },
+            { nama: "Sigi", deskripsi: "Daerah dengan sawah dan bukit!" },
+            { nama: "Tojo Una-Una", deskripsi: "Pulau dengan laut dan gunung!" },
+            { nama: "Toli-Toli", deskripsi: "Daerah dengan pantai dan hutan!" }
+          ]
+        },
+        {
+          nama: "Sulawesi Utara",
+          deskripsi: "Provinsi dengan Pulau Bunaken!",
+          kota: [
+            { nama: "Bitung", deskripsi: "Kota pelabuhan dengan wisata laut!" },
+            { nama: "Kotamobagu", deskripsi: "Kota dengan pasar dan budaya!" },
+            { nama: "Manado", deskripsi: "Kota dengan makanan pedas dan laut!" },
+            { nama: "Tomohon", deskripsi: "Kota dengan bunga dan festival!" }
+          ],
+          kabupaten: [
+            { nama: "Bolaang Mongondow", deskripsi: "Daerah dengan sawah dan bukit!" },
+            { nama: "Bolaang Mongondow Selatan", deskripsi: "Daerah dengan hutan dan sungai!" },
+            { nama: "Bolaang Mongondow Timur", deskripsi: "Daerah dengan pantai dan hutan!" },
+            { nama: "Bolaang Mongondow Utara", deskripsi: "Daerah dengan laut dan bukit!" },
+            { nama: "Kepulauan Sangihe", deskripsi: "Pulau dengan laut jernih!" },
+            { nama: "Kepulauan Siau Tagulandang Biaro", deskripsi: "Pulau dengan gunung api!" },
+            { nama: "Kepulauan Talaud", deskripsi: "Pulau dengan pantai dan laut!" },
+            { nama: "Minahasa", deskripsi: "Daerah dengan budaya dan bukit!" },
+            { nama: "Minahasa Selatan", deskripsi: "Daerah dengan sawah dan danau!" },
+            { nama: "Minahasa Tenggara", deskripsi: "Daerah dengan pantai dan hutan!" },
+            { nama: "Minahasa Utara", deskripsi: "Daerah dengan pantai dan resor!" }
+          ]
+        },
+        {
+          nama: "Sulawesi Barat",
+          deskripsi: "Provinsi dengan pantai yang tenang!",
+          kota: [
+            { nama: "Mamuju", deskripsi: "Kota dengan pemandangan alam!" }
+          ],
+          kabupaten: [
+            { nama: "Majene", deskripsi: "Daerah dengan pantai dan budaya!" },
+            { nama: "Mamasa", deskripsi: "Daerah dengan bukit dan budaya!" },
+            { nama: "Mamuju", deskripsi: "Daerah dengan pantai dan sungai!" },
+            { nama: "Mamuju Tengah", deskripsi: "Daerah dengan hutan dan sawah!" },
+            { nama: "Mamuju Utara", deskripsi: "Daerah dengan pantai dan bukit!" },
+            { nama: "Polewali Mandar", deskripsi: "Daerah dengan pantai dan sawah!" }
+          ]
+        },
+        {
+          nama: "Maluku",
+          deskripsi: "Provinsi dengan pulau-pulau indah!",
+          kota: [
+            { nama: "Ambon", deskripsi: "Kota dengan Teluk Ambon yang cantik!" },
+            { nama: "Tual", deskripsi: "Kota dengan pantai dan pulau kecil!" }
+          ],
+          kabupaten: [
+            { nama: "Buru", deskripsi: "Daerah dengan pulau dan hutan!" },
+            { nama: "Buru Selatan", deskripsi: "Daerah dengan pantai dan laut!" },
+            { nama: "Kepulauan Aru", deskripsi: "Pulau dengan laut dan burung!" },
+            { nama: "Maluku Barat Daya", deskripsi: "Daerah dengan pulau dan laut!" },
+            { nama: "Maluku Tengah", deskripsi: "Daerah dengan budaya dan pantai!" },
+            { nama: "Maluku Tenggara", deskripsi: "Daerah dengan laut jernih!" },
+            { nama: "Maluku Tenggara Barat", deskripsi: "Daerah dengan pulau kecil!" },
+            { nama: "Seram Bagian Barat", deskripsi: "Daerah dengan hutan dan pantai!" },
+            { nama: "Seram Bagian Timur", deskripsi: "Daerah dengan laut dan bukit!" }
+          ]
+        },
+        {
+          nama: "Maluku Utara",
+          deskripsi: "Provinsi dengan pulau rempah!",
+          kota: [
+            { nama: "Ternate", deskripsi: "Kota dengan Gunung Gamalama!" },
+            { nama: "Tidore Kepulauan", deskripsi: "Kota dengan sejarah kesultanan!" }
+          ],
+          kabupaten: [
+            { nama: "Halmahera Barat", deskripsi: "Daerah dengan pulau dan laut!" },
+            { nama: "Halmahera Tengah", deskripsi: "Daerah dengan hutan dan pantai!" },
+            { nama: "Halmahera Utara", deskripsi: "Daerah dengan tambang dan laut!" },
+            { nama: "Halmahera Selatan", deskripsi: "Daerah dengan pulau dan hutan!" },
+            { nama: "Kepulauan Sula", deskripsi: "Pulau dengan laut jernih!" },
+            { nama: "Halmahera Timur", deskripsi: "Daerah dengan pantai dan hutan!" },
+            { nama: "Pulau Morotai", deskripsi: "Pulau dengan sejarah dan laut!" },
+            { nama: "Pulau Taliabu", deskripsi: "Pulau dengan hutan dan pantai!" }
+          ]
+        },
+        {
+          nama: "Papua",
+          deskripsi: "Provinsi dengan budaya Papua yang kaya!",
+          kota: [
+            { nama: "Jayapura", deskripsi: "Kota dengan Danau Sentani!" }
+          ],
+          kabupaten: [
+            { nama: "Asmat", deskripsi: "Daerah dengan seni ukir kayu!" },
+            { nama: "Biak Numfor", deskripsi: "Pulau dengan pantai dan laut!" },
+            { nama: "Boven Digoel", deskripsi: "Daerah dengan sungai dan hutan!" },
+            { nama: "Deiyai", deskripsi: "Daerah dengan danau dan budaya!" },
+            { nama: "Dogiyai", deskripsi: "Daerah dengan sawah dan budaya!" },
+            { nama: "Intan Jaya", deskripsi: "Daerah dengan bukit dan hutan!" },
+            { nama: "Jayapura", deskripsi: "Daerah dengan pantai dan bukit!" },
+            { nama: "Jayawijaya", deskripsi: "Daerah dengan budaya dan lembah!" },
+            { nama: "Keerom", deskripsi: "Daerah dengan hutan dan sawah!" },
+            { nama: "Kepulauan Yapen", deskripsi: "Pulau dengan laut jernih!" },
+            { nama: "Lanny Jaya", deskripsi: "Daerah dengan budaya dan bukit!" },
+            { nama: "Mamberamo Raya", deskripsi: "Daerah dengan sungai dan hutan!" },
+            { nama: "Mamberamo Tengah", deskripsi: "Daerah dengan hutan dan bukit!" },
+            { nama: "Mappi", deskripsi: "Daerah dengan sungai dan hutan!" },
+            { nama: "Merauke", deskripsi: "Daerah dengan savana dan sungai!" },
+            { nama: "Mimika", deskripsi: "Daerah dengan tambang dan pantai!" },
+            { nama: "Nabire", deskripsi: "Daerah dengan pantai dan hutan!" },
+            { nama: "Nduga", deskripsi: "Daerah dengan pegunungan tinggi!" },
+            { nama: "Paniai", deskripsi: "Daerah dengan danau dan budaya!" },
+            { nama: "Pegunungan Bintang", deskripsi: "Daerah dengan bukit dan hutan!" },
+            { nama: "Puncak", deskripsi: "Daerah dengan pegunungan sejuk!" },
+            { nama: "Puncak Jaya", deskripsi: "Daerah dengan gunung dan budaya!" },
+            { nama: "Sarmi", deskripsi: "Daerah dengan pantai dan hutan!" },
+            { nama: "Supiori", deskripsi: "Pulau dengan laut dan budaya!" },
+            { nama: "Tolikara", deskripsi: "Daerah dengan bukit dan budaya!" },
+            { nama: "Waropen", deskripsi: "Daerah dengan pantai dan sungai!" },
+            { nama: "Yahukimo", deskripsi: "Daerah dengan hutan dan budaya!" },
+            { nama: "Yalimo", deskripsi: "Daerah dengan bukit dan budaya!" }
+          ]
+        },
+        {
+          nama: "Papua Barat",
+          deskripsi: "Provinsi dengan Raja Ampat!",
+          kota: [
+            { nama: "Manokwari", deskripsi: "Kota dengan pemandangan laut!" },
+            { nama: "Sorong", deskripsi: "Kota gerbang ke Raja Ampat!" }
+          ],
+          kabupaten: [
+            { nama: "Fakfak", deskripsi: "Daerah dengan pantai dan bukit!" },
+            { nama: "Kaimana", deskripsi: "Daerah dengan laut dan gua!" },
+            { nama: "Manokwari", deskripsi: "Daerah dengan pantai dan hutan!" },
+            { nama: "Manokwari Selatan", deskripsi: "Daerah dengan hutan dan sungai!" },
+            { nama: "Maybrat", deskripsi: "Daerah dengan bukit dan budaya!" },
+            { nama: "Pegunungan Arfak", deskripsi: "Daerah dengan pegunungan!" },
+            { nama: "Raja Ampat", deskripsi: "Daerah dengan pulau dan laut jernih!" },
+            { nama: "Sorong", deskripsi: "Daerah dengan pantai dan hutan!" },
+            { nama: "Sorong Selatan", deskripsi: "Daerah dengan sungai dan hutan!" },
+            { nama: "Tambrauw", deskripsi: "Daerah dengan hutan dan budaya!" },
+            { nama: "Teluk Bintuni", deskripsi: "Daerah dengan teluk dan hutan!" },
+            { nama: "Teluk Wondama", deskripsi: "Daerah dengan pantai dan laut!" }
+          ]
+        },
+        {
+          nama: "Papua Tengah",
+          deskripsi: "Provinsi dengan pegunungan tinggi!",
+          kota: [
+            { nama: "Nabire", deskripsi: "Kota dengan pantai dan hutan!" }
+          ],
+          kabupaten: [
+            { nama: "Puncak", deskripsi: "Daerah dengan pegunungan sejuk!" },
+            { nama: "Paniai", deskripsi: "Daerah dengan danau dan budaya!" },
+            { nama: "Mimika", deskripsi: "Daerah dengan tambang dan pantai!" },
+            { nama: "Dogiyai", deskripsi: "Daerah dengan sawah dan budaya!" },
+            { nama: "Deiyai", deskripsi: "Daerah dengan danau dan budaya!" },
+            { nama: "Intan Jaya", deskripsi: "Daerah dengan bukit dan hutan!" },
+            { nama: "Nabire", deskripsi: "Daerah dengan pantai dan hutan!" },
+            { nama: "Puncak Jaya", deskripsi: "Daerah dengan gunung dan budaya!" }
+          ]
+        },
+        {
+          nama: "Papua Pegunungan",
+          deskripsi: "Provinsi dengan lembah Baliem!",
+          kota: [
+            { nama: "Jayawijaya", deskripsi: "Kota dengan budaya tradisional!" }
+          ],
+          kabupaten: [
+            { nama: "Jayawijaya", deskripsi: "Daerah dengan Lembah Baliem!" },
+            { nama: "Pegunungan Bintang", deskripsi: "Daerah dengan bukit dan hutan!" },
+            { nama: "Yahukimo", deskripsi: "Daerah dengan hutan dan budaya!" },
+            { nama: "Tolikara", deskripsi: "Daerah dengan bukit dan budaya!" },
+            { nama: "Lanny Jaya", deskripsi: "Daerah dengan budaya dan bukit!" },
+            { nama: "Mamberamo Tengah", deskripsi: "Daerah dengan hutan dan bukit!" },
+            { nama: "Nduga", deskripsi: "Daerah dengan pegunungan tinggi!" },
+            { nama: "Yalimo", deskripsi: "Daerah dengan bukit dan budaya!" }
+          ]
+        },
+        {
+          nama: "Papua Selatan",
+          deskripsi: "Provinsi dengan Sungai Digul!",
+          kota: [
+            { nama: "Merauke", deskripsi: "Kota di ujung timur Indonesia!" }
+          ],
+          kabupaten: [
+            { nama: "Merauke", deskripsi: "Daerah dengan savana dan sungai!" },
+            { nama: "Boven Digoel", deskripsi: "Daerah dengan sungai dan hutan!" },
+            { nama: "Mappi", deskripsi: "Daerah dengan sungai dan hutan!" },
+            { nama: "Asmat", deskripsi: "Daerah dengan seni ukir kayu!" }
+          ]
+        },
+        {
+          nama: "Papua Barat Daya",
+          deskripsi: "Provinsi dengan pulau-pulau kecil!",
+          kota: [
+            { nama: "Sorong", deskripsi: "Kota gerbang ke Raja Ampat!" }
+          ],
+          kabupaten: [
+            { nama: "Sorong", deskripsi: "Daerah dengan pantai dan hutan!" },
+            { nama: "Sorong Selatan", deskripsi: "Daerah dengan sungai dan hutan!" },
+            { nama: "Raja Ampat", deskripsi: "Daerah dengan pulau dan laut jernih!" },
+            { nama: "Tambrauw", deskripsi: "Daerah dengan hutan dan budaya!" },
+            { nama: "Maybrat", deskripsi: "Daerah dengan bukit dan budaya!" },
+            { nama: "Manokwari", deskripsi: "Daerah dengan pantai dan hutan!" },
+            { nama: "Manokwari Selatan", deskripsi: "Daerah dengan hutan dan sungai!" }
+          ]
+        }
+      ]
+    };
+
+    function Card({ title, description, children, onClick, clickable = true }) {
+      return (
+        <div
+          className={`card bg-white p-4 m-2 rounded-lg shadow-lg ${clickable ? 'cursor-pointer hover:bg-yellow-100' : 'cursor-default'}`}
+          onClick={clickable ? onClick : undefined}
+        >
+          <h3 className="text-xl font-bold text-blue-600">{title}</h3>
+          <p className="text-gray-700">{description}</p>
+          {children}
+        </div>
+      );
+    }
+
+    function App() {
+      const [selectedProvinsi, setSelectedProvinsi] = React.useState(null);
+
+      const handleBack = () => {
+        setSelectedProvinsi(null);
+      };
+
+      return (
+        <div className="min-h-screen bg-blue-50 p-4">
+          <h1 className="text-4xl font-bold text-center text-red-600 mb-6 bounce">
+            Jelajahi Indonesia!
+          </h1>
+
+          {!selectedProvinsi ? (
+            <div>
+              <Card
+                title={dataIndonesia.nama}
+                description={dataIndonesia.deskripsi}
+                clickable={false}
+              />
+              <h2 className="text-2xl font-semibold text-center text-green-600 mt-6">
+                Pilih Provinsi
+              </h2>
+              <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {dataIndonesia.provinsi.map((prov) => (
+                  <Card
+                    key={prov.nama}
+                    title={prov.nama}
+                    description={prov.deskripsi}
+                    onClick={() => setSelectedProvinsi(prov)}
+                  />
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div>
+              <button
+                className="bg-red-500 text-white px-4 py-2 rounded-lg mb-4 hover:bg-red-600"
+                onClick={handleBack}
+              >
+                Kembali ke Indonesia
+              </button>
+              <Card
+                title={selectedProvinsi.nama}
+                description={selectedProvinsi.deskripsi}
+                clickable={false}
+              />
+              <h2 className="text-2xl font-semibold text-center text-green-600 mt-6">
+                Kota di {selectedProvinsi.nama}
+              </h2>
+              <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {selectedProvinsi.kota.length > 0 ? (
+                  selectedProvinsi.kota.map((kota) => (
+                    <Card
+                      key={kota.nama}
+                      title={kota.nama}
+                      description={kota.deskripsi}
+                      clickable={false}
+                    />
+                  ))
+                ) : (
+                  <p className="text-center text-gray-600">Tidak ada kota otonom di provinsi ini.</p>
+                )}
+              </div>
+              <h2 className="text-2xl font-semibold text-center text-green-600 mt-6">
+                Kabupaten di {selectedProvinsi.nama}
+              </h2>
+              <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {selectedProvinsi.kabupaten.length > 0 ? (
+                  selectedProvinsi.kabupaten.map((kab) => (
+                    <Card
+                      key={kab.nama}
+                      title={kab.nama}
+                      description={kab.deskripsi}
+                      clickable={false}
+                    />
+                  ))
+                ) : (
+                  <p className="text-center text-gray-600">Tidak ada kabupaten di provinsi ini.</p>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+  <audio id="bg-audio" src="skyhigh.mp3" loop hidden></audio>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.body.addEventListener('click', function () {
+        var audio = document.getElementById('bg-audio');
+        audio.play().catch(err => {
+          console.log('Autoplay diblokir:', err);
+        });
+      }, { once: true });
+    });
+  </script>
+</body>
+</html>

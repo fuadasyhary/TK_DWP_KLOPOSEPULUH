@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Cerita Nabi, Rasul, dan Sahabat</title>
+  <link rel="icon" type="image/png" href="https://png.pngtree.com/png-clipart/20210610/ourmid/pngtree-islamic-figure-png-image_3430436.jpg">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+  </script>
+  <style>
+    body {
+      font-family: 'Comic Sans MS', sans-serif;
+    }
+    .card {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .card:hover {
+      transform: scale(1.05);
+      box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
+    }
+    .bg-gradient {
+      background: linear-gradient(135deg, #f0f4c3, #81d4fa);
+    }
+    .modal {
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(5px);
+    }
+    button {
+      position: relative;
+      z-index: 10;
+      cursor: pointer;
+    }
+    .watermark {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      color: rgba(0, 0, 0, 0.3);
+      font-size: 12px;
+      font-family: Arial, sans-serif;
+      z-index: 1000;
+    }
+    .watermark a {
+      color: rgba(0, 0, 0, 0.5);
+      text-decoration: none;
+    }
+    .watermark a:hover {
+      color: rgba(0, 0, 0, 0.8);
+      text-decoration: underline;
+    }
+    button:active {
+      transform: scale(1.1);
+      transition: transform 0.1s ease;
+    }
+    #story-modal {
+      z-index: 50;
+    }
+    @media (max-width: 640px) {
+      .card {
+        padding: 0.5rem;
+        font-size: 0.9rem;
+      }
+      .card h2 {
+        font-size: 1.1rem;
+      }
+      .card p {
+        font-size: 0.8rem;
+      }
+    }
+  </style>
+</head>
+<body class="bg-gradient min-h-screen p-6 items-center justify-center">
+  <div class="container mx-auto">
+    <!-- Initial Screen -->
+    <div id="initial-screen" class="text-center">
+      <h1 class="text-5xl font-bold text-blue-800 mb-12">Cerita Nabi, Rasul, dan Sahabat</h1>
+      <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-8">
+        <button id="category-25" class="px-8 py-4 bg-blue-500 text-white text-2xl rounded-full hover:bg-blue-600 shadow-lg">25 Nabi dan Rasul</button>
+        <button id="category-other" class="px-8 py-4 bg-green-500 text-white text-2xl rounded-full hover:bg-green-600 shadow-lg">Nabi Lainnya</button>
+        <button id="category-sahabat" class="px-8 py-4 bg-purple-500 text-white text-2xl rounded-full hover:bg-purple-600 shadow-lg">Sahabat Rasulullah</button>
+      </div>
+    </div>
+    <div class="watermark"><a href="https://id.linkedin.com/in/mochamad-fuad-asyhary">By Mochamad Fuad Asyhary</a></div>
+
+    <!-- Story List Screen -->
+    <div id="story-list-screen" class="hidden">
+      <h2 id="category-title" class="text-3xl font-bold text-blue-800 text-center mb-8"></h2>
+      <div id="story-list" class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
+      <button id="back-to-categories" class="mt-8 px-6 py-3 bg-gray-500 text-white rounded-full hover:bg-gray-600 mx-auto block">Kembali ke Kategori</button>
+    </div>
+
+    <!-- Story Detail Modal -->
+    <div id="story-modal" class="hidden fixed inset-0 modal flex items-center justify-center">
+      <div class="bg-white p-8 rounded-lg shadow-2xl max-w-lg w-full">
+        <h2 id="story-title" class="text-3xl font-bold text-blue-800 mb-4"></h2>
+        <p id="story-content" class="text-gray-700 mb-6"></p>
+        <div class="flex justify-between mb-4">
+          <button id="prev-story" class="px-4 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600"></button>
+          <button id="next-story" class="px-4 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600"></button>
+        </div>
+        <button id="close-modal" class="px-4 py-2 bg-gray-500 text-white rounded-full hover:bg-gray-600 w-full">Kembali</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Story data
+    const stories = [
+      { 
+        id: 1, 
+        title: "Kisah Nabi Adam AS", 
+        category: "25 Nabi dan Rasul", 
+        summary: "Manusia pertama yang diciptakan oleh Allah SWT.",
+        content: "Nabi Adam AS adalah manusia pertama yang diciptakan Allah SWT dari tanah liat. Allah memberinya nyawa dan menempatkannya di surga bersama Siti Hawa. Mereka hidup bahagia, tapi dilarang memakan buah dari pohon tertentu. Karena tergoda Iblis, mereka memakan buah itu dan diturunkan ke bumi. Di bumi, Nabi Adam belajar bekerja keras dan selalu berdoa meminta ampun. Pelajaran: Taatlah pada Allah dan minta maaf jika salah!"
+      },
+      { 
+        id: 2, 
+        title: "Kisah Nabi Idris AS", 
+        category: "25 Nabi dan Rasul", 
+        summary: "Orang pertama yang menulis dengan pena.",
+        content: "Nabi Idris AS adalah orang yang sangat cerdas dan taat. Ia adalah orang pertama yang menulis dengan pena, mengajarkan manusia cara mencatat ilmu. Ia selalu berdoa dan mengajak kaumnya untuk menyembah Allah. Karena ketaatannya, Allah mengangkatnya ke tempat yang mulia. Pelajaran: Belajarlah dengan rajin dan gunakan ilmu untuk kebaikan!"
+      },
+      { 
+        id: 3, 
+        title: "Kisah Nabi Nuh AS", 
+        category: "25 Nabi dan Rasul", 
+        summary: "Diutus untuk memperingatkan kaumnya tentang kesyirikan.",
+        content: "Nabi Nuh AS adalah nabi yang sangat sabar. Ia mengajak kaumnya untuk menyembah Allah dan meninggalkan kesyirikan, tapi banyak yang mengejeknya. Allah memerintahkan Nabi Nuh untuk membangun bahtera besar. Ketika banjir besar datang, ia menyelamatkan keluarga dan binatang di bahtera itu. Pelajaran: Tetap sabar meski orang lain tidak mendengarkan kebenaran!"
+      },
+      { 
+        id: 4, 
+        title: "Kisah Nabi Hud AS", 
+        category: "25 Nabi dan Rasul", 
+        summary: "Diutus untuk kaum 'Ad.",
+        content: "Nabi Hud AS diutus untuk kaum 'Ad yang sombong dan menyembah berhala. Ia mengajak mereka untuk menyembah Allah dan hidup sederhana. Namun, kaum 'Ad tidak mendengar dan akhirnya mendapat azab berupa angin kencang. Nabi Hud dan pengikutnya diselamatkan Allah. Pelajaran: Jangan sombong dan dengarkan nasihat yang baik!"
+      },
+      { 
+        id: 5, 
+        title: "Kisah Nabi Saleh AS", 
+        category: "25 Nabi dan Rasul", 
+        summary: "Diutus untuk kaum Tsamud.",
+        content: "Nabi Saleh AS diutus untuk kaum Tsamud yang suka berbuat maksiat. Allah memberinya mukjizat berupa unta ajaib yang tidak boleh diganggu. Namun, kaum Tsamud tidak taat dan menyakiti unta itu, sehingga mereka mendapat azab dari Allah. Nabi Saleh diselamatkan. Pelajaran: Hormati perintah Allah dan jangan merusak ciptaan-Nya!"
+      },
+      { 
+        id: 6, 
+        title: "Kisah Nabi Ibrahim AS", 
+        category: "25 Nabi dan Rasul", 
+        summary: "Bapak para nabi, sangat dihormati.",
+        content: "Nabi Ibrahim AS dikenal sebagai bapak para nabi. Ia berani melawan rajanya yang menyembah berhala dan mengajak orang untuk menyembah Allah. Allah menyelamatkannya dari api besar yang dibuat musuhnya. Ia juga membangun Ka’bah bersama putranya, Nabi Ismail. Pelajaran: Berani membela kebenaran meski sulit!"
+      },
+      { 
+        id: 7, 
+        title: "Kisah Nabi Luth AS", 
+        category: "25 Nabi dan Rasul", 
+        summary: "Diutus untuk kaum Sodom.",
+        content: "Nabi Luth AS diutus untuk kaum Sodom yang berbuat dosa besar. Ia mengajak mereka untuk hidup jujur dan baik, tapi mereka tidak mendengar. Allah akhirnya menghancurkan kota Sodom dengan hujan batu, tapi menyelamatkan Nabi Luth dan keluarganya. Pelajaran: Jauhi perbuatan buruk dan ikuti jalan kebaikan!"
+      },
+      { 
+        id: 8, 
+        title: "Kisah Nabi Ismail AS", 
+        category: "25 Nabi dan Rasul", 
+        summary: "Putera Nabi Ibrahim, dikenal dengan sumur Zam-Zam.",
+        content: "Nabi Ismail AS adalah putra Nabi Ibrahim yang sangat taat. Ketika kecil, ia dan ibunya, Siti Hajar, ditinggalkan di padang pasir. Allah memberi mereka air Zam-Zam yang mengalir ajaib. Ismail juga membantu ayahnya membangun Ka’bah. Pelajaran: Percaya pada Allah, Dia selalu membantu kita!"
+      },
+      { 
+        id: 9, 
+        title: "Kisah Nabi Ishaq AS", 
+        category: "25 Nabi dan Rasul", 
+        summary: "Putera Nabi Ibrahim, saudara Nabi Ismail.",
+        content: "Nabi Ishaq AS adalah putra Nabi Ibrahim dan saudara Nabi Ismail. Ia dikenal sebagai anak yang baik dan taat. Allah memberkatinya dengan kehidupan yang penuh kebaikan. Ia menjadi ayah dari Nabi Yaqub dan menyebarkan ajaran Allah. Pelajaran: Jadilah anak yang baik dan taat kepada Allah!"
+      },
+      { 
+        id: 10, 
+        title: "Kisah Nabi Yaqub AS", 
+        category: "25 Nabi dan Rasul", 
+        summary: "Ayah dari Nabi Yusuf.",
+        content: "Nabi Yaqub AS adalah ayah Nabi Yusuf. Ia sangat menyayangi anak-anaknya dan selalu mengajarkan keimanan kepada Allah. Meski menghadapi banyak cobaan, seperti kehilangan Yusuf, ia tetap sabar dan percaya pada Allah. Pelajaran: Tetap sabar dalam cobaan dan percaya pada rencana Allah!"
+      },
+      { 
+        id: 11, 
+        title: "Kisah Nabi Yusuf AS", 
+        category: "25 Nabi dan Rasul", 
+        summary: "Dikenal dengan kisah dalam Al-Qur'an.",
+        content: "Nabi Yusuf AS adalah anak Nabi Yaqub yang sangat tampan. Ia difitnah dan dipenjara, tapi tetap sabar. Allah memberinya kemampuan menafsirkan mimpi, dan ia menjadi pemimpin di Mesir. Ia memaafkan saudara-saudaranya yang pernah berbuat salah padanya. Pelajaran: Sabar dan memaafkan itu mulia!"
+      },
+      { 
+        id: 12, 
+        title: "Kisah Nabi Ayub AS", 
+        category: "25 Nabi dan Rasul", 
+        summary: "Diberi ujian kesabaran oleh Allah.",
+        content: "Nabi Ayub AS adalah nabi yang sangat sabar. Ia kaya dan sehat, tapi Allah mengujinya dengan kehilangan harta, keluarga, dan kesehatan. Meski menderita, ia tetap berdoa dan tidak mengeluh. Allah akhirnya menyembuhkannya. Pelajaran: Tetap bersyukur dan sabar dalam ujian!"
+      },
+      { 
+        id: 13, 
+        title: "Kisah Nabi Syuaib AS", 
+        category: "25 Nabi dan Rasul", 
+        summary: "Diutus untuk kaum Madyan.",
+        content: "Nabi Syuaib AS diutus untuk kaum Madyan yang suka curang dalam berdagang. Ia mengajak mereka untuk jujur dan adil, tapi mereka menolak. Akhirnya, kaum Madyan mendapat azab dari Allah, tapi Nabi Syuaib diselamatkan. Pelajaran: Jujurlah dalam setiap perbuatan!"
+      },
+      { 
+        id: 14, 
+        title: "Kisah Nabi Musa AS", 
+        category: "25 Nabi dan Rasul", 
+        summary: "Berbicara langsung dengan Allah di Gunung Thur.",
+        content: "Nabi Musa AS berbicara langsung dengan Allah di Gunung Thur. Ia diutus untuk melawan Firaun yang kejam dan membebaskan Bani Israil. Dengan mukjizat tongkat yang berubah menjadi ular dan membelah laut, ia menunjukkan kekuasaan Allah. Pelajaran: Percaya pada keajaiban Allah dan lawan kejahatan!"
+      },
+      { 
+        id: 15, 
+        title: "Kisah Nabi Harun AS", 
+        category: "25 Nabi dan Rasul", 
+        summary: "Nabi yang mendampingi Nabi Musa.",
+        content: "Nabi Harun AS adalah kakak Nabi Musa yang pandai berbicara. Ia membantu Nabi Musa menyampaikan ajaran Allah kepada Firaun dan Bani Israil. Ia selalu setia dan sabar mendampingi adiknya. Pelajaran: Bantulah orang lain dengan kelebihan yang kamu miliki!"
+      },
+      { 
+        id: 16, 
+        title: "Kisah Nabi Zulkifli AS", 
+        category: "25 Nabi dan Rasul", 
+        summary: "Diberi mukjizat kesabaran.",
+        content: "Nabi Zulkifli AS dikenal sangat sabar dan menepati janji. Ia menjadi pemimpin yang adil dan selalu membantu rakyatnya. Meski menghadapi banyak tantangan, ia tidak pernah marah atau putus asa. Pelajaran: Tepati janji dan tetap sabar dalam kesulitan!"
+      },
+      { 
+        id: 17, 
+        title: "Kisah Nabi Daud AS", 
+        category: "25 Nabi dan Rasul", 
+        summary: "Memiliki kitab Zabur dan suara merdu.",
+        content: "Nabi Daud AS diberi kitab Zabur oleh Allah. Suaranya sangat merdu hingga burung dan gunung ikut memuji Allah bersamanya. Ia juga berani melawan raksasa Jalut dengan ketapel. Pelajaran: Gunakan bakatmu untuk memuji Allah dan berbuat kebaikan!"
+      },
+      { 
+        id: 18, 
+        title: "Kisah Nabi Sulaiman AS", 
+        category: "25 Nabi dan Rasul", 
+        summary: "Diberi mukjizat dapat berbicara dengan hewan.",
+        content: "Nabi Sulaiman AS adalah raja yang bijaksana. Allah memberinya mukjizat bisa berbicara dengan hewan dan mengendalikan angin. Ia memimpin dengan adil dan selalu bersyukur. Pelajaran: Gunakan kekuasaan dengan bijak dan selalu bersyukur!"
+      },
+      { 
+        id: 19, 
+        title: "Kisah Nabi Ilyas AS", 
+        category: "25 Nabi dan Rasul", 
+        summary: "Diutus untuk kaum Bani Israil.",
+        content: "Nabi Ilyas AS diutus untuk Bani Israil yang menyembah berhala Baal. Ia mengajak mereka kembali menyembah Allah. Meski dihina, ia tetap teguh. Allah menyelamatkannya dari musuh-musuhnya. Pelajaran: Tetap teguh pada keimanan meski dihina!"
+      },
+      { 
+        id: 20, 
+        title: "Kisah Nabi Ilyasa AS", 
+        category: "25 Nabi dan Rasul", 
+        summary: "Murid dan penerus Nabi Ilyas.",
+        content: "Nabi Ilyasa AS adalah murid Nabi Ilyas yang setia. Ia melanjutkan tugas gurunya untuk mengajak Bani Israil menyembah Allah. Dengan kebaikan hatinya, ia membantu banyak orang. Pelajaran: Belajarlah dari orang baik dan lanjutkan kebaikan mereka!"
+      },
+      { 
+        id: 21, 
+        title: "Kisah Nabi Yunus AS", 
+        category: "25 Nabi dan Rasul", 
+        summary: "Ditenggelamkan ke laut dan dimakan ikan paus.",
+        content: "Nabi Yunus AS diutus untuk kaum Ninawa, tapi awalnya ia pergi karena putus asa. Allah membuatnya ditelan ikan paus besar. Di dalam perut ikan, ia berdoa dan meminta ampun. Allah menyelamatkannya, dan ia kembali mengajak kaumnya bertobat. Pelajaran: Jangan putus asa dan selalu minta ampun pada Allah!"
+      },
+      { 
+        id: 22, 
+        title: "Kisah Nabi Zakaria AS", 
+        category: "25 Nabi dan Rasul", 
+        summary: "Ayah dari Nabi Yahya.",
+        content: "Nabi Zakaria AS sangat ingin punya anak. Ia berdoa dengan sungguh-sungguh kepada Allah, meski sudah tua. Allah mengabulkan doanya dan memberinya putra, Nabi Yahya. Pelajaran: Berdoalah dengan tulus, Allah pasti mendengar!"
+      },
+      { 
+        id: 23, 
+        title: "Kisah Nabi Yahya AS", 
+        category: "25 Nabi dan Rasul", 
+        summary: "Nabi yang mensucikan diri.",
+        content: "Nabi Yahya AS adalah putra Nabi Zakaria yang sangat suci. Ia selalu berbuat baik, menyayangi orang lain, dan mengajarkan kebenaran. Ia berani melawan kejahatan meski nyawanya terancam. Pelajaran: Jaga kesucian hati dan berani membela kebenaran!"
+      },
+      { 
+        id: 24, 
+        title: "Kisah Nabi Isa AS", 
+        category: "25 Nabi dan Rasul", 
+        summary: "Kelahiran tanpa ayah, dikenal sebagai Nabi Isa Al-Masih.",
+        content: "Nabi Isa AS lahir tanpa ayah dari ibunya, Maryam. Allah memberinya mukjizat seperti menyembuhkan orang sakit dan menghidupkan orang mati dengan izin-Nya. Ia mengajarkan kasih sayang dan keimanan. Pelajaran: Cintai sesama dan percaya pada kekuasaan Allah!"
+      },
+      { 
+        id: 25, 
+        title: "Kisah Nabi Muhammad SAW", 
+        category: "25 Nabi dan Rasul", 
+        summary: "Nabi dan rasul terakhir, membawa ajaran Islam.",
+        content: "Nabi Muhammad SAW adalah nabi terakhir yang sangat penyayang. Ia lahir di Makkah dan dikenal jujur. Allah memberinya Al-Qur’an untuk menyebarkan Islam. Meski banyak rintangan, ia selalu sabar dan mengajarkan kebaikan. Pelajaran: Jadilah jujur dan penyayang seperti Nabi Muhammad!"
+      },
+      { 
+        id: 26, 
+        title: "Kisah Nabi Syits AS", 
+        category: "Nabi Lainnya", 
+        summary: "Putra Nabi Adam, menjadi nabi kedua di bumi.",
+        content: "Nabi Syits AS adalah putra ketiga Nabi Adam dan Siti Hawa, lahir setelah Habil dan Qabil. Nama Syits berarti anugerah Allah karena ia lahir setelah Habil dibunuh Qabil. Setelah Nabi Adam wafat, Syits menjadi nabi kedua dan menerima 50 suhuf (lembaran wahyu) dari Allah. Ia mengajarkan kaumnya untuk menyembah Allah dan hidup baik. Pelajaran: Bersyukurlah atas anugerah Allah dan ajarkan kebaikan!"
+      },
+      { 
+        id: 27, 
+        title: "Kisah Nabi Yusya' bin Nun", 
+        category: "Nabi Lainnya", 
+        summary: "Murid Nabi Musa yang menaklukkan Baitul Maqdis.",
+        content: "Nabi Yusya' bin Nun adalah murid setia Nabi Musa. Setelah Nabi Musa dan Nabi Harun wafat, ia memimpin Bani Israil untuk menaklukkan Baitul Maqdis. Allah memberinya mukjizat luar biasa: menahan matahari agar tidak terbenam supaya ia bisa menyelesaikan jihad. Ia juga membantu Nabi Musa dalam perjalanan mencari Nabi Khidir. Pelajaran: Berjuanglah dengan tekun dan percaya pada kekuasaan Allah!"
+      },
+      { 
+        id: 28, 
+        title: "Kisah Nabi Irmiya AS", 
+        category: "Nabi Lainnya", 
+        summary: "Keturunan Nabi Harun, memperingatkan Bani Israil.",
+        content: "Nabi Irmiya AS adalah keturunan Nabi Harun yang diutus untuk Bani Israil. Ia memperingatkan mereka agar berhenti menyembah berhala dan berbuat dosa. Meski dihina dan dipenjara, ia tetap berdoa kepada Allah untuk kekuatan. Allah melindunginya dari musuh. Pelajaran: Tetap teguh pada kebenaran meski mendapat tantangan!"
+      },
+      { 
+        id: 29, 
+        title: "Kisah Nabi Hizqiyal AS", 
+        category: "Nabi Lainnya", 
+        summary: "Melihat mukjizat menghidupkan kembali orang mati.",
+        content: "Nabi Hizqiyal AS, atau Yehezkiel, adalah nabi Bani Israil. Ia melihat desa yang hancur karena wabah, dan Allah menunjukkan mukjizat dengan menghidupkan kembali ribuan orang mati. Tulang-tulang bersatu kembali, lalu mereka hidup dan memuji Allah. Pelajaran: Percayalah pada keajaiban Allah yang Maha Kuasa!"
+      },
+      { 
+        id: 30, 
+        title: "Kisah Nabi Hanzalah AS", 
+        category: "Nabi Lainnya", 
+        summary: "Nabi dari Bani Israil, keturunan Nabi Yaqub.",
+        content: "Nabi Hanzalah AS adalah nabi dari Bani Israil, keturunan Yahuda, putra keempat Nabi Yaqub. Ia mengajak kaumnya untuk menyembah Allah dan meninggalkan dosa. Meski tidak banyak diketahui tentangnya, ia dikenal setia pada ajaran Allah. Pelajaran: Tetaplah setia pada keimanan meski sedikit yang mendengar!"
+      },
+      { 
+        id: 31, 
+        title: "Kisah Nabi Uzair AS", 
+        category: "Nabi Lainnya", 
+        summary: "Nabi yang dihidupkan kembali setelah mati 100 tahun.",
+        content: "Nabi Uzair AS adalah nabi Bani Israil yang dihidupkan kembali oleh Allah setelah mati selama 100 tahun. Ia terbangun dengan keledainya yang juga hidup kembali, sebagai tanda kebesaran Allah. Ia mengajarkan kaumnya untuk percaya pada hari kiamat. Pelajaran: Percayalah pada kebangkitan dan kekuasaan Allah!"
+      },
+      { 
+        id: 32, 
+        title: "Kisah Nabi Syam'un AS", 
+        category: "Nabi Lainnya", 
+        summary: "Nabi perkasa dengan kekuatan luar biasa.",
+        content: "Nabi Syam’un AS adalah nabi yang sangat kuat. Ia bisa merobohkan istana dengan tangannya dan menggunakan rahang unta sebagai senjata. Meski dikhianati dan ditangkap musuh, Allah mengembalikan kekuatannya, dan ia menghancurkan istana musuh. Pelajaran: Gunakan kekuatanmu untuk kebaikan dan percaya pada pertolongan Allah!"
+      },
+      { 
+        id: 33, 
+        title: "Kisah Nabi Khidir AS", 
+        category: "Nabi Lainnya", 
+        summary: "Nabi misterius yang penuh hikmah.",
+        content: "Nabi Khidir AS adalah nabi misterius yang penuh hikmah. Ia bertemu Nabi Musa dalam perjalanan ajaib. Ia melakukan hal-hal seperti melubangi perahu dan membangun tembok untuk alasan bijak yang akhirnya terungkap. Pelajaran: Percaya pada hikmah di balik rencana Allah!"
+      },
+      { 
+        id: 34, 
+        title: "Kisah Nabi Dzulqarnain", 
+        category: "Nabi Lainnya", 
+        summary: "Raja adil yang melindungi kebaikan.",
+        content: "Nabi Dzulqarnain adalah raja adil yang menjelajah dunia. Ia membangun tembok besar untuk melindungi sebuah kaum dari Yakjuj dan Makjuj. Ia selalu berdoa agar bisa berbuat baik. Pelajaran: Gunakan kekuatanmu untuk melindungi kebaikan!"
+      },
+      {
+        id: 35,
+        title: "Kisah Abu Bakar Ash-Shiddiq RA",
+        category: "Sahabat Rasulullah",
+        summary: "Sahabat terdekat Nabi Muhammad SAW, khalifah pertama.",
+        content: "Abu Bakar Ash-Shiddiq RA adalah sahabat terdekat Nabi Muhammad SAW dan khalifah pertama umat Islam. Ia dikenal sangat jujur dan setia. Ia menemani Nabi saat hijrah ke Madinah dan bersembunyi di Gua Tsur. Abu Bakar juga dikenal dermawan, menyumbangkan hartanya untuk Islam. Pelajaran: Jadilah setia dan dermawan seperti Abu Bakar!"
+      },
+      {
+        id: 36,
+        title: "Kisah Umar bin Khattab RA",
+        category: "Sahabat Rasulullah",
+        summary: "Khalifah kedua, dikenal tegas dan adil.",
+        content: "Umar bin Khattab RA adalah sahabat Nabi yang menjadi khalifah kedua. Awalnya ia menentang Islam, namun setelah masuk Islam, ia menjadi pembela agama yang kuat. Ia dikenal tegas, adil, dan peduli pada rakyat. Umar juga memperluas wilayah Islam dengan penuh kebijaksanaan. Pelajaran: Berubahlah menjadi lebih baik dan pimpin dengan adil!"
+      },
+      {
+        id: 37,
+        title: "Kisah Utsman bin Affan RA",
+        category: "Sahabat Rasulullah",
+        summary: "Khalifah ketiga, penyusun Al-Qur'an.",
+        content: "Utsman bin Affan RA adalah khalifah ketiga yang sangat lembut hati. Ia dikenal sebagai penyusun mushaf Al-Qur'an yang standar. Utsman sangat dermawan, pernah membeli sumur untuk umat Islam. Meski menghadapi fitnah, ia tetap sabar. Pelajaran: Berbuat baiklah dengan harta dan tetap sabar dalam cobaan!"
+      },
+      {
+        id: 38,
+        title: "Kisah Ali bin Abi Thalib RA",
+        category: "Sahabat Rasulullah",
+        summary: "Khalifah keempat, pemberani dan berilmu.",
+        content: "Ali bin Abi Thalib RA adalah sepupu dan menantu Nabi Muhammad SAW. Ia menjadi khalifah keempat dan dikenal pemberani serta berilmu tinggi. Ali ikut banyak pertempuran untuk membela Islam dan memimpin dengan keadilan. Pelajaran: Gunakan keberanian dan ilmu untuk kebaikan!"
+      },
+      {
+        id: 39,
+        title: "Kisah Thalhah bin Ubaidillah RA",
+        category: "Sahabat Rasulullah",
+        summary: "Salah satu dari sepuluh sahabat yang dijamin masuk surga.",
+        content: "Thalhah bin Ubaidillah RA adalah sahabat Nabi yang termasuk sepuluh orang dijamin masuk surga. Ia dikenal pemberani, terutama dalam Perang Uhud, di mana ia melindungi Nabi dengan tubuhnya hingga terluka parah. Ia juga dermawan, menyedekahkan hartanya untuk Islam. Pelajaran: Beranilah membela kebenaran dan dermawanlah untuk kebaikan!"
+      },
+      {
+        id: 40,
+        title: "Kisah Zubair bin Awwam RA",
+        category: "Sahabat Rasulullah",
+        summary: "Sahabat yang termasuk sepuluh yang dijamin masuk surga.",
+        content: "Zubair bin Awwam RA adalah sahabat Nabi yang juga termasuk sepuluh orang dijamin masuk surga. Ia dikenal sebagai 'Hawari Rasulullah' karena keberaniannya dalam perang. Zubair selalu setia kepada Nabi dan Islam. Pelajaran: Jadilah pemberani dan setia pada kebenaran!"
+      },
+      {
+        id: 41,
+        title: "Kisah Abdurrahman bin Auf RA",
+        category: "Sahabat Rasulullah",
+        summary: "Sahabat kaya raya dan dermawan, dijamin masuk surga.",
+        content: "Abdurrahman bin Auf RA adalah sahabat yang kaya raya namun sangat dermawan. Ia termasuk sepuluh sahabat yang dijamin masuk surga. Ia menyumbangkan hartanya untuk kebutuhan umat, seperti membeli perlengkapan perang. Pelajaran: Gunakan harta untuk membantu sesama!"
+      },
+      {
+        id: 42,
+        title: "Kisah Sa'ad bin Abi Waqqash RA",
+        category: "Sahabat Rasulullah",
+        summary: "Sahabat dengan doa mustajab, dijamin masuk surga.",
+        content: "Sa’ad bin Abi Waqqash RA adalah sahabat yang terkenal dengan doanya yang mustajab. Ia termasuk sepuluh sahabat yang dijamin masuk surga. Sa’ad adalah pemanah ulung dan memimpin pasukan Islam dalam Perang Qadisiyah. Pelajaran: Berdoalah dengan tulus dan berjuanglah untuk Islam!"
+      },
+      {
+        id: 43,
+        title: "Kisah Sa'id bin Zaid RA",
+        category: "Sahabat Rasulullah",
+        summary: "Sahabat yang dijamin masuk surga.",
+        content: "Sa’id bin Zaid RA adalah sahabat yang termasuk sepuluh orang dijamin masuk surga. Ia dikenal sebagai pemberani dan setia kepada Islam. Sa’id ikut banyak pertempuran dan selalu taat pada ajaran Nabi. Pelajaran: Tetaplah setia dan berani dalam keimanan!"
+      },
+      {
+        id: 44,
+        title: "Kisah Abu Ubaidah bin Jarrah RA",
+        category: "Sahabat Rasulullah",
+        summary: "Sahabat yang dipercaya sebagai amin umat.",
+        content: "Abu Ubaidah bin Jarrah RA adalah sahabat yang disebut Nabi sebagai 'amin umat ini'. Ia termasuk sepuluh sahabat yang dijamin masuk surga. Ia memimpin pasukan Islam dengan bijaksana dan rendah hati. Pelajaran: Jadilah orang yang dapat dipercaya dan rendah hati!"
+      },
+      {
+        id: 45,
+        title: "Kisah Abdullah bin Mas'ud RA",
+        category: "Sahabat Rasulullah",
+        summary: "Sahabat yang ahli dalam membaca Al-Qur'an.",
+        content: "Abdullah bin Mas’ud RA adalah sahabat yang ahli dalam membaca dan memahami Al-Qur’an. Ia sering membacakan Al-Qur’an di depan Nabi dan mengajarkannya kepada umat. Ia juga dikenal zuhud dan sederhana. Pelajaran: Pelajarilah Al-Qur’an dengan sungguh-sungguh!"
+      },
+      {
+        id: 46,
+        title: "Kisah Abu Dzar Al-Ghifari RA",
+        category: "Sahabat Rasulullah",
+        summary: "Sahabat yang zuhud dan berani.",
+        content: "Abu Dzar Al-Ghifari RA adalah sahabat yang sangat zuhud, hidup sederhana, dan berani menyampaikan kebenaran. Ia sering mengingatkan orang untuk tidak tamak pada harta dunia. Pelajaran: Hiduplah sederhana dan berani membela kebenaran!"
+      },
+      {
+        id: 47,
+        title: "Kisah Bilal bin Rabah RA",
+        category: "Sahabat Rasulullah",
+        summary: "Muadzin pertama dalam Islam.",
+        content: "Bilal bin Rabah RA adalah sahabat yang menjadi muadzin pertama dalam Islam. Meski pernah disiksa karena keimanannya, ia tetap teguh. Suaranya yang merdu memanggil umat untuk salat. Pelajaran: Tetap teguh pada iman meski menghadapi cobaan!"
+      },
+      {
+        id: 48,
+        title: "Kisah Zaid bin Haritsah RA",
+        category: "Sahabat Rasulullah",
+        summary: "Sahabat yang diangkat anak oleh Nabi.",
+        content: "Zaid bin Haritsah RA adalah sahabat yang sangat dicintai Nabi hingga diangkat sebagai anak. Ia setia kepada Nabi dan gugur sebagai syahid dalam Perang Mu’tah. Pelajaran: Cintailah dan setialah kepada Rasulullah!"
+      },
+      {
+        id: 49,
+        title: "Kisah Ja'far bin Abi Thalib RA",
+        category: "Sahabat Rasulullah",
+        summary: "Sahabat yang syahid dalam Perang Mu'tah.",
+        content: "Ja’far bin Abi Thalib RA adalah sepupu Nabi yang gugur syahid dalam Perang Mu’tah. Ia dikenal sebagai ‘Ja’far yang Terbang’ karena keberaniannya. Allah mengganti tangannya dengan sayap di surga. Pelajaran: Berjuanglah dengan penuh keberanian untuk Islam!"
+      },
+      {
+        id: 50,
+        title: "Kisah Abdullah bin Abbas RA",
+        category: "Sahabat Rasulullah",
+        summary: "Sahabat yang dikenal sebagai penafsir Al-Qur'an.",
+        content: "Abdullah bin Abbas RA adalah sepupu Nabi yang dikenal sebagai ‘penafsir Al-Qur’an’. Ia sangat berilmu dan sering menjelaskan makna ayat-ayat Al-Qur’an kepada umat. Pelajaran: Kejarlah ilmu dan gunakan untuk kebaikan umat!"
+      },
+      {
+        id: 51,
+        title: "Kisah Abdullah bin Umar RA",
+        category: "Sahabat Rasulullah",
+        summary: "Sahabat yang terkenal dengan ketaatannya.",
+        content: "Abdullah bin Umar RA adalah putra Umar bin Khattab yang terkenal sangat taat. Ia selalu mengikuti sunnah Nabi dalam setiap perbuatannya. Ia juga dikenal sebagai perawi hadis. Pelajaran: Ikutilah sunnah Nabi dengan penuh ketaatan!"
+      },
+      {
+        id: 52,
+        title: "Kisah Abdullah bin Amr bin Ash RA",
+        category: "Sahabat Rasulullah",
+        summary: "Sahabat yang meriwayatkan banyak hadis.",
+        content: "Abdullah bin Amr bin Ash RA adalah sahabat yang meriwayatkan banyak hadis Nabi. Ia dikenal rajin mencatat ajaran Nabi dan hidup dengan penuh keimanan. Pelajaran: Pelajarilah dan sebarkan ajaran Nabi dengan tekun!"
+      },
+      {
+        id: 53,
+        title: "Kisah Abu Hurairah RA",
+        category: "Sahabat Rasulullah",
+        summary: "Sahabat yang paling banyak meriwayatkan hadis.",
+        content: "Abu Hurairah RA adalah sahabat yang paling banyak meriwayatkan hadis Nabi. Ia selalu berada di dekat Nabi untuk mempelajari ajarannya. Ia hidup sederhana dan penuh keimanan. Pelajaran: Pelajarilah ajaran Nabi dan sebarkan kebaikan!"
+      },
+      {
+        id: 54,
+        title: "Kisah Abu Thalhah Al-Anshari RA",
+        category: "Sahabat Rasulullah",
+        summary: "Sahabat yang menyedekahkan kebunnya untuk Islam.",
+        content: "Abu Thalhah Al-Anshari RA adalah sahabat yang memiliki kebun luas dan menyedekahkannya untuk perjuangan Islam. Ia dikenal sebagai pemanah ulung dan setia kepada Nabi. Pelajaran: Sedekahkanlah hartamu untuk kebaikan umat!"
+      },
+      {
+        id: 55,
+        title: "Kisah Abu Ayyub Al-Anshari RA",
+        category: "Sahabat Rasulullah",
+        summary: "Sahabat yang menjadi tamu Nabi saat hijrah.",
+        content: "Abu Ayyub Al-Anshari RA adalah sahabat yang menjamu Nabi saat hijrah ke Madinah. Ia sangat menghormati Nabi dan setia dalam perjuangan Islam. Ia juga ikut dalam banyak pertempuran. Pelajaran: Hormatilah tamu dan setialah pada Islam!"
+      },
+      {
+        id: 56,
+        title: "Kisah Hanzhalah bin Abi Amir RA",
+        category: "Sahabat Rasulullah",
+        summary: "Sahabat yang dijuluki orang yang dimandikan malaikat.",
+        content: "Hanzhalah bin Abi Amir RA adalah sahabat yang gugur syahid dalam Perang Uhud. Ia dijuluki ‘orang yang dimandikan malaikat’ karena malaikat memandikan jenazahnya. Ia berjuang dengan penuh keimanan. Pelajaran: Berjuanglah untuk Islam dengan tulus!"
+      },
+      {
+        id: 57,
+        title: "Kisah Usamah bin Zaid RA",
+        category: "Sahabat Rasulullah",
+        summary: "Sahabat yang menjadi panglima perang pada usia muda.",
+        content: "Usamah bin Zaid RA adalah putra Zaid bin Haritsah yang diangkat sebagai panglima perang oleh Nabi meski masih muda. Ia memimpin dengan keberanian dan keimanan. Pelajaran: Berani dan percayalah pada tanggung jawab yang diberikan!"
+      },
+      {
+        id: 58,
+        title: "Kisah Sa'ad bin Mu'adz RA",
+        category: "Sahabat Rasulullah",
+        summary: "Tokoh Anshar, pemimpin kabilah Aus.",
+        content: "Sa’ad bin Mu’adz RA adalah tokoh Anshar dan pemimpin kabilah Aus. Ia memeluk Islam dan menjadi pendukung setia Nabi. Ia juga memimpin dengan adil dalam Perang Khandaq. Pelajaran: Pimpinlah dengan keadilan dan dukunglah kebenaran!"
+      },
+      {
+        id: 59,
+        title: "Kisah Salman Al-Farisi RA",
+        category: "Sahabat Rasulullah",
+        summary: "Sahabat dari Persia yang mencari kebenaran.",
+        content: "Salman Al-Farisi RA adalah sahabat dari Persia yang mencari kebenaran hingga memeluk Islam. Ia memberikan ide menggali parit dalam Perang Khandaq dan sangat setia kepada Nabi. Pelajaran: Carilah kebenaran dan setialah pada Islam!"
+      },
+      {
+        id: 60,
+        title: "Kisah Hudzaifah bin Yaman RA",
+        category: "Sahabat Rasulullah",
+        summary: "Sahabat yang menyimpan rahasia nama-nama munafik.",
+        content: "Hudzaifah bin Yaman RA adalah sahabat yang dipercaya Nabi untuk menyimpan rahasia nama-nama orang munafik. Ia setia dan berani dalam pertempuran. Pelajaran: Jagalah kepercayaan dan beranilah untuk kebenaran!"
+      },
+      {
+        id: 61,
+        title: "Kisah Amr bin Ash RA",
+        category: "Sahabat Rasulullah",
+        summary: "Sahabat cerdas dengan strategi perang.",
+        content: "Amr bin Ash RA adalah sahabat yang cerdas dan ahli strategi perang. Ia memimpin penaklukan Mesir dan membantu menyebarkan Islam dengan kebijaksanaan. Pelajaran: Gunakan kecerdasanmu untuk kebaikan Islam!"
+      },
+      {
+        id: 62,
+        title: "Kisah Mu'adz bin Jabal RA",
+        category: "Sahabat Rasulullah",
+        summary: "Sahabat yang diutus mengajar agama di Yaman.",
+        content: "Mu’adz bin Jabal RA adalah sahabat yang diutus Nabi untuk mengajar agama di Yaman. Ia dikenal berilmu tinggi dan mengajarkan Al-Qur’an serta sunnah dengan penuh keimanan. Pelajaran: Sebarkan ilmu agama dengan ikhlas!"
+      },
+      {
+        id: 63,
+        title: "Kisah Abu Salamah RA",
+        category: "Sahabat Rasulullah",
+        summary: "Sahabat yang wafat karena luka perang.",
+        content: "Abu Salamah RA adalah sahabat yang hijrah ke Madinah bersama keluarganya. Ia ikut dalam Perang Uhud dan wafat karena luka perang. Ia dikenal setia kepada Nabi. Pelajaran: Berjuanglah untuk Islam meski harus berkorban!"
+      },
+      {
+        id: 64,
+        title: "Kisah Hassan bin Tsabit RA",
+        category: "Sahabat Rasulullah",
+        summary: "Sahabat yang dikenal sebagai penyair.",
+        content: "Hassan bin Tsabit RA adalah sahabat yang dikenal sebagai penyair Islam. Puisinya memuji Nabi dan membela Islam, membuat musuh gentar. Ia menggunakan bakatnya untuk kebaikan. Pelajaran: Gunakan bakatmu untuk membela Islam!"
+      }
+    ];
+
+    // DOM elements
+    const initialScreen = document.getElementById('initial-screen');
+    const storyListScreen = document.getElementById('story-list-screen');
+    const categoryTitle = document.getElementById('category-title');
+    const storyList = document.getElementById('story-list');
+    const storyModal = document.getElementById('story-modal');
+    const storyTitle = document.getElementById('story-title');
+    const storyContent = document.getElementById('story-content');
+    const prevStoryBtn = document.getElementById('prev-story');
+    const nextStoryBtn = document.getElementById('next-story');
+    const closeModalBtn = document.getElementById('close-modal');
+    const backToCategoriesBtn = document.getElementById('back-to-categories');
+    const category25Btn = document.getElementById('category-25');
+    const categoryOtherBtn = document.getElementById('category-other');
+    const categorySahabatBtn = document.getElementById('category-sahabat');
+
+    let currentStories = stories;
+    let currentStoryId = null;
+
+    // Display stories by category
+    function displayStories(category) {
+      storyList.innerHTML = '';
+      currentStories = stories.filter(story => story.category === category);
+      categoryTitle.textContent = category;
+      
+      currentStories.forEach(story => {
+        const card = document.createElement('div');
+        card.className = 'card bg-white p-6 rounded-lg shadow-md cursor-pointer';
+        card.innerHTML = `
+          <h3 class="text-xl font-semibold text-blue-700 mb-2">${story.title}</h3>
+          <p class="text-gray-600">${story.summary}</p>
+        `;
+        card.addEventListener('click', () => showStoryDetail(story.id));
+        storyList.appendChild(card);
+      });
+
+      initialScreen.classList.add('hidden');
+      storyListScreen.classList.remove('hidden');
+    }
+
+    // Show story detail in modal
+    function showStoryDetail(id) {
+      currentStoryId = id;
+      const story = stories.find(s => s.id === id);
+      storyTitle.textContent = story.title;
+      storyContent.textContent = story.content;
+      storyModal.classList.remove('hidden');
+
+      // Update navigation buttons
+      const currentIndex = currentStories.findIndex(s => s.id === id);
+      prevStoryBtn.textContent = currentIndex > 0 ? currentStories[currentIndex - 1].title : 'Tidak Ada Cerita Sebelumnya';
+      nextStoryBtn.textContent = currentIndex < currentStories.length - 1 ? currentStories[currentIndex + 1].title : 'Tidak Ada Cerita Selanjutnya';
+      prevStoryBtn.disabled = currentIndex === 0;
+      nextStoryBtn.disabled = currentIndex === currentStories.length - 1;
+    }
+
+    // Navigation button events
+    prevStoryBtn.addEventListener('click', () => {
+      const currentIndex = currentStories.findIndex(s => s.id === currentStoryId);
+      if (currentIndex > 0) {
+        showStoryDetail(currentStories[currentIndex - 1].id);
+      }
+    });
+
+    nextStoryBtn.addEventListener('click', () => {
+      const currentIndex = currentStories.findIndex(s => s.id === currentStoryId);
+      if (currentIndex < currentStories.length - 1) {
+        showStoryDetail(currentStories[currentIndex + 1].id);
+      }
+    });
+
+    // Close modal
+    closeModalBtn.addEventListener('click', () => {
+      storyModal.classList.add('hidden');
+      currentStoryId = null;
+    });
+
+    // Back to categories
+    backToCategoriesBtn.addEventListener('click', () => {
+      storyListScreen.classList.add('hidden');
+      initialScreen.classList.remove('hidden');
+    });
+
+    // Category button events
+    category25Btn.addEventListener('click', () => displayStories('25 Nabi dan Rasul'));
+    categoryOtherBtn.addEventListener('click', () => displayStories('Nabi Lainnya'));
+    categorySahabatBtn.addEventListener('click', () => displayStories('Sahabat Rasulullah'));
+
+    // Mobile landscape orientation
+    if (window.matchMedia("(max-width: 768px)").matches) {
+      screen.orientation.lock('landscape').catch(() => {});
+    }
+  </script>
+  <!-- AUDIO -->
+  <audio id="bg-audio" src="Rindu Muhammadku.mp3" loop hidden></audio>
+  <!-- SCRIPT UNTUK AUTOPLAY SETELAH KLIK -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.body.addEventListener('click', function () {
+        var audio = document.getElementById('bg-audio');
+        audio.play().catch(err => {
+          console.log('Autoplay diblokir:', err);
+        });
+      }, { once: true });
+    });
+  </script>
+</body>
+</html>

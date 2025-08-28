@@ -1,0 +1,493 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sirah Nabawiyah Timeline</title>
+  <link rel="icon" type="image/png" href="https://baladena.id/wp-content/uploads/2019/10/SIRAH-NABAWIYAH-1.png">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.22.5/babel.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .timeline-container {
+      position: relative;
+      margin: 0 auto;
+      max-width: 800px;
+    }
+    .timeline-line {
+      position: absolute;
+      left: 50%;
+      width: 4px;
+      background-color: #2563eb;
+      height: 100%;
+      transform: translateX(-50%);
+      z-index: 1;
+    }
+    .car-animation {
+      position: absolute;
+      left: 50%;
+      width: 40px;
+      height: 40px;
+      z-index: 10;
+      transform: translateX(-50%);
+      transition: top 0.3s ease;
+    }
+    .timeline-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 2rem;
+      position: relative;
+      min-height: 150px;
+    }
+    .timeline-dot {
+      position: absolute;
+      left: 50%;
+      width: 16px;
+      height: 16px;
+      background-color: #2563eb;
+      border-radius: 50%;
+      transform: translateX(-50%);
+      z-index: 2;
+      top: 50%;
+    }
+    .card {
+      width: 45%;
+      background: white;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s;
+      cursor: pointer;
+    }
+    .card:hover {
+      transform: scale(1.05);
+    }
+    .left-card {
+      margin-right: auto;
+      margin-left: 1rem;
+    }
+    .right-card {
+      margin-left: auto;
+      margin-right: 1rem;
+    }
+    .watermark {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      color: rgba(0, 0, 0, 0.3);
+      font-size: 12px;
+      font-family: Arial, sans-serif;
+      z-index: 1000;
+    }
+    .watermark a {
+      color: rgba(0, 0, 0, 0.5);
+      text-decoration: none;
+    }
+    .watermark a:hover {
+      color: rgba(0, 0, 0, 0.8);
+      text-decoration: underline;
+    }
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+    }
+    .modal-content {
+      background: white;
+      padding: 2rem;
+      border-radius: 0.5rem;
+      max-width: 500px;
+      width: 90%;
+      position: relative;
+    }
+    .modal-close {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      background: #2563eb;
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 0.25rem;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-b from-blue-100 to-green-100 min-h-screen font-sans">
+  <div id="root"></div>  
+  <div class="watermark"><a href="https://id.linkedin.com/in/mochamad-fuad-asyhary">By Mochamad Fuad Asyhary</a></div>
+  <script type="text/babel">
+    const sirahData = [
+      {
+        period: "Kelahiran Nabi",
+        year: "570 M",
+        description: "Nabi Muhammad SAW lahir di Mekkah pada tahun gajah, hari Senin, 12 Rabiul Awal.",
+        icon: "👶",
+        details: "Nabi Muhammad SAW lahir di keluarga Bani Hasyim, suku Quraisy di Mekkah. Ibunya, Aminah binti Wahb, dan ayahnya, Abdullah bin Abdul Muthalib, wafat sebelum Nabi lahir. Beliau diasuh kakeknya, Abdul Muthalib, selama dua tahun, lalu pamannya, Abu Thalib. Nabi kecil tinggal bersama Halimah As-Sa’diyah di desa agar kuat dan berhati bersih. Malaikat membersihkan hati Nabi saat bayi sebagai tanda kenabian."
+      },
+      {
+        period: "Masa Kanak-Kanak",
+        year: "574-582 M",
+        description: "Nabi tinggal bersama Halimah di desa dan kembali ke Mekkah, dikenal lembut dan jujur.",
+        icon: "🏡",
+        details: "Setelah diasuh Halimah As-Sa’diyah, Nabi kembali ke Mekkah di usia 6 tahun. Ibunya, Aminah, wafat saat perjalanan ke Yatsrib, membuat Nabi yatim piatu. Abdul Muthalib, kakeknya, merawatnya dengan penuh kasih, tetapi wafat saat Nabi berusia 8 tahun. Abu Thalib, pamannya, kemudian merawat Nabi. Beliau sudah menunjukkan sifat jujur, sopan, dan suka menolong sejak kecil."
+      },
+      {
+        period: "Masa Remaja",
+        year: "582-595 M",
+        description: "Nabi ikut berdagang ke Syam dan dikenal sebagai Al-Amin karena kejujurannya.",
+        icon: "🧑",
+        details: "Di usia 12 tahun, Nabi ikut Abu Thalib berdagang ke Syam. Pendeta Nasrani, Bahira, melihat tanda kenabian pada Nabi, seperti awan yang menaunginya. Saat usia 15 tahun, Nabi membantu memperbaiki Ka’bah dan menyelesaikan konflik antar suku soal Hajar Aswad dengan bijaksana. Kejujuran dan akhlak Nabi membuatnya dihormati dan dijuluki Al-Amin oleh orang Mekkah."
+      },
+      {
+        period: "Pernikahan dengan Khadijah",
+        year: "595 M",
+        description: "Nabi menikah dengan Siti Khadijah, seorang janda kaya yang mendukung dakwah.",
+        icon: "💍",
+        details: "Siti Khadijah, pebisnis sukses dan wanita terhormat, mempekerjakan Nabi untuk berdagang ke Syam. Kejujuran Nabi membuatnya kagum, dan mereka menikah saat Nabi berusia 25 tahun dan Khadijah 40 tahun. Khadijah menjadi istri pertama Nabi, melahirkan enam anak, termasuk Fatimah. Ia setia mendampingi Nabi, terutama saat menerima wahyu pertama."
+      },
+      {
+        period: "Wahyu Pertama",
+        year: "610 M",
+        description: "Nabi menerima wahyu pertama (Al-Alaq) di Gua Hira melalui Malaikat Jibril.",
+        icon: "📜",
+        details: "Nabi sering menyendiri di Gua Hira untuk beribadah. Pada bulan Ramadan, saat usia 40 tahun, Malaikat Jibril datang membawa wahyu pertama, ayat ‘Iqra!’ dari Surah Al-Alaq. Nabi awalnya bingung dan takut, tetapi Khadijah menenangkannya. Waraqah bin Naufal, sepupu Khadijah, memastikan ini tanda kenabian seperti yang diterima Nabi Musa dan Isa."
+      },
+      {
+        period: "Dakwah Awal",
+        year: "610-613 M",
+        description: "Nabi berdakwah secara sembunyi-sembunyi kepada keluarga dan sahabat.",
+        icon: "🗣️",
+        details: "Setelah wahyu pertama, Nabi mengajak orang terdekat untuk memeluk Islam. Yang pertama masuk Islam adalah Khadijah, Ali bin Abi Thalib, Zaid bin Haritsah, dan Abu Bakar. Dakwah dilakukan rahasia di rumah Arqam bin Abi Arqam karena Quraisy menentang ajaran tauhid. Meski penuh risiko, banyak sahabat setia bergabung, termasuk Utsman bin Affan dan Umar bin Khattab."
+      },
+      {
+        period: "Dakwah Terbuka",
+        year: "613-616 M",
+        description: "Nabi berdakwah secara terbuka, tetapi mendapat tantangan keras dari Quraisy.",
+        icon: "📢",
+        details: "Atas perintah Allah, Nabi berdakwah di depan umum, mengajak Quraisy meninggalkan berhala dan menyembah Allah. Beliau berdiri di Bukit Safa dan menyampaikan tauhid. Quraisy menentang keras, mengejek, dan menyakiti Nabi serta pengikutnya, seperti Bilal bin Rabah yang disiksa. Meski begitu, Nabi tetap sabar dan terus menyebarkan Islam dengan keberanian."
+      },
+      {
+        period: "Hijrah ke Habasyah",
+        year: "615 M",
+        description: "Sejumlah muslimin hijrah ke Habasyah untuk menghindari tekanan Quraisy.",
+        icon: "🛶",
+        details: "Karena tekanan Quraisy semakin berat, Nabi menyarankan sebagian muslimin untuk hijrah ke Habasyah (sekarang Etiopia), yang dipimpin Raja Najasyi yang adil. Sekitar 80 muslimin, termasuk Utsman bin Affan dan istrinya Ruqayyah, berpindah ke sana. Raja Najasyi melindungi mereka, bahkan setelah Quraisy mencoba menjem mereka kembali. Ini menunjukkan kebijaksanaan Nabi dalam melindungi umatnya."
+      },
+      {
+        period: "Boikot Quraisy",
+        year: "616-619 M",
+        description: "Quraisy memboikot muslimin dan Bani Hasyim selama tiga tahun.",
+        icon: "🚫",
+        details: "Karena Islam makin menyebar, Quraisy memboikot Bani Hasyim dan muslimin di lembah Syi’b Abu Thalib. Mereka dilarang berdagang, menikah, atau berinteraksi. Selama tiga tahun, muslimin hidup dalam kelaparan dan kesulitan, tetapi tetap teguh. Boikot berakhir setelah beberapa orang Quraisy merasa kasihan dan membatalkan perjanjian."
+      },
+      {
+        period: "Tahun Duka",
+        year: "619 M",
+        description: "Nabi kehilangan Khadijah dan Abu Thalib di tahun yang berat.",
+        icon: "😢",
+        details: "Tahun 619 M disebut Tahun Duka karena Nabi kehilangan dua pendukung utama. Khadijah, istri setia yang mendukung dakwah, wafat. Abu Thalib, paman yang melindungi Nabi dari Quraisy, juga wafat. Tanpa mereka, Nabi menghadapi tekanan lebih berat dari Quraisy, tetapi tetap teguh menyebarkan Islam dengan kesabaran."
+      },
+      {
+        period: "Perjalanan ke Thaif",
+        year: "619 M",
+        description: "Nabi berdakwah ke Thaif, tetapi ditolak dan dilempari batu.",
+        icon: "🪨",
+        details: "Setelah Tahun Duka, Nabi pergi ke Thaif untuk mencari dukungan menyebarkan Islam. Namun, penduduk Thaif menolak dan melempari Nabi dengan batu hingga berdarah. Meski disakiti, Nabi berdoa memohon petunjuk Allah. Malaikat Jibril datang menawarkan bantuan, tetapi Nabi memilih bersabar, menunjukkan akhlak mulianya."
+      },
+      {
+        period: "Isra' Mi'raj",
+        year: "621 M",
+        description: "Nabi melakukan perjalanan malam ke Masjid Al-Aqsa dan naik ke langit.",
+        icon: "🌙",
+        details: "Dalam satu malam, Nabi melakukan perjalanan ajaib dari Masjidil Haram ke Masjid Al-Aqsa di Yerusalem (Isra), lalu naik ke langit (Mi’raj). Di sidratul muntaha, Nabi bertemu Allah dan menerima perintah salat lima waktu. Nabi juga bertemu nabi-nabi seperti Adam, Musa, dan Isa, serta melihat surga dan neraka."
+      },
+      {
+        period: "Baiat Aqabah",
+        year: "621-622 M",
+        description: "Penduduk Yatsrib berjanji setia kepada Nabi, membuka jalan hijrah.",
+        icon: "🤲",
+        details: "Sekelompok orang dari Yatsrib (kelak Madinah) bertemu Nabi di Aqabah. Dalam Baiat Aqabah Pertama dan Kedua, mereka berjanji melindungi Nabi dan menyebarkan Islam. Sekitar 70 orang dari suku Aus dan Khazraj hadir dalam Baiat Kedua, menjanjikan kesetiaan penuh. Ini menjadi langkah awal hijrah ke Madinah."
+      },
+      {
+        period: "Hijrah ke Madinah",
+        year: "622 M",
+        description: "Nabi hijrah ke Madinah, menandai awal kalender Islam.",
+        icon: "🛤️",
+        details: "Quraisy berencana membunuh Nabi, tetapi Allah melindungi beliau. Nabi dan Abu Bakar bersembunyi di Gua Tsur selama tiga hari, lalu pergi ke Madinah. Penduduk Madinah menyambut Nabi dengan sukacita. Beliau membangun Masjid Nabawi dan membuat Piagam Madinah untuk menyatukan Muhajirin, Anshar, dan non-Muslim dalam kedamaian."
+      },
+      {
+        period: "Pembangunan Masjid Nabawi",
+        year: "622 M",
+        description: "Nabi membangun Masjid Nabawi sebagai pusat ibadah dan komunitas.",
+        icon: "🕌",
+        details: "Setelah tiba di Madinah, Nabi memilih tanah untuk Masjid Nabawi. Beliau ikut bekerja bersama sahabat, mengangkut batu dan kayu. Masjid ini menjadi tempat salat, belajar, dan musyawarah. Di samping masjid, ada rumah sederhana untuk Nabi dan keluarganya. Masjid Nabawi memperkuat persatuan dan keimanan umat Islam."
+      },
+      {
+        period: "Pembentukan Hizbut Tahrir",
+        year: "622 M",
+        description: "Nabi mempersaudarakan Muhajirin dan Anshar untuk memperkuat umat.",
+        icon: "👥",
+        details: "Nabi mempersaudarakan Muhajirin (muslim dari Mekkah) dan Anshar (muslim Madinah) sebagai saudara seiman. Setiap Muhajirin dipasangkan dengan Anshar untuk saling membantu. Misalnya, Abdurrahman bin Auf dipersaudarakan dengan Sa’ad bin Mu’adz. Ini memperkuat ikatan umat Islam dan membangun masyarakat yang harmonis di Madinah."
+      },
+      {
+        period: "Perang Badar",
+        year: "624 M",
+        description: "Kemenangan besar umat Islam melawan Quraisy di Badar.",
+        icon: "⚔️",
+        details: "Perang Badar terjadi pada 17 Ramadan di dekat sumur Badar. Muslimin hanya 313 orang dengan peralatan sederhana, melawan 1.000 pasukan Quraisy yang lengkap bersenjata. Berkat strategi Nabi dan pertolongan Allah, muslimin menang besar. Kemenangan ini memperkuat iman dan menunjukkan kekuatan Islam."
+      },
+      {
+        period: "Perang Uhud",
+        year: "625 M",
+        description: "Pertempuran di Bukit Uhud mengajarkan disiplin dan ketaatan.",
+        icon: "🛡️",
+        details: "Di Bukit Uhud, muslimin awalnya unggul melawan Quraisy. Namun, sekelompok pemanah melanggar perintah Nabi demi harta rampasan, sehingga Quraisy menyerang balik. Muslimin kalah, dan Nabi terluka. Perang ini mengajarkan pentingnya taat kepada pemimpin dan tidak terlena dengan dunia."
+      },
+      {
+        period: "Perang Banu Quraizhah",
+        year: "627 M",
+        description: "Nabi menangani pengkhianatan suku Banu Quraizhah.",
+        icon: "⚖️",
+        details: "Suku Banu Quraizhah mengkhianati perjanjian dengan muslimin selama Perang Khandaq. Setelah perang, Nabi mengepung benteng mereka. Setelah menyerah, mereka diadili berdasarkan hukum Taurat yang mereka pilih. Hukuman diberikan karena pengkhianatan, menunjukkan keadilan Nabi dalam memimpin."
+      },
+      {
+        period: "Perang Khandaq",
+        year: "627 M",
+        description: "Umat Islam menggali parit untuk mempertahankan Madinah.",
+        icon: "🪖",
+        details: "Quraisy dan sekutunya menyerang Madinah dengan 10.000 pasukan. Atas saran Salman Al-Farisi, muslimin menggali parit besar di sekeliling kota, strategi baru di Arab. Musuh tidak bisa melewati parit, dan Allah mengirim angin kencang serta ketakutan, membuat mereka mundur tanpa perang besar."
+      },
+      {
+        period: "Penaklukan Khaibar",
+        year: "628 M",
+        description: "Nabi menaklukkan benteng Yahudi di Khaibar.",
+        icon: "🏰",
+        details: "Suku Yahudi di Khaibar merencanakan serangan terhadap muslimin. Nabi memimpin pasukan untuk menaklukkan benteng mereka. Setelah pertempuran sengit, muslimin menang. Nabi membuat perjanjian damai dengan penduduk Khaibar, memungkinkan mereka tetap tinggal dengan syarat membayar upeti."
+      },
+      {
+        period: "Perjanjian Hudaibiyah",
+        year: "628 M",
+        description: "Nabi menandatangani perjanjian damai dengan Quraisy.",
+        icon: "🤝",
+        details: "Nabi dan 1.400 muslimin berangkat untuk umrah, tetapi dihalangi Quraisy di Hudaibiyah. Mereka menandatangani perjanjian damai: muslimin tidak umrah tahun itu, tetapi boleh tahun depan, dengan gencatan senjata 10 tahun. Meski tampak merugikan, perjanjian ini membawa kedamaian dan mempercepat penyebaran Islam."
+      },
+      {
+        period: "Surat kepada Para Raja",
+        year: "628 M",
+        description: "Nabi mengirim surat kepada raja-raja untuk mengajak mereka ke Islam.",
+        icon: "✉️",
+        details: "Nabi mengirim surat kepada para pemimpin dunia, seperti Kaisar Romawi Heraklius, Raja Persia Khosrau, dan Raja Habasyah Najasyi, untuk memeluk Islam. Surat-surat ini ditulis dengan sopan, mengajak mereka menyembah Allah. Beberapa raja, seperti Najasyi, merespons dengan baik, tetapi yang lain menolak."
+      },
+      {
+        period: "Pembebasan Mekkah",
+        year: "630 M",
+        description: "Nabi memasuki Mekkah tanpa pertumpahan darah.",
+        icon: "🕋",
+        details: "Setelah Quraisy melanggar Perjanjian Hudaibiyah, Nabi memimpin 10.000 pasukan ke Mekkah pada bulan Ramadan. Beliau masuk tanpa perang, memaafkan musuh seperti Abu Sufyan, dan menghancurkan 360 berhala di Ka’bah. Pembebasan Mekkah menunjukkan akhlak mulia Nabi dan kemenangan Islam."
+      },
+      {
+        period: "Perang Hunain",
+        year: "630 M",
+        description: "Umat Islam menghadapi suku Hawazin dan menang.",
+        icon: "⚔️",
+        details: "Setelah Pembebasan Mekkah, suku Hawazin dan Tsakif menyerang muslimin di Lembah Hunain dengan pasukan besar. Awalnya, muslimin kewalahan, tetapi Nabi mendorong semangat mereka. Dengan pertolongan Allah, muslimin menang. Nabi membagikan harta rampasan dengan adil, menunjukkan kedermawanannya."
+      },
+      {
+        period: "Perang Tabuk",
+        year: "631 M",
+        description: "Nabi memimpin ekspedisi ke Tabuk melawan Romawi.",
+        icon: "🛡️",
+        details: "Nabi mendengar rencana serangan Romawi, lalu memimpin 30.000 pasukan ke Tabuk di perbatasan. Perjalanan ini sulit karena panas dan kekurangan air. Romawi tidak jadi menyerang, tetapi ekspedisi ini menunjukkan kekuatan Islam. Banyak suku Arab kemudian bergabung dengan Islam."
+      },
+      {
+        period: "Penunjukan Abu Bakar",
+        year: "632 M",
+        description: "Nabi menunjuk Abu Bakar sebagai imam shalat saat sakit.",
+        icon: "🙏",
+        details: "Menjelang wafat, Nabi sakit dan tidak bisa memimpin shalat. Beliau menunjuk Abu Bakar sebagai imam shalat di Masjid Nabawi. Ini menjadi tanda bahwa Abu Bakar dipercaya untuk memimpin umat setelah Nabi. Keputusan ini menunjukkan kebijaksanaan Nabi dalam memilih pemimpin."
+      },
+      {
+        period: "Haji Wada",
+        year: "632 M",
+        description: "Haji terakhir Nabi dengan khutbah tentang persatuan.",
+        icon: "🕌",
+        details: "Pada tahun 10 Hijriah, Nabi melakukan haji terakhir dengan lebih dari 100.000 muslimin. Di Padang Arafah, beliau menyampaikan Khutbah Wada, menekankan kesetaraan manusia, larangan menyakiti sesama, dan pentingnya berpegang pada Al-Qur’an dan sunnah. Ini menjadi pesan terakhir Nabi."
+      },
+      {
+        period: "Wafatnya Nabi",
+        year: "632 M",
+        description: "Nabi wafat di Madinah pada usia 63 tahun.",
+        icon: "🌟",
+        details: "Nabi sakit setelah Haji Wada dan wafat pada 12 Rabiul Awal tahun 11 Hijriah di rumah Aisyah. Umat Islam sangat sedih, tetapi Abu Bakar mengingatkan bahwa Allah kekal abadi. Nabi meninggalkan Al-Qur’an dan sunnah sebagai pedoman. Akhlak mulia dan ajarannya terus menginspirasi umat hingga kini."
+      }
+    ];
+
+    function Modal({ show, onClose, period, details, icon }) {
+      if (!show) return null;
+      return (
+        <div className="modal" onClick={onClose}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <button className="modal-close" onClick={onClose}>Tutup</button>
+            <div className="text-4xl mb-4 text-center">{icon}</div>
+            <h2 className="text-2xl font-bold text-blue-600 mb-4">{period}</h2>
+            <p className="text-gray-700">{details}</p>
+          </div>
+        </div>
+      );
+    }
+
+    function TimelineItem({ period, year, description, icon, details, index, onClick }) {
+      return (
+        <div className="timeline-item" id={`timeline-item-${index}`}>
+          <div className="timeline-dot"></div>
+          <div
+            className={`card ${index % 2 === 0 ? 'left-card' : 'right-card'}`}
+            onClick={onClick}
+          >
+            <div className="text-3xl mb-2">{icon}</div>
+            <h3 className="text-lg font-bold text-blue-600">{period}</h3>
+            <p className="text-sm text-gray-500">{year}</p>
+            <p className="text-gray-700 mt-2">{description}</p>
+          </div>
+        </div>
+      );
+    }
+
+    function App() {
+      const [selectedEvent, setSelectedEvent] = React.useState(null);
+
+      const handleCardClick = (event) => {
+        setSelectedEvent(event);
+      };
+
+      const handleCloseModal = () => {
+        setSelectedEvent(null);
+      };
+
+      return (
+        <div className="container mx-auto p-4">
+          <h1 className="text-3xl font-extrabold text-center text-blue-800 mb-12 animate-pulse">
+            Sirah Nabawiyah Timeline
+          </h1>
+          <div className="timeline-container">
+            <div className="timeline-line"></div>
+            <img
+              src="https://img.icons8.com/emoji/48/000000/racing-car.png"
+              alt="Car"
+              className="car-animation"
+              id="timeline-car"
+            />
+            {sirahData.map((item, index) => (
+              <TimelineItem
+                key={index}
+                index={index}
+                period={item.period}
+                year={item.year}
+                description={item.description}
+                icon={item.icon}
+                details={item.details}
+                onClick={() => handleCardClick(item)}
+              />
+            ))}
+          </div>
+          <Modal
+            show={!!selectedEvent}
+            onClose={handleCloseModal}
+            period={selectedEvent?.period}
+            details={selectedEvent?.details}
+            icon={selectedEvent?.icon}
+          />
+          <footer className="mt-12 text-center text-gray-600">
+            <p>Dibuat dengan ❤️ untuk belajar Sirah Nabawiyah</p>
+          </footer>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+
+    // Scroll-based car movement aligned with timeline items
+    window.addEventListener('scroll', () => {
+      const car = document.getElementById('timeline-car');
+      const timelineItems = document.querySelectorAll('.timeline-item');
+      let closestItem = null;
+      let minDistance = Infinity;
+
+      timelineItems.forEach((item, index) => {
+        const rect = item.getBoundingClientRect();
+        const distance = Math.abs(rect.top + rect.height / 2 - window.innerHeight / 2);
+        if (distance < minDistance) {
+          minDistance = distance;
+          closestItem = item;
+        }
+      });
+
+      if (closestItem) {
+        const rect = closestItem.getBoundingClientRect();
+        const timeline = document.querySelector('.timeline-container').getBoundingClientRect();
+        const offsetTop = rect.top + rect.height / 2 - timeline.top;
+        car.style.top = `${offsetTop}px`;
+      }
+    });
+  </script>
+  <audio id="bg-audio" src="Rindu Muhammadku.mp3" loop hidden></audio>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.body.addEventListener('click', function () {
+        var audio = document.getElementById('bg-audio');
+        audio.play().catch(err => {
+          console.log('Autoplay diblokir:', err);
+        });
+      }, { once: true });
+    });
+  </script>
+</body>
+</html>

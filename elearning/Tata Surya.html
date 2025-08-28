@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.2, maximum-scale=3.0, user-scalable=yes">
+  <title>Tata Surya</title>
+  <link rel="icon" type="image/png" href="https://cdn-icons-png.freepik.com/256/8967/8967275.png">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.2/p5.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .watermark {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      color: rgba(0, 0, 0, 0.3);
+      font-size: 12px;
+      font-family: Arial, sans-serif;
+      z-index: 1000;
+    }
+    .watermark a {
+      color: rgba(0, 0, 0, 0.5);
+      text-decoration: none;
+    }
+    .watermark a:hover {
+      color: rgba(0, 0, 0, 0.8);
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-b from-blue-900 to-purple-900 min-h-screen flex items-center justify-center overflow-hidden">
+  <div id="solar-system" class="w-full h-screen flex items-center justify-center"></div>
+  <div class="watermark"><a href="https://id.linkedin.com/in/mochamad-fuad-asyhary">By Mochamad Fuad Asyhary</a></div>
+  <div id="planet-card" class="hidden fixed inset-0 bg-blue-800 bg-opacity-90 flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl p-8 max-w-lg w-full shadow-2xl transform transition-all">
+      <h2 id="planet-title" class="text-4xl font-bold text-center text-purple-600 mb-4"></h2>
+      <p id="planet-desc" class="text-lg text-gray-700 mb-6 font-comic"></p>
+      <button id="summary-btn" class="bg-yellow-400 hover:bg-yellow-500 text-white font-bold py-3 px-6 rounded-full transition duration-300">Lihat Ringkasan!</button>
+      <button id="back-btn" class="bg-red-400 hover:bg-red-500 text-white font-bold py-3 px-6 rounded-full mt-4 transition duration-300">Kembali ke Tata Surya</button>
+    </div>
+  </div>
+  <div id="popup" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl">
+      <h3 id="popup-title" class="text-2xl font-bold text-center text-purple-600 mb-4"></h3>
+      <p id="popup-caption" class="text-lg text-gray-700 mb-6 font-comic"></p>
+      <button id="popup-back-btn" class="bg-red-400 hover:bg-red-500 text-white font-bold py-3 px-6 rounded-full transition duration-300 w-full">Kembali</button>
+    </div>
+  </div>
+  <audio id="bg-audio" src="skyhigh.mp3" loop preload="auto" autoplay hidden>
+    <source src="skyhigh.mp3" type="audio/mpeg">
+    Maaf, browser Anda tidak mendukung elemen audio.
+  </audio>
+  <script type="text/javascript">
+    var gk_isXlsx = false;
+    var gk_xlsxFileLookup = {};
+    var gk_fileData = {};
+    function filledCell(cell) {
+      return cell !== '' && cell != null;
+    }
+    function loadFileData(filename) {
+      if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+        try {
+          var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+          var firstSheetName = workbook.SheetNames[0];
+          var worksheet = workbook.Sheets[firstSheetName];
+          var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+          var filteredData = jsonData.filter(row => row.some(filledCell));
+          var headerRowIndex = filteredData.findIndex((row, index) =>
+            row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+          );
+          if (headerRowIndex === -1 || headerRowIndex > 25) {
+            headerRowIndex = 0;
+          }
+          var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex));
+          csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+          return csv;
+        } catch (e) {
+          console.error(e);
+          return "";
+        }
+      }
+      return gk_fileData[filename] || "";
+    }
+  </script>
+  <script>
+    // Celestial bodies data
+    const celestialBodies = [
+      {
+        name: "Matahari",
+        size: 60,
+        color: "yellow",
+        orbit: 0,
+        desc: "Matahari adalah bintang besar di pusat tata surya kita. Memberikan cahaya dan panas untuk kehidupan!",
+        satellites: [],
+        summary: "Matahari adalah bintang raksasa berusia sekitar 4,6 miliar tahun di pusat tata surya kita. Ini adalah bola gas panas yang terdiri dari hidrogen (73,5%) dan helium (24%), yang menghasilkan energi melalui fusi nuklir. Diameternya sekitar 1,39 juta kilometer, cukup besar untuk menampung 1 juta Bumi! Suhunya mencapai 15 juta °C di intinya dan sekitar 5.500°C di permukaannya. Matahari memberikan cahaya dan panas yang membuat kehidupan di Bumi mungkin, dan menggerakkan orbit semua planet."
+      },
+      {
+        name: "Merkurius",
+        size: 20,
+        color: "gray",
+        orbit: 100,
+        desc: "Merkurius adalah planet terdekat dengan Matahari. Sangat panas di siang hari dan sangat dingin di malam hari!",
+        satellites: [],
+        summary: "Merkurius adalah planet terkecil di tata surya kita dan hanya sedikit lebih besar dari Bulan Bumi. Permukaannya penuh dengan kawah seperti Bulan karena banyak meteor yang menghantamnya. Siang hari bisa mencapai 430°C karena dekat dengan Matahari, tapi malam hari sangat dingin hingga -180°C! Merkurius tidak punya atmosfer tebal, jadi tidak ada udara untuk bernapas. Satu hari di Merkurius (rotasi) sama dengan 59 hari di Bumi, tapi satu tahunnya hanya 88 hari karena orbitnya cepat."
+      },
+      {
+        name: "Venus",
+        size: 30,
+        color: "yellow",
+        orbit: 150,
+        desc: "Venus adalah planet yang sangat panas dengan awan tebal. Disebut bintang pagi atau sore!",
+        satellites: [],
+        summary: "Venus sering disebut kembaran Bumi karena ukurannya hampir sama, tapi sangat berbeda! Suhunya bisa mencapai 470°C karena efek rumah kaca dari atmosfer tebal yang penuh karbon dioksida. Awan asam sulfat menutupi planet ini, membuatnya sangat terang di langit Bumi. Venus berputar sangat lambat, satu hari di Venus sama dengan 243 hari Bumi, dan anehnya, matahari terbit di barat! Tekanan di permukaannya sangat kuat, seperti berada di dasar laut dalam."
+      },
+      {
+        name: "Bumi",
+        size: 30,
+        color: "blue",
+        orbit: 200,
+        desc: "Bumi adalah rumah kita! Penuh dengan air, udara, dan kehidupan.",
+        satellites: ["Bulan"],
+        summary: "Bumi adalah satu-satunya planet yang diketahui memiliki kehidupan. Sekitar 71% permukaannya ditutupi air, itulah mengapa terlihat biru dari luar angkasa. Atmosfernya kaya akan oksigen, memungkinkan kita bernapas. Bumi memiliki medan magnet yang melindungi kita dari radiasi matahari. Satu hari di Bumi adalah 24 jam, dan satu tahun adalah 365,25 hari. Bulan, satelit alami kita, menyebabkan pasang surut dan membantu menstabilkan iklim."
+      },
+      {
+        name: "Mars",
+        size: 25,
+        color: "red",
+        orbit: 250,
+        desc: "Mars berwarna merah karena besi berkarat. Ada gunung berapi raksasa!",
+        satellites: ["Phobos", "Deimos"],
+        summary: "Mars dikenal sebagai Planet Merah karena oksida besi (karat) di permukaannya. Ini adalah planet berbatu dengan gunung berapi terbesar di tata surya, Olympus Mons, yang tingginya 22 km! Mars memiliki lembah besar bernama Valles Marineris, sepanjang benua Amerika. Dulu mungkin ada air cair di permukaannya, dan sekarang para ilmuwan mencari tanda-tanda kehidupan mikroba. Mars memiliki dua bulan kecil, Phobos dan Deimos, yang bentuknya tidak beraturan."
+      },
+      {
+        name: "Jupiter",
+        size: 50,
+        color: "orange",
+        orbit: 300,
+        desc: "Jupiter adalah raksasa gas dengan badai besar.",
+        satellites: ["Ganymede", "Europa", "Io", "Callisto"],
+        summary: "Jupiter adalah planet terbesar di tata surya, bisa memuat 1.300 Bumi di dalamnya! Ini adalah raksasa gas yang sebagian besar terdiri dari hidrogen dan helium, seperti Matahari. Bercak Merah Besar di Jupiter adalah badai raksasa yang sudah berlangsung ratusan tahun, lebih besar dari Bumi. Jupiter memiliki 79 bulan, termasuk Ganymede, bulan terbesar di tata surya, yang bahkan lebih besar dari Merkurius. Europa mungkin memiliki lautan air di bawah permukaan esnya!"
+      },
+      {
+        name: "Saturnus",
+        size: 45,
+        color: "goldenrod",
+        orbit: 350,
+        desc: "Saturnus terkenal dengan cincinnya yang indah. Planet gas raksasa!",
+        satellites: ["Titan"],
+        summary: "Saturnus dikenal karena sistem cincinnya yang spektakuler, terbuat dari es dan batu. Ini adalah raksasa gas dengan diameter 9 kali Bumi. Saturnus memiliki lebih dari 80 bulan, dan Titan adalah yang terbesar, bahkan lebih besar dari Merkurius, dengan atmosfer tebal dan danau metana cair. Satu hari di Saturnus hanya 10,7 jam, tapi satu tahunnya sama dengan 29,5 tahun Bumi. Cincinnya bisa terlihat dengan teleskop kecil dari Bumi!"
+      },
+      {
+        name: "Uranus",
+        size: 40,
+        color: "cyan",
+        orbit: 400,
+        desc: "Uranus adalah planet es raksasa dengan warna biru-hijau.",
+        satellites: ["Miranda", "Ariel"],
+        summary: "Uranus adalah raksasa es dengan warna biru-hijau karena metana di atmosfernya. Planet ini sangat dingin, dengan suhu hingga -224°C. Uniknya, Uranus berputar miring hampir 98 derajat, seperti berguling di orbitnya! Ini memiliki 27 bulan yang dikenal, dinamai dari karakter Shakespeare seperti Miranda dan Ariel. Uranus memiliki cincin tipis yang sulit dilihat. Satu tahun di Uranus sama dengan 84 tahun Bumi karena orbitnya yang jauh."
+      },
+      {
+        name: "Neptunus",
+        size: 40,
+        color: "darkblue",
+        orbit: 450,
+        desc: "Neptunus adalah planet terjauh dengan lautan metana.",
+        satellites: ["Triton"],
+        summary: "Neptunus adalah planet terjauh dari Matahari, dengan warna biru tua karena metana di atmosfernya. Ini adalah raksasa es dengan angin tercepat di tata surya, mencapai 2.400 km/jam! Neptunus memiliki 14 bulan, dengan Triton sebagai yang terbesar, yang mungkin memiliki lautan di bawah permukaan esnya. Satu hari di Neptunus adalah 16 jam, tapi satu tahunnya adalah 165 tahun Bumi. Planet ini ditemukan karena perhitungan matematis sebelum teleskop melihatnya!"
+      },
+      {
+        name: "Pluto",
+        size: 15,
+        color: "lightgray",
+        orbit: 500,
+        desc: "Pluto adalah planet kerdil di tepi tata surya, kecil namun menarik!",
+        satellites: ["Charon"],
+        summary: "Pluto adalah planet kerdil di Sabuk Kuiper, jauh di tepi tata surya. Diameternya hanya sekitar 2.370 km, lebih kecil dari Bulan Bumi. Pluto memiliki permukaan es yang terdiri dari nitrogen, metana, dan karbon monoksida. Suhunya sangat dingin, sekitar -229°C. Pluto memiliki orbit eksentrik yang membawanya lebih dekat ke Matahari daripada Neptunus pada waktu tertentu. Charon, satelit terbesarnya, begitu besar sehingga Pluto dan Charon dianggap sebagai sistem biner."
+      },
+      {
+        name: "Bulan",
+        desc: "Satelit dari Bumi.",
+        summary: "Bulan adalah satelit alami Bumi, penuh dengan kawah akibat hantaman meteor. Permukaannya memiliki dataran luas yang disebut 'maria'. Bulan menyebabkan pasang surut di lautan Bumi dan membantu menstabilkan iklim. Manusia pernah mendarat di Bulan pada misi Apollo! Satu sisi Bulan selalu menghadap Bumi karena rotasinya terkunci."
+      },
+      {
+        name: "Phobos",
+        desc: "Satelit dari Mars.",
+        summary: "Phobos adalah bulan kecil Mars yang bentuknya tidak bulat, seperti kentang! Penuh dengan kawah, termasuk kawah besar bernama Stickney. Phobos sangat dekat dengan Mars dan mengorbitnya tiga kali sehari. Para ilmuwan percaya Phobos mungkin akan hancur menjadi cincin di masa depan."
+      },
+      {
+        name: "Deimos",
+        desc: "Satelit dari Mars.",
+        summary: "Deimos adalah bulan Mars yang lebih kecil dari Phobos, juga berbentuk tidak beraturan. Permukaannya lebih halus karena tertutup debu. Deimos mengorbit Mars lebih jauh dan lambat dibandingkan Phobos. Namanya berarti 'ketakutan' dalam mitologi Yunani."
+      },
+      {
+        name: "Ganymede",
+        desc: "Satelit dari Jupiter.",
+        summary: "Ganymede adalah bulan terbesar di tata surya, lebih besar dari Merkurius! Ini memiliki medan magnet sendiri dan mungkin lautan air di bawah permukaan esnya. Permukaannya penuh dengan kawah dan garis-garis retakan. Ganymede adalah satu-satunya bulan yang diketahui memiliki magnetosfer."
+      },
+      {
+        name: "Europa",
+        desc: "Satelit dari Jupiter.",
+        summary: "Europa memiliki permukaan es yang sangat halus, mungkin menyembunyikan lautan air cair di bawahnya. Ini adalah kandidat utama untuk mencari kehidupan di luar Bumi! Permukaannya penuh dengan garis-garis merah yang misterius, mungkin akibat aktivitas geologis."
+      },
+      {
+        name: "Io",
+        desc: "Satelit dari Jupiter.",
+        summary: "Io adalah bulan paling vulkanik di tata surya, dengan ratusan gunung berapi aktif! Permukaannya penuh dengan lava dan warna kuning karena belerang. Aktivitas vulkaniknya disebabkan oleh tarikan gravitasi dari Jupiter dan bulan-bulan lain."
+      },
+      {
+        name: "Callisto",
+        desc: "Satelit dari Jupiter.",
+        summary: "Callisto adalah bulan dengan kawah terbanyak di tata surya. Permukaannya sangat tua dan penuh dengan bekas hantaman meteor. Mungkin ada lautan di bawah permukaannya, tetapi tidak seaktif Europa. Callisto adalah tempat yang tenang dibandingkan bulan Jupiter lainnya."
+      },
+      {
+        name: "Titan",
+        desc: "Satelit dari Saturnus.",
+        summary: "Titan adalah bulan terbesar Saturnus, lebih besar dari Merkurius, dan satu-satunya bulan dengan atmosfer tebal, bahkan lebih tebal dari Bumi! Titan memiliki danau, sungai, dan lautan, tapi berisi metana, bukan air. Permukaannya sangat dingin, sekitar -180°C."
+      },
+      {
+        name: "Miranda",
+        desc: "Satelit dari Uranus.",
+        summary: "Miranda adalah bulan kecil dengan permukaan yang sangat aneh, penuh dengan tebing besar dan lembah. Salah satu tebingnya, Verona Rupes, adalah yang tertinggi di tata surya, setinggi 20 km! Miranda sepertinya pernah mengalami aktivitas geologis besar di masa lalu."
+      },
+      {
+        name: "Ariel",
+        desc: "Satelit dari Uranus.",
+        summary: "Ariel memiliki permukaan yang relatif muda dengan banyak lembah dan retakan. Mungkin pernah ada aktivitas geologis seperti aliran es. Ariel adalah salah satu bulan Uranus yang paling cerah karena permukaan esnya memantulkan banyak cahaya."
+      },
+      {
+        name: "Triton",
+        desc: "Satelit dari Neptunus.",
+        summary: "Triton adalah bulan terbesar Neptunus dan sangat unik karena mengorbit berlawanan arah dengan rotasi Neptunus. Permukaannya sangat dingin, sekitar -235°C, dan memiliki geyser yang menyemburkan nitrogen. Triton mungkin dulunya adalah objek dari Sabuk Kuiper yang ditangkap Neptunus."
+      },
+      {
+        name: "Charon",
+        desc: "Satelit dari Pluto.",
+        summary: "Charon adalah satelit terbesar Pluto, dengan diameter sekitar setengah ukuran Pluto, menjadikannya sistem biner dengan Pluto. Permukaannya terdiri dari es air dan memiliki ngarai besar serta kawah. Charon sangat unik karena Pluto dan Charon saling terkunci secara gravitasi, selalu menunjukkan sisi yang sama satu sama lain."
+      }
+    ];
+
+    let currentBody = null;
+    let zoomScale = 1;
+    let zoomMin = 0.2;
+    let zoomMax = 3;
+    let lastTouchDistance = 0;
+    let stars = [];
+
+    function setup() {
+      let canvas = createCanvas(windowWidth, windowHeight);
+      canvas.parent("solar-system");
+      textAlign(CENTER);
+      textSize(20);
+      noStroke();
+      // Initialize stars
+      for (let i = 0; i < 200; i++) {
+        stars.push({
+          x: random(width),
+          y: random(height),
+          size: random(1, 3),
+          alpha: random(50, 255),
+          twinkleSpeed: random(0.01, 0.05)
+        });
+      }
+    }
+
+    function windowResized() {
+      resizeCanvas(windowWidth, windowHeight);
+      // Reinitialize stars to cover new canvas size
+      stars = [];
+      for (let i = 0; i < 200; i++) {
+        stars.push({
+          x: random(width),
+          y: random(height),
+          size: random(1, 3),
+          alpha: random(50, 255),
+          twinkleSpeed: random(0.01, 0.05)
+        });
+      }
+    }
+
+    function mouseWheel(event) {
+      let zoomDelta = event.delta * -0.001;
+      zoomScale += zoomDelta;
+      zoomScale = constrain(zoomScale, zoomMin, zoomMax);
+      return false;
+    }
+
+    function touchStarted() {
+      if (touches.length === 2) {
+        lastTouchDistance = dist(touches[0].x, touches[0].y, touches[1].x, touches[1].y);
+      } else if (touches.length === 1) {
+        let adjustedTouchX = (touches[0].x - width / 2) / zoomScale + width / 2;
+        let adjustedTouchY = (touches[0].y - height / 2) / zoomScale + height / 2;
+        selectCelestialBody(adjustedTouchX, adjustedTouchY);
+      }
+      return false;
+    }
+
+    function touchMoved() {
+      if (touches.length === 2) {
+        let currentTouchDistance = dist(touches[0].x, touches[0].y, touches[1].x, touches[1].y);
+        let zoomDelta = (currentTouchDistance - lastTouchDistance) * 0.005;
+        zoomScale += zoomDelta;
+        zoomScale = constrain(zoomScale, zoomMin, zoomMax);
+        lastTouchDistance = currentTouchDistance;
+      }
+      return false;
+    }
+
+    function mousePressed() {
+      let adjustedMouseX = (mouseX - width / 2) / zoomScale + width / 2;
+      let adjustedMouseY = (mouseY - height / 2) / zoomScale + height / 2;
+      selectCelestialBody(adjustedMouseX, adjustedMouseY);
+      return false;
+    }
+
+    function selectCelestialBody(x, y) {
+      celestialBodies.filter(p => !p.desc.startsWith("Satelit")).forEach((body, index) => {
+        let bodyX = width / 2 + (body.orbit * cos(frameCount / (60 + index * 10)));
+        let bodyY = height / 2 + (body.orbit * sin(frameCount / (60 + index * 10)));
+        if (dist(x, y, bodyX, bodyY) < body.size / 2) {
+          currentBody = body;
+          document.getElementById("solar-system").classList.add("hidden");
+          document.getElementById("planet-card").classList.remove("hidden");
+          document.getElementById("planet-title").textContent = body.name;
+          document.getElementById("planet-desc").textContent = body.desc;
+          document.getElementById("popup-title").textContent = `Ringkasan ${body.name}`;
+          document.getElementById("popup-caption").textContent = body.summary;
+        }
+        body.satellites.forEach((sat, i) => {
+          let sx = bodyX + body.size * 1.5 * cos(frameCount / 20 + i * 2);
+          let sy = bodyY + body.size * 1.5 * sin(frameCount / 20 + i * 2);
+          if (dist(x, y, sx, sy) < body.size / 4) {
+            const satellite = celestialBodies.find(p => p.name === sat);
+            currentBody = satellite;
+            document.getElementById("solar-system").classList.add("hidden");
+            document.getElementById("planet-card").classList.remove("hidden");
+            document.getElementById("planet-title").textContent = sat;
+            document.getElementById("planet-desc").textContent = satellite.desc;
+            document.getElementById("popup-title").textContent = `Ringkasan ${sat}`;
+            document.getElementById("popup-caption").textContent = satellite.summary;
+          }
+        });
+      });
+    }
+
+    function draw() {
+      background(0, 0, 50);
+      // Draw twinkling stars
+      stars.forEach(star => {
+        star.alpha = 127 + 128 * sin(frameCount * star.twinkleSpeed);
+        fill(255, 255, 255, star.alpha);
+        ellipse(star.x, star.y, star.size, star.size);
+      });
+      translate(width / 2, height / 2);
+      scale(zoomScale);
+      translate(-width / 2, -height / 2);
+      celestialBodies.filter(p => !p.desc.startsWith("Satelit")).forEach((body, index) => {
+        if (body.orbit > 0) {
+          noFill();
+          stroke(255, 255, 255, 50);
+          ellipse(width / 2, height / 2, body.orbit * 2, body.orbit * 2);
+          noStroke();
+        }
+        fill(body.color);
+        let x = width / 2 + (body.orbit * cos(frameCount / (60 + index * 10)));
+        let y = height / 2 + (body.orbit * sin(frameCount / (60 + index * 10)));
+        ellipse(x, y, body.size, body.size);
+        fill(255);
+        stroke(0);
+        strokeWeight(max(0.3, 0.5 / zoomScale));
+        textSize(max(8, 12 / zoomScale));
+        textFont('Comic Neue');
+        text(body.name, x, y + body.size / 2 + 15 / zoomScale);
+        noStroke();
+        body.satellites.forEach((sat, i) => {
+          fill("white");
+          let sx = x + body.size * 1.5 * cos(frameCount / 20 + i * 2);
+          let sy = y + body.size * 1.5 * sin(frameCount / 20 + i * 2);
+          ellipse(sx, sy, body.size / 2, body.size / 2);
+          fill(255);
+          stroke(0);
+          strokeWeight(max(0.3, 0.5 / zoomScale));
+          textSize(max(6, 10 / zoomScale));
+          textFont('Comic Neue');
+          text(sat, sx, sy + body.size / 4 + 12 / zoomScale);
+          noStroke();
+        });
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      const summaryBtn = document.getElementById("summary-btn");
+      const backBtn = document.getElementById("back-btn");
+      const popupBackBtn = document.getElementById("popup-back-btn");
+
+      function handleSummaryClick() {
+        document.getElementById("planet-card").classList.add("hidden");
+        document.getElementById("popup").classList.remove("hidden");
+      }
+
+      function handleBackClick() {
+        document.getElementById("planet-card").classList.add("hidden");
+        document.getElementById("popup").classList.add("hidden");
+        document.getElementById("solar-system").classList.remove("hidden");
+      }
+
+      function handlePopupBackClick() {
+        document.getElementById("popup").classList.add("hidden");
+        document.getElementById("planet-card").classList.remove("hidden");
+      }
+
+      ['click', 'touchstart'].forEach(eventType => {
+        summaryBtn.addEventListener(eventType, handleSummaryClick);
+        backBtn.addEventListener(eventType, handleBackClick);
+        popupBackBtn.addEventListener(eventType, handlePopupBackClick);
+      });
+
+      const audio = document.getElementById('bg-audio');
+
+      function tryPlayAudio() {
+        audio.play().then(() => {
+          console.log('Audio berhasil diputar');
+        }).catch(err => {
+          console.error('Gagal memutar audio:', err);
+        });
+      }
+
+      tryPlayAudio();
+
+      ['click', 'touchstart'].forEach(eventType => {
+        document.body.addEventListener(eventType, function () {
+          if (audio.paused) {
+            tryPlayAudio();
+          }
+        }, { once: true });
+      });
+
+      audio.addEventListener('error', (err) => {
+        console.error('Error memuat audio:', err);
+        alert('Gagal memuat file audio. Pastikan file skyhigh.mp3 ada di direktori yang benar.');
+      });
+
+      const style = document.createElement("style");
+      style.textContent = `
+        @import url('https://fonts.googleapis.com/css2?family=Comic+Neue&display=swap');
+        .font-comic { font-family: 'Comic Neue', cursive; }
+      `;
+      document.head.appendChild(style);
+    });
+  </script>
+</body>
+</html>

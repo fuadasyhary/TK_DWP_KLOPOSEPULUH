@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="screen-orientation" content="landscape">
+  <title>Game Mencari Barang!</title>
+  <link rel="icon" type="image/png" href="https://cdn-icons-png.freepik.com/512/782/782796.png">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: #f0f0f0;
+      margin: 0;
+    }
+    #game-container {
+      position: relative;
+      width: 900px;
+      height: 675px;
+      margin: 20px auto;
+      background-color: #fff;
+      border: 2px solid #000;
+    }
+    .item {
+      position: absolute;
+      font-size: 16px;
+      cursor: pointer;
+      user-select: none;
+      width: 45px;
+      height: 45px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: rgba(255, 255, 255, 0.8);
+      border: 1px solid #000;
+      border-radius: 5px;
+    }
+    #game-info {
+      margin: 20px;
+      font-size: 20px;
+    }
+    .watermark {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      color: rgba(0, 0, 0, 0.3);
+      font-size: 12px;
+      font-family: Arial, sans-serif;
+      z-index: 1000;
+    }
+    .watermark a {
+      color: rgba(0, 0, 0, 0.5);
+      text-decoration: none;
+    }
+    .watermark a:hover {
+      color: rgba(0, 0, 0, 0.8);
+      text-decoration: underline;
+    }
+    #start-button, #restart-button, #play-button {
+      padding: 8px 16px;
+      font-size: 16px;
+      cursor: pointer;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }
+    #start-button:hover, #restart-button:hover, #play-button:hover {
+      background-color: #45a049;
+    }
+    #restart-button {
+      display: none;
+    }
+    #target-item {
+      font-size: 30px;
+      margin: 10px;
+    }
+    #mobile-popup {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
+      color: white;
+      z-index: 2000;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      flex-direction: column;
+    }
+    #mobile-popup p {
+      font-size: 20px;
+      margin: 20px;
+    }
+    @media only screen and (max-width: 768px) {
+      #game-container {
+        width: 100vw;
+        height: 100vh;
+        margin: 0;
+      }
+      #mobile-popup {
+        display: flex;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="mobile-popup">
+    <p>Harap putar perangkat ke mode landscape untuk bermain game ini!</p>
+    <button id="play-button">Main Sekarang</button>
+  </div>
+  <h1>Game Mencari Barang!</h1>
+  <button id="start-button">Mulai Main!</button>
+  <div id="game-info">
+    Skor: <span id="score">0</span> / 250<br>
+    Waktu: <span id="time">240</span>
+  </div>
+  <div class="watermark"><a href="https://id.linkedin.com/in/mochamad-fuad-asyhary">By Mochamad Fuad Asyhary</a></div>
+  <div id="target-item">Cari barangnya!</div>
+  <div id="game-container"></div>
+  <button id="restart-button">Main Lagi!</button>
+
+  <script type="text/javascript">
+    // Lock orientation to landscape on mobile devices
+    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+      if (screen.orientation && screen.orientation.lock) {
+        screen.orientation.lock('landscape').catch(function(error) {
+          console.log('Orientation lock failed: ', error);
+        });
+      }
+    }
+
+    var gk_isXlsx = false;
+    var gk_xlsxFileLookup = {};
+    var gk_fileData = {};
+    function filledCell(cell) {
+      return cell !== '' && cell != null;
+    }
+    function loadFileData(filename) {
+      if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+        try {
+          var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+          var firstSheetName = workbook.SheetNames[0];
+          var worksheet = workbook.Sheets[firstSheetName];
+          var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+          var filteredData = jsonData.filter(row => row.some(filledCell));
+          var headerRowIndex = filteredData.findIndex((row, index) =>
+            row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+          );
+          if (headerRowIndex === -1 || headerRowIndex > 25) {
+            headerRowIndex = 0;
+          }
+          var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex));
+          csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+          return csv;
+        } catch (e) {
+          console.error(e);
+          return "";
+        }
+      }
+      return gk_fileData[filename] || "";
+    }
+
+    const gameContainer = document.getElementById('game-container');
+    const scoreDisplay = document.getElementById('score');
+    const timeDisplay = document.getElementById('time');
+    const startButton = document.getElementById('start-button');
+    const restartButton = document.getElementById('restart-button');
+    const targetItemDisplay = document.getElementById('target-item');
+    const mobilePopup = document.getElementById('mobile-popup');
+    const playButton = document.getElementById('play-button');
+
+    let score = 0;
+    let time = 240;
+    let gameActive = false;
+    let timer;
+    let items = [];
+    let targetItem;
+
+    const baseIcons = [
+      '🍎', '🍐', '🍊', '🍋', '🍌', '🍉', '🍇', '🍓', '🍒', '🍑',
+      '🥭', '🍍', '🥥', '🥝', '🍅', '🍆', '🥑', '🥕', '🌽', '🌶️',
+      '🥔', '🥖', '🥐', '🍔', '🍟', '🍕', '🥪', '🥗', '🍣', '🍜',
+      '🍦', '🥧', '🍰', '🍫', '🍬', '🍭', '🍩', '🍪', '🥛', '☕',
+      '🍵', '🍺', '🍷', '🥂', '🥤', '🍴', '🥄', '🔪', '🧂', '🍽️'
+    ];
+    const colors = ['#ffcccc', '#ccffcc', '#ccccff', '#ffffcc'];
+    const icons = [];
+    for (let i = 0; i < 1; i++) {
+      baseIcons.forEach((icon, index) => {
+        icons.push({ emoji: icon, id: `${icon}-${i+1}`, color: colors[i % colors.length] });
+      });
+    }
+
+    function startGame() {
+      if (gameActive) return;
+      gameActive = true;
+      score = 0;
+      time = 240;
+      scoreDisplay.textContent = score;
+      timeDisplay.textContent = time;
+      startButton.style.display = 'none';
+      restartButton.style.display = 'none';
+      gameContainer.innerHTML = '';
+      items = [];
+      generateItems();
+      selectNewTarget();
+      timer = setInterval(updateTimer, 1000);
+    }
+
+    function generateItems() {
+      for (let i = 0; i < 50; i++) {
+        const item = document.createElement('div');
+        item.classList.add('item');
+        item.textContent = icons[i].emoji;
+        item.style.backgroundColor = icons[i].color;
+        let x, y, isOverlapping;
+        do {
+          x = Math.random() * (900 - 45);
+          y = Math.random() * (675 - 45);
+          isOverlapping = items.some(existing => {
+            const ex = parseFloat(existing.element.style.left);
+            const ey = parseFloat(existing.element.style.top);
+            return Math.abs(x - ex) < 45 && Math.abs(y - ey) < 45;
+          });
+        } while (isOverlapping);
+        item.style.left = x + 'px';
+        item.style.top = y + 'px';
+        item.addEventListener('click', () => checkItem(item, icons[i].id));
+        gameContainer.appendChild(item);
+        items.push({ element: item, id: icons[i].id, emoji: icons[i].emoji });
+      }
+    }
+
+    function selectNewTarget() {
+      const remainingItems = items.filter(item => item.element.parentNode);
+      if (remainingItems.length === 0) {
+        endGame(true);
+        return;
+      }
+      targetItem = remainingItems[Math.floor(Math.random() * remainingItems.length)];
+      targetItemDisplay.textContent = `Cari: ${targetItem.emoji}`;
+    }
+
+    function checkItem(element, id) {
+      if (!gameActive) return;
+      if (id === targetItem.id) {
+        score += 5;
+        scoreDisplay.textContent = score;
+        element.remove();
+        selectNewTarget();
+      }
+    }
+
+    function updateTimer() {
+      time--;
+      timeDisplay.textContent = time;
+      if (time <= 0) {
+        endGame(false);
+      }
+    }
+
+    function endGame(won) {
+      gameActive = false;
+      clearInterval(timer);
+      targetItemDisplay.textContent = won ? 'Selamat! Kamu Menang!' : 'Waktu Habis!';
+      restartButton.style.display = 'block';
+    }
+
+    // Handle mobile popup
+    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+      playButton.addEventListener('click', () => {
+        if (screen.orientation.type.includes('landscape')) {
+          mobilePopup.style.display = 'none';
+          startGame();
+        } else {
+          alert('Harap putar perangkat ke mode landscape untuk bermain!');
+        }
+      });
+    } else {
+      mobilePopup.style.display = 'none';
+    }
+
+    startButton.addEventListener('click', startGame);
+    restartButton.addEventListener('click', startGame);
+  </script>
+  <!-- AUDIO -->
+  <audio id="bg-audio" src="skyhigh.mp3" loop hidden></audio>
+  <!-- SCRIPT UNTUK AUTOPLAY SETELAH KLIK -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.body.addEventListener('click', function () {
+        var audio = document.getElementById('bg-audio');
+        audio.play().catch(err => {
+          console.log('Autoplay diblokir:', err);
+        });
+      }, { once: true });
+    });
+  </script>
+</body>
+</html>

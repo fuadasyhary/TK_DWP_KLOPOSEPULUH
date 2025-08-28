@@ -1,0 +1,2152 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jelajahi Dunia</title>
+  <link rel="icon" type="image/png" href="https://cdn-icons-png.freepik.com/512/5352/5352016.png">
+  <style>
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #e0f7fa;
+    margin: 0;
+    padding: 20px;
+    text-align: center;
+  }
+  h1 {
+    color: #1e88e5;
+    font-size: 2.5em;
+    margin-bottom: 20px;
+  }
+  h2 {
+    color: #d81b60;
+    font-size: 2em;
+    margin: 20px 0;
+  }
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .card {
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    padding: 15px;
+    width: 300px;
+    cursor: pointer;
+    transition: transform 0.3s;
+  }
+  .card:hover {
+    transform: scale(1.05);
+    background-color: #fff176;
+  }
+  .card h2, .card h3, .card h4 {
+    margin: 10px 0;
+    color: #d81b60;
+  }
+  .card p {
+    color: #424242;
+    font-size: 0.9em;
+    line-height: 1.5;
+  }
+  .card .summary {
+    font-style: italic;
+    color: #0288d1;
+    margin-top: 5px;
+  }
+  .attraction-details p {
+    margin: 5px 0;
+  }
+  .back-btn {
+    background-color: #1e88e5;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 10px;
+  }
+  .watermark {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    color: rgba(0, 0, 0, 0.3);
+    font-size: 12px;
+    font-family: Arial, sans-serif;
+    z-index: 1000;
+  }
+  .watermark a {
+    color: rgba(0, 0, 0, 0.5);
+    text-decoration: none;
+  }
+  .watermark a:hover {
+    color: rgba(0, 0, 0, 0.8);
+    text-decoration: underline;
+  }
+  .back-btn:hover {
+    background-color: #1565c0;
+  }
+  .country-name {
+    display: flex;
+    align-items: center;
+  }
+  .flag-emoji {
+    font-size: 1.5em; /* Ukuran lebih besar untuk kejelasan */
+    margin-right: 10px;
+    line-height: 1; /* Mencegah misalignment */
+    vertical-align: middle;
+  }
+  /* Mobile view: two cards per row */
+  @media (max-width: 640px) {
+    .card {
+      width: calc(50% - 20px);
+      padding: 10px;
+    }
+    .card h2, .card h3 {
+      font-size: 1.2em;
+    }
+    .card p {
+      font-size: 0.85em;
+    }
+    .flag-emoji {
+      font-size: 1.2em; /* Ukuran sedikit lebih kecil di mobile */
+    }
+  }
+</style>
+</head>
+<body>
+  <h1 id="main-title">Jelajahi Dunia!</h1>
+  <button class="back-btn" style="display: none;" onclick="goBack()">Kembali</button>
+  <div class="container" id="content">
+    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
+  </div>
+  <div class="watermark"><a href="https://id.linkedin.com/in/mochamad-fuad-asyhary">By Mochamad Fuad Asyhary</a></div>
+  
+  <script>
+    const data = {
+      continents: [
+        {
+          name: "Asia",
+          summary: "Benua terbesar dengan lebih dari 50 negara, penuh budaya dan gunung tertinggi!",
+          countries: [
+            { name: "Afghanistan", flag: "🇦🇫", summary: "Ibu kota: Kabul. Mata uang: Afghani (AFN). Negara pegunungan dengan sejarah kuno.", attractions: [{ name: "Masjid Biru Mazar-i-Sharif", details: "Masjid indah di Mazar-i-Sharif, terkenal dengan ubin birunya yang memukau. Tempat suci yang penuh sejarah Islam." }] },
+            { name: "Arab Saudi", flag: "🇸🇦", summary: "Ibu kota: Riyadh. Mata uang: Riyal Saudi (SAR). Negara dengan kota suci Mekah dan Madinah.", attractions: [{ name: "Masjidil Haram", details: "Masjid terbesar di dunia di Mekah, pusat ibadah umat Islam dengan Ka'bah di tengahnya. Tempat ziarah yang sangat penting." }] },
+            { name: "Armenia", flag: "🇦🇲", summary: "Ibu kota: Yerevan. Mata uang: Dram (AMD). Negara dengan gereja kuno dan pegunungan.", attractions: [{ name: "Katedral Etchmiadzin", details: "Katedral tertua di dunia di Yerevan, dibangun pada tahun 301. Pusat agama Armenia yang penuh sejarah." }] },
+            { name: "Azerbaijan", flag: "🇦🇿", summary: "Ibu kota: Baku. Mata uang: Manat (AZN). Negara di persimpangan Eropa dan Asia.", attractions: [{ name: "Kota Tua Baku", details: "Kawasan bersejarah di Baku dengan Istana Shirvanshah dan Menara Maiden. Situs Warisan Dunia UNESCO." }] },
+            { name: "Bahrain", flag: "🇧🇭", summary: "Ibu kota: Manama. Mata uang: Dinar Bahrain (BHD). Negara pulau kecil dengan budaya maritim.", attractions: [{ name: "Benteng Bahrain", details: "Situs arkeologi di Manama, menunjukkan sejarah 4.000 tahun. Dekat dengan pohon kehidupan yang misterius." }] },
+            { name: "Bangladesh", flag: "🇧🇩", summary: "Ibu kota: Dhaka. Mata uang: Taka (BDT). Negara dengan sungai dan delta besar.", attractions: [{ name: "Sundarbans", details: "Hutan mangrove terbesar di dunia, rumah bagi harimau Bengal. Kamu bisa naik perahu untuk melihat satwa liar." }] },
+            { name: "Bhutan", flag: "🇧🇹", summary: "Ibu kota: Thimphu. Mata uang: Ngultrum (BTN). Negara Himalaya dengan budaya damai.", attractions: [{ name: "Paro Taktsang", details: "Biara suci di Lembah Paro, terletak di tebing pada ketinggian 3.120 meter. Disebut Sarang Harimau." }] },
+            { name: "Brunei", flag: "🇧🇳", summary: "Ibu kota: Bandar Seri Begawan. Mata uang: Dolar Brunei (BND). Negara kecil kaya dengan masjid megah.", attractions: [{ name: "Masjid Omar Ali Saifuddien", details: "Masjid megah di Bandar Seri Begawan dengan kubah emas. Terletak di tepi laguna yang indah." }] },
+            { name: "India", flag: "🇮🇳", summary: "Ibu kota: New Delhi. Mata uang: Rupee India (INR). Negara penuh warna dengan festival dan sejarah.", attractions: [{ name: "Taj Mahal", details: "Makam megah di Agra, dibangun oleh Kaisar Shah Jahan untuk istrinya Mumtaz. Terapakan dari marmer putih, terlihat indah saat matahari terbit." }, { name: "Kota Jaipur", details: "Kota merah muda di Rajasthan, terkenal dengan benteng Amber dan istana Hawa Mahal. Pasar pasar dan warna." }] },
+            { name: "Indonesia", flag: "🇮🇩", summary: "Ibu kota: Jakarta. Mata uang: Rupiah (IDR). Negara kepulauan dengan ribuan pulau indah.", attractions: [{ name: "Candi Borobudur", details: "Candi Buddha terbesar di dunia, terletak di Magelang, Jawa Tengah. Dibangun abad ke-9 dengan ribuan relief." }, { name: "Pantai Kuta", detailstoon: "Pulau di Bali dengan ombak pantai cocok untuk berselancar. Dekat dengan kafe dan pasar." }] },
+            { name: "Irak", flag: "🇮🇶", summary: "Ibu kota: Baghdad. Mata uang: Dinar Irak (IQD). Negara dengan sejarah Mesopotamia kuno.", attractions: [{ name: "Ziggurat Ur", details: "Struktur kuno di selatan Irak, dibangun 4.000 tahun lalu. Menunjukkan kehebatan peradaban Sumeria." }] },
+            { name: "Iran", flag: "🇮🇷", summary: "Ibu kota: Teheran. Mata uang: Rial Iran (IRR). Negara dengan istana dan kebun Persia.", attractions: [{ name: "Persepolis", details: "Kota kuno di Fars, ibu kota Kekaisaran Persia. Penuh dengan pilar dan relief bersejarah." }] },
+            { name: "Israel", flag: "🇮🇱", summary: "Ibu kota: Yerusalem. Mata uang: Shekel Baru (ILS). Negara dengan situs suci tiga agama.", attractions: [{ name: "Kota Tua Yerusalem", title: "Detail Kota Tua", details: "Kawasan bersejarah dengan Tembok Ratapan, Masjid Al-Aqsa, dan Gereja Makam Suci. Pusat spiritual dunia." }],
+ },
+            { name: "Jepang", flag: "🇯🇵",summary: "Ibu kota: Tokyo. Mata uang: Yen (JPY). Negara dengan teknologi dan bunga sakura.", attractions: [{ name: "Gunung Fuji", details: "Gunung tertinggi di Jepang (3.776 m), terletak di Shizuoka dan Yamanashi. Indah untuk pendakian di musim panas." }, { name: "Tokyo Disneyland", details: "Taman hiburan di Chiba, dekat Tokyo, dengan wahana seru dan parade karakter Disney." }] },
+            { name: "Kazakhstan", flag: "🇰🇿", summary: "Ibu kota: Astana. Mata uang: Tenge (KZT). Negara stepa dengan arsitektur modern.", attractions: [{ name: "Baiterek Tower", details: "Menara ikonik di Astana, simbol kemajuan Kazakhstan. Kamu bisa naik ke puncak untuk melihat kota." }] },
+            { name: "Kirgistan", flag: "🇰🇬", summary: "Ibu kota: Bishkek. Mata uang: Som (KGS). Negara pegunungan dengan budaya nomaden.", attractions: [{ name: "Danau Issyk-Kul", details: "Danau alpine terbesar kedua di dunia, dikelilingi pegunungan. Cocok untuk berenang dan berkemah." }] },
+            { name: "Korea Selatan", flag: "🇰🇷", summary: "Ibu kota: Seoul. Mata uang: Won (KRW). Negaara dengan K-pop dan teknologi canggih.", attractions: [{ name: "Istana Gyeongbokgung", detaiil: "Istana bersejarah di Seoul, dibangun pada abad ke-14. Kamu bisa melihat upacara pergantian penjaga." },
+            {
+              name: "Korea Utara",
+              flag: "🇰🇵",
+              summary: "Ibu kota: Pyongyang. Mata uang: Won (KPW). Negara dengan monumen besar dan sejarah unik.",
+              attractions: [
+                {
+                  name: "Menara Juche",
+                  details: "Monumen di Pyongyang, simbol ideologi Juche. Kamu bisa naik untuk melihat pemandangan kota."
+                }
+              ]
+            },
+            {
+              name: "Kuwait",
+              flag: "🇰🇼",
+              summary: "Ibu kota: Kota Kuwait. Mata uang: Dinar Kuwait (KWD). Negara kaya dengan menara modern.",
+              attractions: [
+                {
+                  name: "Kuwait Towers",
+                  details: "Tiga menara ikonik di Kota Kuwait, dengan pemandangan Teluk Persia. Ada restoran di puncak!"
+                }
+              ]
+            },
+            {
+              name: "Laos",
+              flag: "🇱🇦",
+              summary: "Ibu kota: Vientiane. Mata uang: Kip (LAK). Negara dengan kuil Buddha dan sungai.",
+              attractions: [
+                {
+                  name: "Pha That Luang",
+                  details: "Stupa emas di Vientiane, simbol nasional Laos. Tempat suci yang penuh kedamaian."
+                }
+              ]
+            },
+            {
+              name: "Libanon",
+              flag: "🇱🇧",
+              summary: "Ibu kota: Beirut. Mata uang: Pound Lebanon (LBP). Negara dengan pantai dan situs kuno.",
+              attractions: [
+                {
+                  name: "Baalbek",
+                  details: "Kota kuno di Lembah Bekaa dengan kuil Romawi megah. Situs Warisan Dunia UNESCO."
+                }
+              ]
+            },
+            {
+              name: "Maladewa",
+              flag: "🇲🇻",
+              summary: "Ibu kota: Male. Mata uang: Rufiyaa (MVR). Negara kepulauan dengan pantai.",
+              attractions: [
+                {
+                  name: "Atol Maladewa",
+                  details: "Kumpulan pulau dengan laguna biru dan terumbu karang. Cocok untuk snorkeling dan berenang."
+                }
+              ]
+            },
+            {
+              name: "Malaysia",
+              flag: "🇲🇾",
+              summary: "Ibu kota: Kuala Lumpur. Mata uang: Ringgit (MYR). Negara dengan menara kembar dan hutan.",
+              attractions: [
+                {
+                  name: "Menara Kembar Petronas",
+                  details: "Menara kembar tertinggi di dunia di Kuala Lumpur. Ada jembatan langit untuk melihat kota."
+                }
+              ]
+            },
+            {
+              name: "Mongolia",
+              flag: "🇲🇳",
+              summary: "Ibu kota: Ulan Bator. Mata uang: Tögrög (MNT). Negara stepa dengan budaya nomaden.",
+              attractions: [
+                {
+                  name: "Taman Nasional Gorkhi-Terelj",
+                  details: "Taman dekat Ulan Bator dengan batu besar dan yurt tradisional. Cocok untuk berkemah."
+                }
+              ]
+            },
+            {
+              name: "Myanmar",
+              flag: "🇲🇲",
+              summary: "Ibu kota: Naypyidaw. Mata uang: Kyat (MMK). Negara dengan pagoda emas.",
+              attractions: [
+                {
+                  name: "Pagoda Shwedagon",
+                  details: "Pagoda emas di Yangon, situs suci Buddha dengan stupa setinggi 99 meter."
+                }
+              ]
+            },
+            {
+              name: "Nepal",
+              flag: "🇳🇱",
+              summary: "Ibu kota: Kathmandu. Mata uang: Rupee Nepal (NPR). Negara Himalaya dengan kuil kuno.",
+              attractions: [
+                {
+                  name: "Puncak Everest",
+                  details: "Gunung tertinggi di dunia (8.848 m) di Himalaya. Cocok untuk melihat pemandangan megah."
+                }
+              ]
+            },
+            {
+              name: "Oman",
+              flag: "🇴🇲",
+              summary: "Ibu kota: Muscat. Mata uang: Rial Oman (OMR). Negara dengan benteng dan gurun.",
+              attractions: [
+                {
+                  name: "Masjid Sultan Qaboos",
+                  details: "Masjid megah di Muscat dengan karpet raksasa dan lampu kristal besar."
+                }
+              ]
+            },
+            {
+              name: "Pakistan",
+              flag: "🇵🇰",
+              summary: "Ibu kota: Islamabad. Mata uang: Rupee Pakistan (PKR). Negara dengan pegunungan dan sejarah.",
+              attractions: [
+                {
+                  name: "Lahore Fort",
+                  details: "Benteng bersejarah di Lahore dengan arsitektur Mughal yang megah."
+                }
+              ]
+            },
+            {
+              name: "Qatar",
+              flag: "🇶🇦",
+              summary: "Ibu kota: Doha. Mata uang: Riyal Qatar (QAR). Negara dengan kota modern dan budaya Arab.",
+              attractions: [
+                {
+                  name: "Museum of Islamic Art",
+                  details: "Museum di Doha dengan koleksi seni Islam dari seluruh dunia. Desainnya sangat unik!"
+                }
+              ]
+            },
+            {
+              name: "Singapura",
+              flag: "🇸🇬",
+              summary: "Ibu kota: Singapura. Mata uang: Dolar Singapura (SGD). Kota-negara dengan taman dan teknologi.",
+              attractions: [
+                {
+                  name: "Gardens by the Bay",
+                  details: "Taman futuristik di Singapura dengan pohon super besar dan pertunjukan cahaya."
+                }
+              ]
+            },
+            {
+              name: "Sri Lanka",
+              flag: "🇱🇰",
+              summary: "Ibu kota: Kolombo. Mata uang: Rupee Sri Lanka (LKR). Negara dengan pantai dan kuil Buddha.",
+              attractions: [
+                {
+                  name: "Sigiriya",
+                  details: "Benteng batu di Dambulla, dibangun pada abad ke-5 dengan pemandangan luar biasa."
+                }
+              ]
+            },
+            {
+              name: "Suriah",
+              flag: "🇸🇾",
+              summary: "Ibu kota: Damaskus. Mata uang: Pound Suriah (SYP). Negara dengan kota kuno tertua di dunia.",
+              attractions: [
+                {
+                  name: "Kota Tua Damaskus",
+                  details: "Kawasan bersejarah dengan Masjid Umayyad dan pasar kuno. Penuh sejarah ribuan tahun."
+                }
+              ]
+            },
+            {
+              name: "Taiwan",
+              flag: "🇹🇼",
+              summary: "Ibu kota: Taipei. Mata uang: Dolar Taiwan (TWD). Negara dengan pasar malam dan teknologi.",
+              attractions: [
+                {
+                  name: "Taipei 101",
+                  details: "Gedung setinggi 508 meter di Taipei, pernah menjadi yang tertinggi di dunia. Ada observatorium di puncak."
+                }
+              ]
+            },
+            {
+              name: "Tajikistan",
+              flag: "🇹🇯",
+              summary: "Ibu kota: Dushanbe. Mata uang: Somoni (TJS). Negara pegunungan dengan pasar tradisional.",
+              attractions: [
+                {
+                  name: "Danau Iskanderkul",
+                  details: "Danau indah di Pegunungan Fann, cocok untuk hiking dan menikmati alam."
+                }
+              ]
+            },
+            {
+              name: "Thailand",
+              flag: "🇹🇭",
+              summary: "Ibu kota: Bangkok. Mata uang: Baht (THB). Negara dengan kuil emas dan makanan pedas.",
+              attractions: [
+                {
+                  name: "Grand Palace",
+                  details: "Kompleks istana megah di Bangkok, rumah bagi Raja Thailand dulu. Ada kuil Buddha Zamrud."
+                },
+                {
+                  name: "Pulau Phuket",
+                  details: "Pulau di selatan Thailand dengan pantai berpasir putih dan air jernih."
+                }
+              ]
+            },
+            {
+              name: "Timor-Leste",
+              flag: "🇹🇱",
+              summary: "Ibu kota: Dili. Mata uang: Dolar AS (USD). Negara muda dengan pantai dan sejarah.",
+              attractions: [
+                {
+                  name: "Pantai Cristo Rei",
+                  details: "Pantai di Dili dengan patung Yesus besar, mirip Christ the Redeemer di Brasil."
+                }
+              ]
+            },
+            {
+              name: "Turki",
+              flag: "🇹🇷",
+              summary: "Ibu kota: Ankara. Mata uang: Lira Turki (TRY). Negara dengan dua benua dan masjid indah.",
+              attractions: [
+                {
+                  name: "Hagia Sophia",
+                  details: "Bangunan bersejarah di Istanbul, dulunya gereja dan masjid. Kini museum dengan kubah megah."
+                }
+              ]
+            },
+            {
+              name: "Turkmenistan",
+              flag: "🇹🇲",
+              summary: "Ibu kota: Ashgabat. Mata uang: Manat (TMT). Negara dengan monumen marmer putih.",
+              attractions: [
+                {
+                  name: "Gerbang Neraka",
+                  details: "Kawah gas di Darvaza yang terus menyala sejak 1971. Pemandangan unik di gurun."
+                }
+              ]
+            },
+            {
+              name: "Uni Emirat Arab",
+              flag: "🇦🇪",
+              summary: "Ibu kota: Abu Dhabi. Mata uang: Dirham (AED). Negara dengan gedung pencakar langit.",
+              attractions: [
+                {
+                  name: "Burj Khalifa",
+                  details: "Gedung tertinggi di dunia di Dubai, setinggi 829 meter. Ada dek observasi di puncak."
+                }
+              ]
+            },
+            {
+              name: "Uzbekistan",
+              flag: "🇺🇿",
+              summary: "Ibu kota: Tashkent. Mata uang: Som (UZS). Negara dengan kota-kota Jalur Sutra.",
+              attractions: [
+                {
+                  name: "Registan Samarkand",
+                  details: "Alun-alun di Samarkand dengan tiga madrasah megah dari abad ke-15."
+                }
+              ]
+            },
+            {
+              name: "Vietnam",
+              flag: "🇻🇳",
+              summary: "Ibu kota: Hanoi. Mata uang: Bandung (VND). Negara dengan teluk dan makanan pho.",
+              attractions: [
+                {
+                  name: "Teluk Ha Long",
+                  details: "Teluk di utara Vietnam dengan ribuan pulau karst dan anda zamrud anda."
+                }
+              ]
+            },
+            {
+              name: "Yaman",
+              flag: "🇾🇪",
+              summary: "Ibu kota: Sanaa. Mata uang: Rial Yaman (YER). Negara dengan arsitektur kuno unik.",
+              attractions: [
+                {
+                  name: "Kota Tua Sanaa",
+                  details: "Kota bersejarah dengan rumah-rumah bata lumpur dan masjid kuno. Situs Warisan Dunia."
+                }
+              ]
+            },
+            {
+              name: "Yordania",
+              flag: "🇯🇴",
+              summary: "Ibu kota: Amman. Mata uang: Dinar Yordania (JOD). Negara dengan kota batu Petra.",
+              attractions: [
+                {
+                  name: "Petra",
+                  details: "Kota kuno di Ma'an, diukir di tebing batu merah. Dikenal sebagai kota mawar, situs UNESCO."
+                }
+              ]
+            }
+          ]
+        }]},
+        {
+          name: "Eropa",
+          summary: "Benua dengan 44 negara, penuh kastil dan sejarah kuno.",
+          countries: [
+            {
+              name: "Akrotiri dan Dhekelia",
+              flag: "🇬🇧",
+              summary: "Ibu kota: Episkopi. Mata uang: Euro (EUR). Wilayah Inggris di Pulau Siprus.",
+              attractions: [
+                {
+                  name: "Pantai Akrotiri",
+                  details: "Pantai indah di Akrotiri, cocok untuk berenang dan menikmati laut Mediterania."
+                }
+              ]
+            },
+            {
+              name: "Albania",
+              flag: "🇦🇱",
+              summary: "Ibu kota: Tirana. Mata uang: Lek (ALL). Negara dengan pantai dan pegunungan.",
+              attractions: [
+                {
+                  name: "Kota Berat",
+                  details: "Kota bersejarah dengan rumah-rumah putih Ottoman, dikenal sebagai kota seribu jendela."
+                }
+              ]
+            },
+            {
+              name: "Andorra",
+              flag: "🇦🇩",
+              summary: "Ibu kota: Andorra la Vella. Mata uang: Euro (EUR). Negara kecil di Pegunungan Pyrenees.",
+              attractions: [
+                {
+                  name: "Casa de la Vall",
+                  details: "Gedung parlemen bersejarah di Andorra la Vella, menunjukkan sejarah abad ke-16."
+                }
+              ]
+            },
+            {
+              name: "Austria",
+              flag: "🇦🇹",
+              summary: "Ibu kota: Wina. Mata uang: Euro (EUR). Negara dengan musik klasik dan istana.",
+              attractions: [
+                {
+                  name: "Istana Schönbrunn",
+                  details: "Istana megah di Wina, rumah musim panas Kaisar Habsburg. Taman dan kebun binatangnya seru!"
+                }
+              ]
+            },
+            {
+              name: "Belanda",
+              flag: "🇳🇱",
+              summary: "Ibu kota: Amsterdam. Mata uang: Euro (EUR). Negara dengan kanal dan bunga tulip.",
+              attractions: [
+                {
+                  name: "Kanal Amsterdam",
+                  details: "Jaringan kanal di Amsterdam, cocok untuk tur perahu dan melihat rumah-rumah kuno."
+                }
+              ]
+            },
+            {
+              name: "Belarus",
+              flag: "🇧🇾",
+              summary: "Ibu kota: Minsk. Mata uang: Rubel Belarus (BYN). Negara dengan hutan luas dan kastil.",
+              attractions: [
+                {
+                  name: "Kastil Mir",
+                  details: "Kastil abad ke-16 di Mir, dengan arsitektur Gothic dan Renaissance. Situs UNESCO."
+                }
+              ]
+            },
+            {
+              name: "Belgia",
+              flag: "🇧🇪",
+              summary: "Ibu kota: Brussel. Mata uang: Euro (EUR). Negara dengan cokelat dan wafel lezat.",
+              attractions: [
+                {
+                  name: "Atomium",
+                  details: "Struktur unik di Brussel, dibangun untuk Expo 1958. Berbentuk molekul besi raksasa."
+                }
+              ]
+            },
+            {
+              name: "Bosnia dan Herzegovina",
+              flag: "🇧🇦",
+              summary: "Ibu kota: Sarajevo. Mata uang: Mark Konvertibel (BAM). Negara dengan jembatan kuno dan budaya.",
+              attractions: [
+                {
+                  name: "Jembatan Tua Mostar",
+                  details: "Jembatan abad ke-16 di Mostar, terkenal dengan lompatan air tradisional."
+                }
+              ]
+            },
+            {
+              name: "Bulgaria",
+              flag: "🇧🇬",
+              summary: "Ibu kota: Sofia. Mata uang: Lev (BGN). Negara dengan gereja dan pantai Laut Hitam.",
+              attractions: [
+                {
+                  name: "Katedral Alexander Nevsky",
+                  details: "Katedral megah di Sofia dengan kubah emas, simbol kebudayaan Bulgaria."
+                }
+              ]
+            },
+            {
+              name: "Ceko",
+              flag: "🇨🇿",
+              summary: "Ibu kota: Praha. Mata uang: Koruna Ceko (CZK). Negara dengan kastil dan jembatan indah.",
+              attractions: [
+                {
+                  name: "Kastil Praha",
+                  details: "Kastil terbesar di dunia di Praha, dengan katedral dan pemandangan kota."
+                }
+              ]
+            },
+            {
+              name: "Denmark",
+              flag: "🇩🇰",
+              summary: "Ibu kota: Kopenhagen. Mata uang: Krone Denmark (DKK). Negara dengan kastil dan Lego!",
+              attractions: [
+                {
+                  name: "Taman Tivoli",
+                  details: "Taman hiburan tertua di Kopenhagen, penuh wahana dan lampu warna-warni."
+                }
+              ]
+            },
+            {
+              name: "Estonia",
+              flag: "🇪🇪",
+              summary: "Ibu kota: Tallinn. Mata uang: Euro (EUR). Negara dengan kota abad pertengahan.",
+              attractions: [
+                {
+                  name: "Kota Tua Tallinn",
+                  details: "Kawasan bersejarah di Tallinn dengan jalanan batu dan tembok kota kuno."
+                }
+              ]
+            },
+            {
+              name: "Finlandia",
+              flag: "🇫🇮",
+              summary: "Ibu kota: Helsinki. Mata uang: Euro (EUR). Negara dengan danau dan aurora borealis.",
+              attractions: [
+                {
+                  name: "Katedral Helsinki",
+                  details: "Katedral putih megah di Helsinki, terletak di alun-alun Senate Square."
+                }
+              ]
+            },
+            {
+              name: "Gibraltar",
+              flag: "🇬🇮",
+              summary: "Ibu kota: Gibraltar. Mata uang: Pound Gibraltar (GIP). Wilayah Inggris dengan batu karang besar.",
+              attractions: [
+                {
+                  name: "Batu Gibraltar",
+                  details: "Batu karang besar dengan gua dan monyet Barbary yang unik."
+                }
+              ]
+            },
+            {
+              name: "Irlandia",
+              flag: "🇮🇪",
+              summary: "Ibu kota: Dublin. Mata uang: Euro (EUR). Negara dengan kastil dan ladang hijau.",
+              attractions: [
+                {
+                  name: "Tebing Moher",
+                  details: "Tebing setinggi 214 meter di County Clare, dengan pemandangan laut Atlantik."
+                }
+              ]
+            },
+            {
+              name: "Islandia",
+              flag: "🇮🇸",
+              summary: "Ibu kota: Reykjavik. Mata uang: Krona Islandia (ISK). Negara dengan geyser dan air terjun.",
+              attractions: [
+                {
+                  name: "Air Terjun Gullfoss",
+                  details: "Air terjun besar di Islandia selatan, bagian dari rute Golden Circle."
+                }
+              ]
+            },
+            {
+              name: "Isle of Man",
+              flag: "🇮🇴",
+              summary: "Ibu kota: Douglas. Mata uang: Pound Manx (IMP). Pulau dengan sejarah Viking dan kastil.",
+              attractions: [
+                {
+                  name: "Kastil Peel",
+                  details: "Kastil kuno di Peel, dibangun oleh Viking pada abad ke-11."
+                }
+              ]
+            },
+            {
+              name: "Italia",
+              flag: "🇮🇹",
+              summary: "Ibu kota: Roma. Mata uang: Euro (EUR). Negara dengan pizza dan bangunan kuno.",
+              attractions: [
+                {
+                  name: "Colosseum",
+                  details: "Arena kuno di Roma, dibangun abad ke-1. Tempat pertarungan gladiator."
+                },
+                {
+                  name: "Kota Venesia",
+                  details: "Kota di atas air dengan kanal dan gondola. Jembatan Rialto sangat terkenal."
+                }
+              ]
+            },
+            {
+              name: "Jersey",
+              flag: "🇯🇪",
+              summary: "Ibu kota: Saint Helier. Mata uang: Pound Jersey (JEP). Pulau dengan pantai dan kastil.",
+              attractions: [
+                {
+                  name: "Kastil Elizabeth",
+                  details: "Kastil di Saint Helier, dibangun di pulau kecil yang bisa dicapai saat air surut."
+                }
+              ]
+            },
+            {
+              name: "Kosovo",
+              flag: "🇽🇰",
+              summary: "Ibu kota: Pristina. Mata uang: Euro (EUR). Negara muda dengan budaya beragam.",
+              attractions: [
+                {
+                  name: "Biara Gračanica",
+                  details: "Biara Ortodoks Serbia di dekat Pristina, dibangun pada abad ke-14."
+                }
+              ]
+            },
+            {
+              name: "Latvia",
+              flag: "🇱🇻",
+              summary: "Ibu kota: Riga. Mata uang: Euro (EUR). Negara dengan arsitektur Art Nouveau.",
+              attractions: [
+                {
+                  name: "Kota Tua Riga",
+                  details: "Kawasan bersejarah di Riga dengan katedral dan rumah-rumah kuno."
+                }
+              ]
+            },
+            {
+              name: "Liechtenstein",
+              flag: "🇱🇮",
+              summary: "Ibu kota: Vaduz. Mata uang: Franc Swiss (CHF). Negara kecil dengan kastil di pegunungan.",
+              attractions: [
+                {
+                  name: "Kastil Vaduz",
+                  details: "Kastil abad ke-12 di Vaduz, rumah keluarga kerajaan Liechtenstein."
+                }
+              ]
+            },
+            {
+              name: "Lithuania",
+              flag: "🇱🇹",
+              summary: "Ibu kota: Vilnius. Mata uang: Euro (EUR). Negara dengan kastil dan hutan luas.",
+              attractions: [
+                {
+                  name: "Kastil Trakai",
+                  details: "Kastil di pulau di Danau Galvė, dekat Vilnius. Penuh sejarah abad pertengahan."
+                }
+              ]
+            },
+            {
+              name: "Luksemburg",
+              flag: "🇱🇺",
+              summary: "Ibu kota: Luksemburg. Mata uang: Euro (EUR). Negara kecil dengan benteng kuno.",
+              attractions: [
+                {
+                  name: "Bock Casemates",
+                  details: "Jaringan terowongan bawah tanah di Kota Luksemburg, digunakan sebagai benteng."
+                }
+              ]
+            },
+            {
+              name: "Makedonia Utara",
+              flag: "🇲🇰",
+              summary: "Ibu kota: Skopje. Mata uang: Denar (MKD). Negara dengan jembatan batu dan danau.",
+              attractions: [
+                {
+                  name: "Danau Ohrid",
+                  details: "Danau kuno di Ohrid, salah satu yang tertua di Eropa. Cocok untuk berenang."
+                }
+              ]
+            },
+            {
+              name: "Malta",
+              flag: "🇲🇹",
+              summary: "Ibu kota: Valletta. Mata uang: Euro (EUR). Negara pulau dengan kota bersejarah.",
+              attractions: [
+                {
+                  name: "Kota Tua Valletta",
+                  details: "Kota bersejarah dengan benteng dan katedral, situs Warisan Dunia UNESCO."
+                }
+              ]
+            },
+            {
+              name: "Moldova",
+              flag: "🇲🇩",
+              summary: "Ibu kota: Chisinau. Mata uang: Leu Moldova (MDL). Negara dengan anggur dan monumen.",
+              attractions: [
+                {
+                  name: "Orheiul Vechi",
+                  details: "Situs arkeologi dengan biara gua dan desa kuno di tepi sungai Răut."
+                }
+              ]
+            },
+            {
+              name: "Monako",
+              flag: "🇲🇨",
+              summary: "Ibu kota: Monako. Mata uang: Euro (EUR). Negara kecil dengan kasino dan pelabuhan.",
+              attractions: [
+                {
+                  name: "Kasino Monte Carlo",
+                  details: "Kasino mewah di Monako, terkenal dengan arsitektur dan kemewahan."
+                }
+              ]
+            },
+            {
+              name: "Montenegro",
+              flag: "🇲🇪",
+              summary: "Ibu kota: Podgorica. Mata uang: Euro (EUR). Negara dengan pantai dan pegunungan.",
+              attractions: [
+                {
+                  name: "Teluk Kotor",
+                  details: "Fjord indah dengan kota-kota kuno seperti Kotor, situs Warisan Dunia."
+                }
+              ]
+            },
+            {
+              name: "Norwegia",
+              flag: "🇳🇴",
+              summary: "Ibu kota: Oslo. Mata uang: Krone Norwegia (NOK). Negara dengan fjord dan aurora borealis.",
+              attractions: [
+                {
+                  name: "Fjord Geiranger",
+                  details: "Fjord di Norwegia barat dengan air terjun dan pemandangan dramatis."
+                }
+              ]
+            },
+            {
+              name: "Polandia",
+              flag: "🇵🇱",
+              summary: "Ibu kota: Warsawa. Mata uang: Zloty (PLN). Negara dengan kastil dan sejarah kaya.",
+              attractions: [
+                {
+                  name: "Kastil Wawel",
+                  details: "Kastil bersejarah di Krakow, rumah raja-raja Polandia dan katedral."
+                }
+              ]
+            },
+            {
+              name: "Portugal",
+              flag: "🇵🇹",
+              summary: "Ibu kota: Lisboa. Mata uang: Euro (EUR). Negara dengan pantai dan menara kuno.",
+              attractions: [
+                {
+                  name: "Menara Belém",
+                  details: "Menara abad ke-16 di Lisboa, simbol era penjelajahan Portugis."
+                }
+              ]
+            },
+            {
+              name: "Rumania",
+              flag: "🇷🇴",
+              summary: "Ibu kota: Bukares. Mata uang: Leu Rumania (RON). Negara dengan kastil dan hutan Karpatia.",
+              attractions: [
+                {
+                  name: "Kastil Bran",
+                  details: "Kastil di Transilvania, sering disebut kastil Dracula. Penuh misteri!"
+                }
+              ]
+            },
+            {
+              name: "Rusia",
+              flag: "🇷🇺",
+              summary: "Ibu kota: Moskow. Mata uang: Rubel Rusia (RUB). Negara terbesar di dunia dengan istana megah.",
+              attractions: [
+                {
+                  name: "Lapangan Merah",
+                  details: "Alun-alun di Moskow dengan Katedral Saint Basil dan Kremlin."
+                }
+              ]
+            },
+            {
+              name: "San Marino",
+              flag: "🇸🇲",
+              summary: "Ibu kota: San Marino. Mata uang: Euro (EUR). Negara kecil dengan menara abad pertengahan.",
+              attractions: [
+                {
+                  name: "Tiga Menara San Marino",
+                  details: "Tiga benteng di Gunung Titano, dengan pemandangan Italia yang indah."
+                }
+              ]
+            },
+            {
+              name: "Serbia",
+              flag: "🇷🇸",
+              summary: "Ibu kota: Beograd. Mata uang: Dinar Serbia (RSD). Negara dengan benteng dan sungai.",
+              attractions: [
+                {
+                  name: "Benteng Beograd",
+                  details: "Benteng kuno di Beograd, di tepi Sungai Danube dan Sava."
+                }
+              ]
+            },
+            {
+              name: "Siprus",
+              flag: "🇨🇾",
+              summary: "Ibu kota: Nikosia. Mata uang: Euro (EUR). Pulau dengan pantai dan situs kuno.",
+              attractions: [
+                {
+                  name: "Petra tou Romiou",
+                  details: "Pantai indah di Paphos, konon tempat kelahiran dewi Aphrodite."
+                }
+              ]
+            },
+            {
+              name: "Slovenia",
+              flag: "🇸🇮",
+              summary: "Ibu kota: Ljubljana. Mata uang: Euro (EUR). Negara dengan danau dan kastil.",
+              attractions: [
+                {
+                  name: "Danau Bled",
+                  details: "Danau indah dengan kastil di tebing dan gereja di pulau kecil."
+                }
+              ]
+            },
+            {
+              name: "Slovakia",
+              flag: "🇸🇰",
+              summary: "Ibu kota: Bratislava. Mata uang: Euro (EUR). Negara dengan kastil dan sungai Danube.",
+              attractions: [
+                {
+                  name: "Kastil Bratislava",
+                  details: "Kastil megah di Bratislava, menghadap Sungai Danube."
+                }
+              ]
+            },
+            {
+              name: "Spanyol",
+              flag: "🇪🇸",
+              summary: "Ibu kota: Madrid. Mata uang: Euro (EUR). Negara dengan tarian flamenco dan festival.",
+              attractions: [
+                {
+                  name: "Sagrada Familia",
+                  details: "Katedral unik di Barcelona, dirancang oleh Antoni Gaudí. Interiornya seperti hutan penuh warna."
+                }
+              ]
+            },
+            {
+              name: "Swedia",
+              flag: "🇸🇪",
+              summary: "Ibu kota: Stockholm. Mata uang: Krona Swedia (SEK). Negara dengan pulau dan aurora.",
+              attractions: [
+                {
+                  name: "Kota Tua Stockholm",
+                  details: "Kawasan bersejarah Gamla Stan dengan jalanan batu dan istana kerajaan."
+                }
+              ]
+            },
+            {
+              name: "Swiss",
+              flag: "🇨🇭",
+              summary: "Ibu kota: Bern. Mata uang: Franc Swiss (CHF). Negara dengan Alpen dan cokelat.",
+              attractions: [
+                {
+                  name: "Matterhorn",
+                  details: "Gunung ikonik di Zermatt, cocok untuk ski dan mendaki."
+                }
+              ]
+            },
+            {
+              name: "Ukraina",
+              flag: "🇺🇦",
+              summary: "Ibu kota: Kyiv. Mata uang: Hryvnia (UAH). Negara dengan katedral dan sejarah Slavia.",
+              attractions: [
+                {
+                  name: "Katedral Saint Sophia",
+                  details: "Katedral bersejarah di Kyiv dengan mozaik dan fresko abad ke-11."
+                }
+              ]
+            },
+            {
+              name: "Vatikan",
+              flag: "🇻🇦",
+              summary: "Ibu kota: Kota Vatikan. Mata uang: Euro (EUR). Negara terkecil dengan gereja besar.",
+              attractions: [
+                {
+                  name: "Basilika Santo Petrus",
+                  details: "Gereja megah di Vatikan, pusat Katolik dunia dengan kubah besar."
+                }
+              ]
+            },
+            {
+              name: "Yunani",
+              flag: "🇬🇷",
+              summary: "Ibu kota: Athena. Mata uang: Euro (EUR). Negara dengan kuil kuno dan pulau.",
+              attractions: [
+                {
+                  name: "Acropolis Athena",
+                  details: "Kuil kuno di Athena, termasuk Parthenon, simbol peradaban Yunani."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          name: "Afrika",
+          summary: "Benua dengan 54 negara, rumah bagi savana dan piramida kuno.",
+          countries: [
+            {
+              name: "Afrika Selatan",
+              flag: "🇿🇦",
+              summary: "Ibu kota: Pretoria, Cape Town, Bloemfontein. Mata uang: Rand (ZAR). Negara dengan safari.",
+              attractions: [
+                {
+                  name: "Taman Nasional Kruger",
+                  details: "Taman safari di timur laut, rumah 'Big Five': singa, gajah, badak, macan tutul, kerbau."
+                },
+                {
+                  name: "Table Mountain",
+                  details: "Gunung datar di Cape Town dengan pemandangan kota. Naik kereta gantung ke puncak!"
+                }
+              ]
+            },
+            {
+              name: "Aljazair",
+              flag: "🇩🇿",
+              summary: "Ibu kota: Aljazair. Mata uang: Dinar Aljazair (DZD). Negara dengan gurun Sahara dan pantai.",
+              attractions: [
+                {
+                  name: "Taman Nasional Tassili n'Ajjer",
+                  details: "Taman di Sahara dengan lukisan gua prasejarah dan formasi batu unik."
+                }
+              ]
+            },
+            {
+              name: "Angola",
+              flag: "🇦🇴",
+              summary: "Ibu kota: Luanda. Mata uang: Kwanza (AOA). Negara dengan pantai dan hutan tropis.",
+              attractions: [
+                {
+                  name: "Air Terjun Kalandula",
+                  details: "Air terjun besar di Malanje, salah satu yang terbesar di Afrika."
+                }
+              ]
+            },
+            {
+              name: "Benin",
+              flag: "🇧🇯",
+              summary: "Ibu kota: Porto-Novo, Cotonou. Mata uang: Franc CFA Afrika Barat (XOF). Negara dengan budaya voodoo.",
+              attractions: [
+                {
+                  name: "Kota Ouidah",
+                  details: "Kota bersejarah dengan kuil voodoo dan pintu tanpa kembali, monumen sejarah budak."
+                }
+              ]
+            },
+            {
+              name: "Botswana",
+              flag: "🇧🇼",
+              summary: "Ibu kota: Gaborone. Mata uang: Pula (BWP). Negara dengan delta dan safari.",
+              attractions: [
+                {
+                  name: "Delta Okavango",
+                  details: "Delta air terbesar di dunia, penuh dengan satwa liar seperti gajah dan kuda nil."
+                }
+              ]
+            },
+            {
+              name: "Burkina Faso",
+              flag: "🇧🇫",
+              summary: "Ibu kota: Ouagadougou. Mata uang: Franc CFA Afrika Barat (XOF). Negara dengan budaya dan pasar tradisional.",
+              attractions: [
+                {
+                  name: "Sindou Peaks",
+                  details: "Formasi batu unik di Banfora, cocok untuk hiking dan fotografi."
+                }
+              ]
+            },
+            {
+              name: "Burundi",
+              flag: "🇧🇮",
+              summary: "Ibu kota: Gitega, Bujumbura. Mata uang: Franc Burundi (BIF). Negara dengan danau besar.",
+              attractions: [
+                {
+                  name: "Danau Tanganyika",
+                  details: "Danau terpanjang di dunia, cocok untuk berenang dan melihat ikan warna-warni."
+                }
+              ]
+            },
+            {
+              name: "Djibouti",
+              flag: "🇩🇯",
+              summary: "Ibu kota: Djibouti. Mata uang: Franc Djibouti (DJF). Negara kecil dengan danau garam.",
+              attractions: [
+                {
+                  name: "Danau Assal",
+                  details: "Danau garam terendah di Afrika, dengan air biru dan kristal garam putih."
+                }
+              ]
+            },
+            {
+              name: "Eswatini",
+              flag: "🇸🇿",
+              summary: "Ibu kota: Mbabane, Lobamba. Mata uang: Lilangeni (SZL). Negara kecil dengan budaya kerajaan.",
+              attractions: [
+                {
+                  name: "Cagar Alam Mlilwane",
+                  details: "Cagar alam dengan zebra dan antelop, cocok untuk safari berjalan kaki."
+                }
+              ]
+            },
+            {
+              name: "Etiopia",
+              flag: "🇪🇹",
+              summary: "Ibu kota: Addis Ababa. Mata uang: Birr (ETB). Negara dengan gereja batu kuno.",
+              attractions: [
+                {
+                  name: "Lalibela",
+                  details: "Kota dengan gereja-gereja batu abad ke-12, diukir langsung dari batu."
+                }
+              ]
+            },
+            {
+              name: "Gabon",
+              flag: "🇬🇦",
+              summary: "Ibu kota: Libreville. Mata uang: Franc CFA Afrika Tengah (XAF). Negara dengan hutan hujan dan pantai.",
+              attractions: [
+                {
+                  name: "Taman Nasional Loango",
+                  details: "Taman dengan gajah, gorila, dan pantai tempat kura-kura bertelur."
+                }
+              ]
+            },
+            {
+              name: "Gambia",
+              flag: "🇬🇲",
+              summary: "Ibu kota: Banjul. Mata uang: Dalasi (GMD). Negara kecil di sepanjang Sungai Gambia.",
+              attractions: [
+                {
+                  name: "Taman Nasional Kiang West",
+                  details: "Taman dengan burung eksotis dan monyet, cocok untuk pecinta alam."
+                }
+              ]
+            },
+            {
+              name: "Ghana",
+              flag: "🇬🇭",
+              summary: "Ibu kota: Accra. Mata uang: Cedi (GHS). Negara dengan kastil dan pasar ramai.",
+              attractions: [
+                {
+                  name: "Kastil Cape Coast",
+                  details: "Kastil bersejarah dengan sejarah perdagangan budak, sekarang museum."
+                }
+              ]
+            },
+            {
+              name: "Guinea",
+              flag: "🇬🇳",
+              summary: "Ibu kota: Conakry. Mata uang: Franc Guinea (GNF). Negara dengan air terjun dan hutan.",
+              attractions: [
+                {
+                  name: "Air Terjun Soumba",
+                  details: "Air terjun indah di dekat Conakry, cocok untuk piknik dan berenang."
+                }
+              ]
+            },
+            {
+              name: "Guinea Ekuatorial",
+              flag: "🇬🇶",
+              summary: "Ibu kota: Malabo. Mata uang: Franc CFA Afrika Tengah (XAF). Negara pulau dengan budaya Spanyol.",
+              attractions: [
+                {
+                  name: "Katedral Malabo",
+                  details: "Katedral bergaya kolonial Spanyol di Malabo, pusat kota yang indah."
+                }
+              ]
+            },
+            {
+              name: "Guinea-Bissau",
+              flag: "🇬🇼",
+              summary: "Ibu kota: Bissau. Mata uang: Franc CFA Afrika Barat (XOF). Negara dengan kepulauan dan mangrove.",
+              attractions: [
+                {
+                  name: "Kepulauan Bijagós",
+                  details: "Kepulauan dengan pantai dan satwa liar, rumah bagi budaya Bissago."
+                }
+              ]
+            },
+            {
+              name: "Kenya",
+              flag: "🇰🇪",
+              summary: "Ibu kota: Nairobi. Mata uang: Shilling Kenya (KES). Negara dengan safari dan migrasi hewan.",
+              attractions: [
+                {
+                  name: "Maasai Mara",
+                  details: "Cagar alam dengan migrasi rusa liar tahunan. Kamu bisa melihat singa dan zebra."
+                }
+              ]
+            },
+            {
+              name: "Lesoto",
+              flag: "🇱🇸",
+              summary: "Ibu kota: Maseru. Mata uang: Loti (LSL). Negara pegunungan di dalam Afrika Selatan.",
+              attractions: [
+                {
+                  name: "Air Terjun Maletsunyane",
+                  details: "Air terjun setinggi 192 meter, salah satu yang tertinggi di Afrika."
+                }
+              ]
+            },
+            {
+              name: "Liberia",
+              flag: "🇱🇷",
+              summary: "Ibu kota: Monrovia. Mata uang: Dolar Liberia (LRD). Negara dengan pantai dan sejarah Amerika.",
+              attractions: [
+                {
+                  name: "Pantai Robertsport",
+                  details: "Pantai di barat Liberia, cocok untuk berselancar dan bersantai."
+                }
+              ]
+            },
+            {
+              name: "Libya",
+              flag: "🇱🇾",
+              summary: "Ibu kota: Tripoli. Mata uang: Dinar Libya (LYD). Negara dengan reruntuhan Romawi dan gurun.",
+              attractions: [
+                {
+                  name: "Leptis Magna",
+                  details: "Reruntuhan kota Romawi di dekat Tripoli, dengan amfiteater dan kuil."
+                }
+              ]
+            },
+            {
+              name: "Madagaskar",
+              flag: "🇲🇬",
+              summary: "Ibu kota: Antananarivo. Mata uang: Ariary (MGA). Pulau dengan lemur dan baobab.",
+              attractions: [
+                {
+                  name: "Avenue of the Baobabs",
+                  details: "Jalan dengan pohon baobab raksasa di Morondava, pemandangan ikonik."
+                }
+              ]
+            },
+            {
+              name: "Malawi",
+              flag: "🇲🇼",
+              summary: "Ibu kota: Lilongwe. Mata uang: Kwacha Malawi (MWK). Negara dengan danau besar dan satwa liar.",
+              attractions: [
+                {
+                  name: "Danau Malawi",
+                  details: "Danau besar dengan ikan cichlid warna-warni, cocok untuk snorkeling."
+                }
+              ]
+            },
+            {
+              name: "Mali",
+              flag: "🇲🇱",
+              summary: "Ibu kota: Bamako. Mata uang: Franc CFA Afrika Barat (XOF). Negara dengan masjid lumpur dan sejarah.",
+              attractions: [
+                {
+                  name: "Masjid Djenné",
+                  details: "Masjid lumpur terbesar di dunia di Djenné, situs Warisan Dunia."
+                }
+              ]
+            },
+            {
+              name: "Maroko",
+              flag: "🇲🇦",
+              summary: "Ibu kota: Rabat. Mata uang: Dirham Maroko (MAD). Negara dengan pasar ramai dan gurun.",
+              attractions: [
+                {
+                  name: "Kota Marrakech",
+                  details: "Kota dengan pasar Jemaa el-Fnaa, penuh penari dan toko unik."
+                },
+                {
+                  name: "Sahara Desert",
+                  details: "Gurun terbesar di dunia. Kamu bisa naik unta atau berkemah."
+                }
+              ]
+            },
+            {
+              name: "Mauritania",
+              flag: "🇲🇷",
+              summary: "Ibu kota: Nouakchott. Mata uang: Ouguiya (MRU). Negara dengan gurun dan kapal karam.",
+              attractions: [
+                {
+                  name: "Teluk Nouadhibou",
+                  details: "Teluk dengan kuburan kapal karam terbesar di dunia."
+                }
+              ]
+            },
+            {
+              name: "Mauritius",
+              flag: "🇲🇺",
+              summary: "Ibu kota: Port Louis. Mata uang: Rupee Mauritius (MUR). Pulau dengan pantai dan laguna.",
+              attractions: [
+                {
+                  name: "Taman Black River Gorges",
+                  details: "Taman nasional dengan air terjun dan satwa liar seperti monyet."
+                }
+              ]
+            },
+            {
+              name: "Mesir",
+              flag: "🇪🇬",
+              summary: "Ibu kota: Kairo. Mata uang: Pound Mesir (EGP). Negara dengan piramida dan sejarah Firaun.",
+              attractions: [
+                {
+                  name: "Piramida Giza",
+                  details: "Piramida kuno di Kairo, dibangun 4.500 tahun lalu dengan patung Sphinx."
+                },
+                {
+                  name: "Sungai Nil",
+                  details: "Sungai terpanjang di dunia, cocok untuk kapal pesiar dan melihat kuil."
+                }
+              ]
+            },
+            {
+              name: "Mozambik",
+              flag: "🇲🇿",
+              summary: "Ibu kota: Maputo. Mata uang: Metical (MZN). Negara dengan pantai dan pulau.",
+              attractions: [
+                {
+                  name: "Kepulauan Bazaruto",
+                  details: "Kepulauan dengan pantai pasir putih dan terumbu karang untuk snorkeling."
+                }
+              ]
+            },
+            {
+              name: "Namibia",
+              flag: "🇳🇦",
+              summary: "Ibu kota: Windhoek. Mata uang: Dolar Namibia (NAD). Negara dengan gurun dan satwa liar.",
+              attractions: [
+                {
+                  name: "Dune 45",
+                  details: "Bukit pasir merah di Gurun Namib, salah satu yang tertinggi di dunia."
+                }
+              ]
+            },
+            {
+              name: "Nigeria",
+              flag: "🇳🇬",
+              summary: "Ibu kota: Abuja. Mata uang: Naira (NGN). Negara dengan budaya kaya dan pasar besar.",
+              attractions: [
+                {
+                  name: "Taman Nasional Yankari",
+                  details: "Taman dengan mata air panas dan satwa liar seperti gajah dan singa."
+                }
+              ]
+            },
+            {
+              name: "Rwanda",
+              flag: "🇷🇼",
+              summary: "Ibu kota: Kigali. Mata uang: Franc Rwanda (RWF). Negara dengan bukit dan gorila.",
+              attractions: [
+                {
+                  name: "Taman Nasional Volcanoes",
+                  details: "Taman di utara Rwanda, rumah bagi gorila gunung yang langka."
+                }
+              ]
+            },
+            {
+              name: "Senegal",
+              flag: "🇸🇳",
+              summary: "Ibu kota: Dakar. Mata uang: Franc CFA Afrika Barat (XOF). Negara dengan pantai dan budaya musik.",
+              attractions: [
+                {
+                  name: "Pulau Gorée",
+                  details: "Pulau bersejarah di Dakar, dengan museum tentang sejarah perdagangan budak."
+                }
+              ]
+            },
+            {
+              name: "Seychelles",
+              flag: "🇸🇨",
+              summary: "Ibu kota: Victoria. Mata uang: Rupee Seychelles (SCR). Kepulauan dengan pantai tropis.",
+              attractions: [
+                {
+                  name: "Pantai Anse Lazio",
+                  details: "Pantai indah di Praslin dengan pasir putih dan air jernih."
+                }
+              ]
+            },
+            {
+              name: "Sierra Leone",
+              flag: "🇸🇱",
+              summary: "Ibu kota: Freetown. Mata uang: Leone (SLL). Negara dengan pantai dan hutan.",
+              attractions: [
+                {
+                  name: "Pantai Lumley",
+                  details: "Pantai populer di Freetown, cocok untuk bersantai dan melihat sunset."
+                }
+              ]
+            },
+            {
+              name: "Somalia",
+              flag: "🇸🇴",
+              summary: "Ibu kota: Mogadishu. Mata uang: Shilling Somalia (SOS). Negara dengan pantai panjang.",
+              attractions: [
+                {
+                  name: "Pantai Lido",
+                  details: "Pantai di Mogadishu dengan pasir putih, cocok untuk berjalan-jalan."
+                }
+              ]
+            },
+            {
+              name: "Sudan",
+              flag: "🇸🇩",
+              summary: "Ibu kota: Khartoum. Mata uang: Pound Sudan (SDG). Negara dengan piramida Nubia.",
+              attractions: [
+                {
+                  name: "Piramida Meroë",
+                  details: "Piramida kuno di Meroë, lebih kecil dari Giza tapi penuh sejarah."
+                }
+              ]
+            },
+            {
+              name: "Sudan Selatan",
+              flag: "🇸🇸",
+              summary: "Ibu kota: Juba. Mata uang: Pound Sudan Selatan (SSP). Negara muda dengan savana luas.",
+              attractions: [
+                {
+                  name: "Taman Nasional Boma",
+                  details: "Taman dengan migrasi antelop terbesar di dunia."
+                }
+              ]
+            },
+            {
+              name: "Tanzania",
+              flag: "🇹🇿",
+              summary: "Ibu kota: Dodoma. Mata uang: Shilling Tanzania (TZS). Negara dengan gunung Kilimanjaro.",
+              attractions: [
+                {
+                  name: "Gunung Kilimanjaro",
+                  details: "Gunung tertinggi di Afrika, cocok untuk pendakian dan pemandangan."
+                }
+              ]
+            },
+            {
+              name: "Togo",
+              flag: "🇹🇬",
+              summary: "Ibu kota: Lomé. Mata uang: Franc CFA Afrika Barat (XOF). Negara kecil dengan pantai dan pasar.",
+              attractions: [
+                {
+                  name: "Pasar Fetish Lomé",
+                  details: "Pasar di Lomé dengan barang-barang tradisional voodoo dan kerajinan."
+                }
+              ]
+            },
+            {
+              name: "Tunisia",
+              flag: "🇹🇳",
+              summary: "Ibu kota: Tunis. Mata uang: Dinar Tunisia (TND). Negara dengan reruntuhan Karthago.",
+              attractions: [
+                {
+                  name: "Karthago",
+                  details: "Reruntuhan kota kuno di dekat Tunis, pusat peradaban Phoenicia."
+                }
+              ]
+            },
+            {
+              name: "Uganda",
+              flag: "🇺🇬",
+              summary: "Ibu kota: Kampala. Mata uang: Shilling Uganda (UGX). Negara dengan danau dan gorila.",
+              attractions: [
+                {
+                  name: "Taman Nasional Bwindi",
+                  details: "Hutan hujan dengan populasi gorila gunung, cocok untuk trekking."
+                }
+              ]
+            },
+            {
+              name: "Zambia",
+              flag: "🇿🇲",
+              summary: "Ibu kota: Lusaka. Mata uang: Kwacha Zambia (ZMW). Negara dengan air terjun dan safari.",
+              attractions: [
+                {
+                  name: "Air Terjun Victoria",
+                  details: "Air terjun besar di perbatasan Zambia dan Zimbabwe, disebut 'Asap yang Bergemuruh'."
+                }
+              ]
+            },
+            {
+              name: "Zimbabwe",
+              flag: "🇿🇼",
+              summary: "Ibu kota: Harare. Mata uang: Dolar Zimbabwe (ZWL). Negara dengan reruntuhan kuno dan safari.",
+              attractions: [
+                {
+                  name: "Great Zimbabwe",
+                  details: "Reruntuhan kota batu abad ke-11, pusat peradaban kuno."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          name: "Amerika",
+          summary: "Benua dengan dua benua kecil, penuh ngarai dan hutan hujan.",
+          countries: [
+            {
+              name: "Amerika Serikat",
+              flag: "🇺🇸",
+              summary: "Ibu kota: Washington, D.C. Mata uang: Dolar AS (USD). Negara dengan kota besar dan alam luas.",
+              attractions: [
+                {
+                  name: "Patung Liberty",
+                  details: "Patung di New York, hadiah dari Prancis pada 1886. Simbol kebebasan."
+                },
+                {
+                  name: "Grand Canyon",
+                  details: "Ngarai besar di Arizona, panjangnya 446 km. Cocok untuk hiking."
+                }
+              ]
+            },
+            {
+              name: "Anguilla",
+              flag: "🇦🇮",
+              summary: "Ibu kota: The Valley. Mata uang: Dolar Karibia Timur (XCD). Pulau kecil dengan pantai indah.",
+              attractions: [
+                {
+                  name: "Pantai Shoal Bay",
+                  details: "Pantai pasir putih di Anguilla, cocok untuk snorkeling dan bersantai."
+                }
+              ]
+            },
+            {
+              name: "Antigua dan Barbuda",
+              flag: "🇦🇬",
+              summary: "Ibu kota: Saint John's. Mata uang: Dolar Karibia Timur (XCD). Negara pulau dengan teluk indah.",
+              attractions: [
+                {
+                  name: "Nelson's Dockyard",
+                  details: "Pelabuhan bersejarah di Antigua, situs Warisan Dunia UNESCO."
+                }
+              ]
+            },
+            {
+              name: "Argentina",
+              flag: "🇦🇷",
+              summary: "Ibu kota: Buenos Aires. Mata uang: Peso Argentina (ARS). Negara dengan tango dan pegunungan.",
+              attractions: [
+                {
+                  name: "Air Terjun Iguazu",
+                  details: "Air terjun besar di perbatasan Argentina dan Brasil, dengan 275 air terjun."
+                }
+              ]
+            },
+            {
+              name: "Aruba",
+              flag: "🇦🇼",
+              summary: "Ibu kota: Oranjestad. Mata uang: Florin Aruba (AWG). Pulau dengan pantai dan kaktus.",
+              attractions: [
+                {
+                  name: "Pantai Eagle",
+                  details: "Pantai pasir putih di Aruba, cocok untuk berenang dan bersantai."
+                }
+              ]
+            },
+            {
+              name: "Bahamas",
+              flag: "🇧🇸",
+              summary: "Ibu kota: Nassau. Mata uang: Dolar Bahama (BSD). Negara kepulauan dengan air jernih.",
+              attractions: [
+                {
+                  name: "Pantai Cable",
+                  details: "Pantai terkenal di Nassau dengan pasir putih dan air biru."
+                }
+              ]
+            },
+            {
+              name: "Barbados",
+              flag: "🇧🇧",
+              summary: "Ibu kota: Bridgetown. Mata uang: Dolar Barbados (BBD). Pulau dengan pantai dan sejarah.",
+              attractions: [
+                {
+                  name: "Gua Harrison",
+                  details: "Gua kapur di Barbados dengan stalaktit dan sungai bawah tanah."
+                }
+              ]
+            },
+            {
+              name: "Belize",
+              flag: "🇧🇿",
+              summary: "Ibu kota: Belmopan. Mata uang: Dolar Belize (BZD). Negara dengan terumbu karang dan hutan.",
+              attractions: [
+                {
+                  name: "Great Blue Hole",
+                  details: "Lubang bawah laut di lepas pantai Belize, cocok untuk menyelam."
+                }
+              ]
+            },
+            {
+              name: "Bermuda",
+              flag: "🇧🇲",
+              summary: "Ibu kota: Hamilton. Mata uang: Dolar Bermuda (BMD). Pulau dengan pantai merah muda.",
+              attractions: [
+                {
+                  name: "Pantai Horseshoe Bay",
+                  details: "Pantai dengan pasir merah muda di Bermuda, cocok untuk berenang."
+                }
+              ]
+            },
+            {
+              name: "Bolivia",
+              flag: "🇧🇴",
+              summary: "Ibu kota: La Paz, Sucre. Mata uang: Boliviano (BOB). Negara dengan dataran tinggi Andes.",
+              attractions: [
+                {
+                  name: "Salar de Uyuni",
+                  details: "Gurun garam terbesar di dunia di Bolivia, seperti cermin saat hujan."
+                }
+              ]
+            },
+            {
+              name: "Brasil",
+              flag: "🇧🇷",
+              summary: "Ibu kota: Brasília. Mata uang: Real Brasil (BRL). Negara dengan hutan Amazon dan karnaval.",
+              attractions: [
+                {
+                  name: "Patung Christ the Redeemer",
+                  details: "Patung Yesus di Rio de Janeiro, di atas Gunung Corcovado."
+                },
+                {
+                  name: "Hutan Amazon",
+                  details: "Hutan hujan terbesar di dunia, penuh satwa liar seperti jaguar."
+                }
+              ]
+            },
+            {
+              name: "Kepulauan Virgin Inggris",
+              flag: "🇻🇬",
+              summary: "Ibu kota: Road Town. Mata uang: Dolar AS (USD). Pulau dengan pantai dan gua.",
+              attractions: [
+                {
+                  name: "The Baths",
+                  details: "Pantai dengan formasi batu besar di Virgin Gorda, cocok untuk eksplorasi."
+                }
+              ]
+            },
+            {
+              name: "Kanada",
+              flag: "🇨🇦",
+              summary: "Ibu kota: Ottawa. Mata uang: Dolar Kanada (CAD). Negara dengan danau dan musim dingin.",
+              attractions: [
+                {
+                  name: "Air Terjun Niagara",
+                  details: "Air terjun besar di perbatasan Kanada-AS, seru untuk tur kapal."
+                }
+              ]
+            },
+            {
+              name: "Kuba",
+              flag: "🇨🇺",
+              summary: "Ibu kota: Havana. Mata uang: Peso Kuba (CUP). Negara dengan mobil klasik dan salsa.",
+              attractions: [
+                {
+                  name: "Kota Tua Havana",
+                  details: "Kawasan bersejarah dengan bangunan kolonial dan alun-alun kuno."
+                }
+              ]
+            },
+            {
+              name: "Curacao",
+              flag: "🇨🇼",
+              summary: "Ibu kota: Willemstad. Mata uang: Guilder Antillen Belanda (ANG). Pulau dengan bangunan warna-warni.",
+              attractions: [
+                {
+                  name: "Kota Willemstad",
+                  details: "Kota dengan bangunan kolonial Belanda berwarna cerah, situs UNESCO."
+                }
+              ]
+            },
+            {
+              name: "Dominika",
+              flag: "🇩🇲",
+              summary: "Ibu kota: Roseau. Mata uang: Dolar Karibia Timur (XCD). Pulau dengan hutan hujan dan air terjun.",
+              attractions: [
+                {
+                  name: "Boiling Lake",
+                  details: "Danau panas di Taman Nasional Morne Trois Pitons, fenomena alam unik."
+                }
+              ]
+            },
+            {
+              name: "Republik Dominika",
+              flag: "🇩🇴",
+              summary: "Ibu kota: Santo Domingo. Mata uang: Peso Dominika (DOP). Negara dengan pantai Karibia.",
+              attractions: [
+                {
+                  name: "Zona Colonial",
+                  details: "Kawasan bersejarah di Santo Domingo, kota tertua di Amerika."
+                }
+              ]
+            },
+            {
+              name: "Ekuador",
+              flag: "🇪🇨",
+              summary: "Ibu kota: Quito. Mata uang: Dolar AS (USD). Negara dengan Galapagos dan Andes.",
+              attractions: [
+                {
+                  name: "Kepulauan Galapagos",
+                  details: "Kepulauan dengan satwa unik seperti kura-kura raksasa dan singa laut."
+                }
+              ]
+            },
+            {
+              name: "El Salvador",
+              flag: "🇸🇻",
+              summary: "Ibu kota: San Salvador. Mata uang: Dolar AS (USD). Negara dengan gunung berapi.",
+              attractions: [
+                {
+                  name: "Taman Nasional El Boquerón",
+                  details: "Taman di San Salvador dengan kawah gunung berapi dan pemandangan."
+                }
+              ]
+            },
+            {
+              name: "Guatemala",
+              flag: "🇬🇹",
+              summary: "Ibu kota: Kota Guatemala. Mata uang: Quetzal (GTQ). Negara dengan reruntuhan Maya.",
+              attractions: [
+                {
+                  name: "Tikal",
+                                    details: "Reruntuhan kota Maya kuno di Petén, dengan piramida dan kuil megah."
+                }
+              ]
+            },
+            {
+              name: "Guyana",
+              flag: "🇬🇾",
+              summary: "Ibu kota: Georgetown. Mata uang: Dolar Guyana (GYD). Negara dengan hutan hujan dan air terjun.",
+              attractions: [
+                {
+                  name: "Air Terjun Kaieteur",
+                  details: "Air terjun setinggi 226 meter di tengah hutan, salah satu yang tertinggi di dunia."
+                }
+              ]
+            },
+            {
+              name: "Haiti",
+              flag: "🇭🇹",
+              summary: "Ibu kota: Port-au-Prince. Mata uang: Gourde (HTG). Negara dengan sejarah revolusi dan pantai.",
+              attractions: [
+                {
+                  name: "Citadelle Laferrière",
+                  details: "Benteng besar di utara Haiti, dibangun pada abad ke-19, situs Warisan Dunia."
+                }
+              ]
+            },
+            {
+              name: "Honduras",
+              flag: "🇭🇳",
+              summary: "Ibu kota: Tegucigalpa. Mata uang: Lempira (HNL). Negara dengan reruntuhan Maya dan pulau.",
+              attractions: [
+                {
+                  name: "Copán",
+                  details: "Situs arkeologi Maya di barat Honduras, terkenal dengan ukiran batu dan hieroglif."
+                }
+              ]
+            },
+            {
+              name: "Jamaika",
+              flag: "🇯🇲",
+              summary: "Ibu kota: Kingston. Mata uang: Dolar Jamaika (JMD). Negara dengan reggae dan pantai.",
+              attractions: [
+                {
+                  name: "Air Terjun Dunn’s River",
+                  details: "Air terjun di Ocho Rios, cocok untuk pendakian dan berenang."
+                }
+              ]
+            },
+            {
+              name: "Kepulauan Cayman",
+              flag: "🇰🇾",
+              summary: "Ibu kota: George Town. Mata uang: Dolar Kepulauan Cayman (KYD). Pulau dengan pantai dan menyelam.",
+              attractions: [
+                {
+                  name: "Stingray City",
+                  details: "Kawasan laut di Grand Cayman, tempat berenang bersama ikan pari."
+                }
+              ]
+            },
+            {
+              name: "Kosta Rika",
+              flag: "🇨🇷",
+              summary: "Ibu kota: San José. Mata uang: Colón (CRC). Negara dengan hutan hujan dan gunung berapi.",
+              attractions: [
+                {
+                  name: "Taman Nasional Arenal",
+                  details: "Taman dengan gunung berapi aktif, mata air panas, dan hutan tropis."
+                }
+              ]
+            },
+            {
+              name: "Meksiko",
+              flag: "🇲🇽",
+              summary: "Ibu kota: Kota Meksiko. Mata uang: Peso Meksiko (MXN). Negara dengan piramida dan makanan taco.",
+              attractions: [
+                {
+                  name: "Chichén Itzá",
+                  details: "Reruntuhan Maya di Yucatán, dengan piramida El Castillo yang ikonik."
+                },
+                {
+                  name: "Tulum",
+                  details: "Reruntuhan Maya di tepi pantai Karibia, dengan pemandangan laut yang indah."
+                }
+              ]
+            },
+            {
+              name: "Nikaragua",
+              flag: "🇳🇮",
+              summary: "Ibu kota: Managua. Mata uang: Córdoba (NIO). Negara dengan danau dan gunung berapi.",
+              attractions: [
+                {
+                  name: "Danau Nikaragua",
+                  details: "Danau besar dengan pulau Ometepe, rumah dua gunung berapi."
+                }
+              ]
+            },
+            {
+              name: "Panama",
+              flag: "🇵🇦",
+              summary: "Ibu kota: Kota Panama. Mata uang: Balboa, Dolar AS (PAB, USD). Negara dengan kanal dan hutan.",
+              attractions: [
+                {
+                  name: "Kanal Panama",
+                  details: "Kanal sepanjang 82 km yang menghubungkan Atlantik dan Pasifik."
+                }
+              ]
+            },
+            {
+              name: "Paraguay",
+              flag: "🇵🇾",
+              summary: "Ibu kota: Asunción. Mata uang: Guarani (PYG). Negara dengan sungai dan sejarah Jesuit.",
+              attractions: [
+                {
+                  name: "Misión Jesuita Trinidad",
+                  details: "Reruntuhan misi Jesuit abad ke-17, situs Warisan Dunia."
+                }
+              ]
+            },
+            {
+              name: "Peru",
+              flag: "🇵🇪",
+              summary: "Ibu kota: Lima. Mata uang: Sol (PEN). Negara dengan Machu Picchu dan Andes.",
+              attractions: [
+                {
+                  name: "Machu Picchu",
+                  details: "Kota Inca kuno di pegunungan Andes, situs Warisan Dunia."
+                }
+              ]
+            },
+            {
+              name: "Puerto Riko",
+              flag: "🇵🇷",
+              summary: "Ibu kota: San Juan. Mata uang: Dolar AS (USD). Wilayah AS dengan pantai dan benteng.",
+              attractions: [
+                {
+                  name: "El Morro",
+                  details: "Benteng Spanyol di San Juan, dibangun pada abad ke-16."
+                }
+              ]
+            },
+            {
+              name: "Saint Kitts dan Nevis",
+              flag: "🇰🇳",
+              summary: "Ibu kota: Basseterre. Mata uang: Dolar Karibia Timur (XCD). Negara pulau dengan benteng.",
+              attractions: [
+                {
+                  name: "Brimstone Hill Fortress",
+                  details: "Benteng abad ke-17 di St. Kitts, situs Warisan Dunia."
+                }
+              ]
+            },
+            {
+              name: "Saint Lucia",
+              flag: "🇱🇨",
+              summary: "Ibu kota: Castries. Mata uang: Dolar Karibia Timur (XCD). Pulau dengan gunung kembar.",
+              attractions: [
+                {
+                  name: "The Pitons",
+                  details: "Dua gunung vulkanik di Saint Lucia, situs Warisan Dunia."
+                }
+              ]
+            },
+            {
+              name: "Saint Vincent dan Grenadine",
+              flag: "🇻🇨",
+              summary: "Ibu kota: Kingstown. Mata uang: Dolar Karibia Timur (XCD). Kepulauan dengan pantai.",
+              attractions: [
+                {
+                  name: "Kepulauan Grenadine",
+                  details: "Kepulauan dengan pantai pasir putih dan air jernih."
+                }
+              ]
+            },
+            {
+              name: "Suriname",
+              flag: "🇸🇷",
+              summary: "Ibu kota: Paramaribo. Mata uang: Dolar Suriname (SRD). Negara dengan hutan dan budaya beragam.",
+              attractions: [
+                {
+                  name: "Kota Tua Paramaribo",
+                  details: "Kawasan bersejarah dengan bangunan kolonial Belanda, situs UNESCO."
+                }
+              ]
+            },
+            {
+              name: "Trinidad dan Tobago",
+              flag: "🇹🇹",
+              summary: "Ibu kota: Port of Spain. Mata uang: Dolar Trinidad dan Tobago (TTD). Negara dengan karnaval.",
+              attractions: [
+                {
+                  name: "Teluk Maracas",
+                  details: "Pantai populer di Trinidad dengan pasir putih dan makanan lokal."
+                }
+              ]
+            },
+            {
+              name: "Uruguay",
+              flag: "🇺🇾",
+              summary: "Ibu kota: Montevideo. Mata uang: Peso Uruguay (UYU). Negara dengan pantai dan budaya gaucho.",
+              attractions: [
+                {
+                  name: "Kota Tua Montevideo",
+                  details: "Kawasan bersejarah dengan bangunan kolonial dan plaza indah."
+                }
+              ]
+            },
+            {
+              name: "Venezuela",
+              flag: "🇻🇪",
+              summary: "Ibu kota: Caracas. Mata uang: Bolívar (VES). Negara dengan air terjun dan hutan.",
+              attractions: [
+                {
+                  name: "Air Terjun Angel",
+                  details: "Air terjun tertinggi di dunia (979 m) di Taman Nasional Canaima."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          name: "Australia",
+          summary: "Benua terkecil dengan keanekaragaman satwa liar dan terumbu karang.",
+          countries: [
+            {
+              name: "Australia",
+              flag: "🇦🇺",
+              summary: "Ibu kota: Canberra. Mata uang: Dolar Australia (AUD). Negara dengan kanguru dan terumbu karang.",
+              attractions: [
+                {
+                  name: "Great Barrier Reef",
+                  details: "Terumbu karang terbesar di dunia di Queensland, cocok untuk snorkeling."
+                },
+                {
+                  name: "Uluru",
+                  details: "Batu merah besar di Australia Tengah, suci bagi suku Aborigin."
+                }
+              ]
+            },
+            {
+              name: "Fiji",
+              flag: "🇫🇯",
+              summary: "Ibu kota: Suva. Mata uang: Dolar Fiji (FJD). Negara kepulauan dengan laguna biru.",
+              attractions: [
+                {
+                  name: "Kepulauan Mamanuca",
+                  details: "Kepulauan dengan pantai pasir putih dan air jernih, cocok untuk menyelam."
+                }
+              ]
+            },
+            {
+              name: "Kiribati",
+              flag: "🇰🇮",
+              summary: "Ibu kota: Tarawa. Mata uang: Dolar Australia (AUD). Negara pulau di Pasifik.",
+              attractions: [
+                {
+                  name: "Atol Kiritimati",
+                  details: "Atol terbesar di dunia, cocok untuk memancing dan melihat burung."
+                }
+              ]
+            },
+            {
+              name: "Kepulauan Marshall",
+              flag: "🇲🇭",
+              summary: "Ibu kota: Majuro. Mata uang: Dolar AS (USD). Negara pulau dengan sejarah Perang Dunia II.",
+              attractions: [
+                {
+                  name: "Atol Bikini",
+                  details: "Atol dengan laguna dan sejarah uji coba nuklir, kini situs menyelam."
+                }
+              ]
+            },
+            {
+              name: "Mikronesia",
+              flag: "🇫🇲",
+              summary: "Ibu kota: Palikir. Mata uang: Dolar AS (USD). Negara kepulauan dengan terumbu karang.",
+              attractions: [
+                {
+                  name: "Nan Madol",
+                  details: "Reruntuhan kota kuno di Pohnpei, dibangun di atas kanal buatan."
+                }
+              ]
+            },
+            {
+              name: "Nauru",
+              flag: "🇳🇷",
+              summary: "Ibu kota: Yaren. Mata uang: Dolar Australia (AUD). Negara pulau terkecil di dunia.",
+              attractions: [
+                {
+                  name: "Teluk Anibare",
+                  details: "Pantai indah di Nauru dengan pasir putih dan air jernih."
+                }
+              ]
+            },
+            {
+              name: "Palau",
+              flag: "🇵🇼",
+              summary: "Ibu kota: Ngerulmud. Mata uang: Dolar AS (USD). Negara dengan danau ubur-ubur.",
+              attractions: [
+                {
+                  name: "Jellyfish Lake",
+                  details: "Danau di Eil Malk dengan jutaan ubur-ubur tidak menyengat."
+                }
+              ]
+            },
+            {
+              name: "Papua Nugini",
+              flag: "🇵🇬",
+              summary: "Ibu kota: Port Moresby. Mata uang: Kina (PGK). Negara dengan hutan dan budaya suku.",
+              attractions: [
+                {
+                  name: "Sungai Sepik",
+                  details: "Sungai dengan desa suku dan ukiran kayu tradisional."
+                }
+              ]
+            },
+            {
+              name: "Samoa",
+              flag: "🇼🇸",
+              summary: "Ibu kota: Apia. Mata uang: Tala (WST). Negara pulau dengan budaya Polinesia.",
+              attractions: [
+                {
+                  name: "Air Terjun Sua Trench",
+                  details: "Kolam alami di Upolu, cocok untuk berenang dan melompat."
+                }
+              ]
+            },
+            {
+              name: "Kepulauan Solomon",
+              flag: "🇸🇧",
+              summary: "Ibu kota: Honiara. Mata uang: Dolar Kepulauan Solomon (SBD). Negara dengan laguna.",
+              attractions: [
+                {
+                  name: "Laguna Marovo",
+                  details: "Laguna terbesar di dunia dengan pulau-pulau kecil dan terumbu karang."
+                }
+              ]
+            },
+            {
+              name: "Tonga",
+              flag: "🇹🇴",
+              summary: "Ibu kota: Nukuʻalofa. Mata uang: Paʻanga (TOP). Negara pulau dengan budaya kerajaan.",
+              attractions: [
+                {
+                  name: "Haʻamonga ʻa Maui",
+                  details: "Struktur batu megalitik di Tongatapu, seperti Stonehenge Polinesia."
+                }
+              ]
+            },
+            {
+              name: "Tuvalu",
+              flag: "🇹🇻",
+              summary: "Ibu kota: Funafuti. Mata uang: Dolar Australia (AUD). Negara pulau kecil di Pasifik.",
+              attractions: [
+                {
+                  name: "Laguna Funafuti",
+                  details: "Laguna dengan pulau-pulau kecil, cocok untuk berenang dan menyelam."
+                }
+              ]
+            },
+            {
+              name: "Vanuatu",
+              flag: "🇻🇺",
+              summary: "Ibu kota: Port Vila. Mata uang: Vatu (VUV). Negara kepulauan dengan gunung berapi.",
+              attractions: [
+                {
+                  name: "Gunung Yasur",
+                  details: "Gunung berapi aktif di Tanna, dikenal sebagai mercusuar Pasifik."
+                }
+              ]
+            },
+            {
+              name: "Selandia Baru",
+              flag: "🇳🇿",
+              summary: "Ibu kota: Wellington. Mata uang: Dolar Selandia Baru (NZD). Negara dengan fjord dan budaya Maori.",
+              attractions: [
+                {
+                  name: "Tongariro National Park",
+                  details: "Taman dengan gunung berapi aktif dan Danau Emerald yang indah."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          name: "Antartika",
+          summary: "Benua es tanpa penduduk tetap, penuh dengan penguin dan gunung es.",
+          countries: [
+            {
+              name: "Antartika",
+              flag: "🇦🇶",
+              summary: "Tidak ada ibu kota. Mata uang: Tidak ada mata uang resmi. Benua es untuk penelitian.",
+              attractions: [
+                {
+                  name: "Lembah McMurdo",
+                  details: "Lembah kering di Antartika, digunakan untuk penelitian ilmiah."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    };
+
+    function renderContent(type, data) {
+      const contentDiv = document.getElementById('content');
+      const mainTitle = document.getElementById('main-title');
+      const backBtn = document.querySelector('.back-btn');
+      contentDiv.innerHTML = '';
+
+      if (type === 'continents') {
+        mainTitle.textContent = 'Jelajahi Dunia!';
+        backBtn.style.display = 'none';
+        data.continents.forEach(continent => {
+          const card = document.createElement('div');
+          card.className = 'card';
+          card.innerHTML = `
+            <h2>${continent.name}</h2>
+            <p>${continent.summary}</p>
+          `;
+          card.onclick = () => renderContent('countries', continent);
+          contentDiv.appendChild(card);
+        });
+      } else if (type === 'countries') {
+        mainTitle.textContent = data.name;
+        backBtn.style.display = 'block';
+        data.countries.forEach(country => {
+          const card = document.createElement('div');
+          card.className = 'card';
+          card.innerHTML = `
+            <div class="country-name" className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              <span class="flag-emoji">${country.flag}</span>
+              <h3>${country.name}</h3>
+            </div>
+            <p class="summary">${country.summary}</p>
+          `;
+          card.onclick = () => renderContent('attractions', country);
+          contentDiv.appendChild(card);
+        });
+      } else if (type === 'attractions') {
+        mainTitle.textContent = data.name;
+        backBtn.style.display = 'block';
+        data.attractions.forEach(attraction => {
+          const card = document.createElement('div');
+          card.className = 'card';
+          card.innerHTML = `
+            <h4>${attraction.name}</h4>
+            <div class="attraction-details">
+              <p>${attraction.details}</p>
+            </div>
+          `;
+          contentDiv.appendChild(card);
+        });
+      }
+    }
+
+    function goBack() {
+      const mainTitle = document.getElementById('main-title');
+      if (mainTitle.textContent !== 'Jelajahi Dunia!') {
+        const currentContent = document.querySelector('.card');
+        if (currentContent && currentContent.querySelector('.attraction-details')) {
+          const countryName = mainTitle.textContent;
+          const continent = data.continents.find(c => c.countries.some(country => country.name === countryName));
+          renderContent('countries', continent);
+        } else {
+          renderContent('continents', data);
+        }
+      }
+    }
+
+    renderContent('continents', data);
+  </script>
+  <audio id="bg-audio" src="skyhigh.mp3" loop hidden></audio>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.body.addEventListener('click', function () {
+        var audio = document.getElementById('bg-audio');
+        audio.play().catch(err => {
+          console.log('Autoplay diblokir:', err);
+        });
+      }, { once: true });
+    });
+  </script>
+</body>
+</html>

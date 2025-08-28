@@ -1,0 +1,469 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cerita Rakyat Indonesia</title>
+    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/8694/8694549.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: linear-gradient(to bottom, #ffecd2, #fcb69f);
+            font-family: 'Comic Sans MS', sans-serif;
+        }
+        .story-card {
+            transition: transform 0.3s;
+        }
+        .story-card:hover {
+            transform: scale(1.05);
+        }
+        .popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .popup-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+        .popup.show {
+            display: flex;
+        }
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        .watermark {
+        position: fixed;
+        bottom: 10px;
+        right: 10px;
+        color: rgba(0, 0, 0, 0.3);
+        font-size: 12px;
+        font-family: Arial, sans-serif;
+        z-index: 1000;
+        }
+        .watermark a {
+        color: rgba(0, 0, 0, 0.5);
+        text-decoration: none;
+        }
+        .watermark a:hover {
+        color: rgba(0, 0, 0, 0.8);
+        text-decoration: underline;
+        }
+        @media (max-width: 640px) {
+        .card {
+            padding: 0.5rem;
+            font-size: 0.9rem;
+        }
+        .card h2 {
+            font-size: 1.1rem;
+        }
+        .card p {
+            font-size: 0.8rem;
+        }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center p-6">
+    <h1 class="text-4xl font-bold text-blue-600 mb-8">Cerita Rakyat Indonesia untuk Anak</h1>
+    <div id="story-list" class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <!-- Cerita akan diisi oleh JavaScript -->
+    </div>
+    <div class="watermark"><a href="https://id.linkedin.com/in/mochamad-fuad-asyhary">By Mochamad Fuad Asyhary</a></div>
+    <div id="popup" class="popup">
+        <div class="popup-content">
+            <span class="close-btn">×</span>
+            <h2 id="popup-title" class="text-2xl font-semibold text-purple-600 mb-4"></h2>
+            <p id="popup-content" class="text-gray-800"></p>
+            <div class="flex justify-between mt-6">
+                <button id="prev-btn" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"></button>
+                <button id="next-btn" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"></button>
+                <button id="back-btn" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Kembali</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const stories = [
+            {
+                title: "Malin Kundang",
+                summary: "Kisah anak durhaka yang dikutuk menjadi batu di pantai Sumatera Barat.",
+                content: "Di sebuah kampung nelayan di pesisir Sumatera Barat, hiduplah Malin Kundang bersama ibunya, Mande Rubayah. Mereka hidup sederhana di gubuk kecil, hanya mengandalkan hasil laut. Malin, yang cerdas dan penuh semangat, ingin mengubah nasib keluarganya. Dengan restu ibunya, ia merantau ke kota besar. Bertahun-tahun berlalu, Malin menjadi saudagar kaya dengan kapal megah dan istri jelita. Ketika kembali ke desanya, ia malu melihat ibunya yang miskin dan berpakaian lusuh. Di depan awak kapalnya, Malin mengusir Mande Rubayah, bahkan menyangkal bahwa ia adalah anaknya. Hati Mande Rubayah hancur. Dalam kesedihannya, ia berdoa kepada Tuhan agar keadilan ditegakkan. Tiba-tiba langit menggelap, petir menyambar, dan badai besar menghantam kapal Malin. Di tengah amukan ombak, Malin berubah menjadi batu di Pantai Air Manis. Batu itu kini menjadi simbol pentingnya bakti kepada orang tua, mengajarkan anak-anak untuk selalu menghormati kasih sayang ibu."
+            },
+            {
+                title: "Sangkuriang",
+                summary: "Cinta tragis Sangkuriang dan ibunya, Dayang Sumbi, di Jawa Barat.",
+                content: "Di tanah Pasundan, Jawa Barat, Dayang Sumbi hidup bersama anaknya, Sangkuriang, dan seekor anjing setia bernama Tumang. Karena sebuah kesalahan, Sangkuriang diusir dari desa. Bertahun-tahun kemudian, ia kembali sebagai pemuda tampan dan kuat, tanpa tahu bahwa Tumang adalah ayahnya yang dikutuk. Sangkuriang jatuh cinta pada Dayang Sumbi, yang kini masih cantik, tanpa menyadari bahwa ia adalah ibunya. Ketika Dayang Sumbi mengetahui identitasnya dari tanda luka di kepala Sangkuriang, ia berusaha mencegah pernikahan dengan memberikan syarat mustahil: membangun danau dan perahu besar dalam semalam. Dengan bantuan makhluk gaib, Sangkuriang hampir berhasil. Panik, Dayang Sumbi meminta warga menaburkan beras dan menyalakan api agar ayam berkokok lebih awal, menandakan pagi. Merasa ditipu, Sangkuriang menendang perahu yang sedang dibuatnya, yang kemudian menjadi Gunung Tangkuban Perahu. Kisah ini mengajarkan pentingnya menghormati keluarga dan menerima takdir."
+            },
+            {
+                title: "Timun Mas",
+                summary: "Petualangan Timun Mas melawan raksasa di Jawa Tengah.",
+                content: "Di sebuah desa kecil di Jawa Tengah, hiduplah Mbok Srini dan suaminya, petani miskin yang mendambakan anak. Suatu malam, raksasa hijau muncul dalam mimpi Mbok Srini, menawarkan timun ajaib yang akan melahirkan anak, dengan syarat anak itu harus diserahkan saat berusia 17 tahun. Dari timun itu lahirlah Timun Mas, gadis cantik yang tumbuh dengan penuh kasih sayang. Ketika raksasa datang menagih janji, Mbok Srini memberikan Timun Mas empat benda ajaib: biji timun, jarum, garam, dan terasi. Saat dikejar raksasa, Timun Mas melemparkan biji timun yang berubah menjadi hutan lebat, jarum menjadi duri tajam, garam menjadi laut luas, dan terasi menjadi lumpur panas yang mendidih. Raksasa terjebak di lumpur dan tenggelam. Timun Mas kembali ke pelukan Mbok Srini, dan mereka hidup bahagia. Cerita ini mengajarkan keberanian dan kecerdikan dalam menghadapi bahaya."
+            },
+            {
+                title: "Bawang Merah Bawang Putih",
+                summary: "Kebaikan hati Bawang Putih mengatasi kejahatan Bawang Merah.",
+                content: "Di sebuah desa di Jawa, Bawang Putih hidup bersama ibu tiri dan saudara tirinya, Bawang Merah, setelah ayahnya meninggal. Ibu tiri dan Bawang Merah selalu menyiksa Bawang Putih, memaksanya mengerjakan semua pekerjaan rumah. Suatu hari, kain kesayangan ibu tiri hanyut di sungai. Bawang Putih mencarinya dan bertemu nenek tua di tepi sungai. Dengan hati tulus, ia membantu nenek itu dan diberi labu ajaib berisi emas dan permata. Ketika ibu tiri dan Bawang Merah mengetahui, mereka memaksa Bawang Merah mencari nenek itu. Namun, karena sifatnya yang sombong dan kasar, Bawang Merah hanya mendapat labu berisi ular berbisa. Bawang Putih akhirnya hidup bahagia dengan harta itu, sementara ibu tiri dan Bawang Merah menyesali perbuatan mereka. Kisah ini mengajarkan bahwa kebaikan hati akan selalu membawa kebahagiaan."
+            },
+            {
+                title: "Keong Mas",
+                summary: "Putri yang dikutuk menjadi keong emas di Jawa Timur.",
+                content: "Di Kerajaan Daha, Jawa Timur, hiduplah dua putri, Candra Kirana dan Dewi Galuh. Dewi Galuh iri pada kecantikan dan kebaikan Candra Kirana, yang bertunangan dengan Pangeran Inu Kertapati. Dengan bantuan penyihir, Dewi Galuh mengutuk Candra Kirana menjadi keong mas dan membuangnya ke laut. Seorang nenek nelayan menemukan keong itu dan merawatnya di gubuknya. Setiap hari, keong mas berubah menjadi Candra Kirana saat nenek pergi, membersihkan rumah dan memasak makanan lezat. Nenek akhirnya memergoki Candra Kirana dan membantu memecahkan kutukan. Candra Kirana kembali ke istana, menikah dengan Inu Kertapati, dan Dewi Galuh dihukum atas kejahatannya. Cerita ini mengajarkan bahwa kebaikan hati akan mengalahkan kejahatan."
+            },
+            {
+                title: "Roro Jonggrang",
+                summary: "Kisah candi Prambanan dan kutukan Bandung Bondowoso.",
+                content: "Di Jawa Tengah, Bandung Bondowoso, pangeran sakti dari Kerajaan Pengging, mengalahkan Kerajaan Prambanan dan ingin menikahi putri raja, Roro Jonggrang. Roro menolak karena Bandung telah membunuh ayahnya, tetapi takut menolak secara langsung. Ia memberikan syarat mustahil: membangun seribu candi dalam semalam. Dengan bantuan jin, Bandung hampir menyelesaikan 999 candi. Panik, Roro Jonggrang memerintahkan dayang-dayang menumbuk padi dan menyalakan api agar ayam berkokok, menandakan pagi telah tiba. Merasa ditipu, Bandung marah dan mengutuk Roro Jonggrang menjadi patung untuk melengkapi candi ke-1000. Patung itu kini menjadi bagian dari Candi Prambanan, mengajarkan bahwa kecerdikan harus digunakan dengan bijak."
+            },
+            {
+                title: "Ande Ande Lumut",
+                summary: "Pangeran yang menyamar mencari cinta sejati.",
+                content: "Di Jawa Timur, Pangeran Ande Ande Lumut menyamar sebagai pemuda biasa untuk mencari istri yang tulus. Di desa tetangga, Klenting Kuning, gadis baik hati, disiksa oleh ibu tiri dan saudara-saudaranya, Klenting Merah, Biru, dan Hijau. Pangeran mengadakan sayembara untuk menemukan gadis yang hatinya murni. Klenting Kuning, meski berpakaian sederhana, datang dengan keberanian. Ia melewati ujian dengan menunjukkan kejujuran dan kasih sayang. Ande Ande Lumut mengungkap identitasnya dan memilih Klenting Kuning sebagai istri. Mereka hidup bahagia, sementara keluarga tiri Klenting Kuning menyesali perbuatan mereka. Kisah ini mengajarkan pentingnya kejujuran dan kebaikan hati."
+            },
+            {
+                title: "Si Kancil dan Buaya",
+                summary: "Kecerdikan Si Kancil menipu buaya di sungai.",
+                content: "Di hutan Jawa, Si Kancil, seekor rusa kecil yang cerdik, ingin menyeberangi sungai yang penuh buaya. Ia tahu buaya-buaya itu lapar dan berbahaya. Dengan akal cerdas, Kancil berkata kepada buaya bahwa raja hutan memerintahkannya menghitung jumlah buaya untuk pesta besar. Ia meminta mereka berbaris di sungai. Satu per satu, Kancil melompati punggung buaya sambil menghitung dengan keras, 'Satu, dua, tiga!' hingga sampai di seberang. Ketika buaya sadar mereka ditipu, Kancil sudah menghilang di balik semak dengan tawa riang. Cerita ini mengajarkan bahwa kecerdikan bisa mengatasi kekuatan besar."
+            },
+            {
+                title: "Legenda Danau Toba",
+                summary: "Asal-usul Danau Toba dari ikan mas ajaib.",
+                content: "Di Sumatra Utara, seorang petani muda bernama Toba hidup sendirian di desa terpencil. Suatu hari, ia menangkap ikan mas emas yang indah di sungai. Ajaibnya, ikan itu berubah menjadi wanita cantik bernama Sari. Toba jatuh cinta, dan mereka menikah dengan syarat Toba tidak boleh menyebut asal-usul Sari sebagai ikan. Mereka hidup bahagia dan memiliki anak bernama Samosir. Suatu hari, Toba marah pada Samosir dan tanpa sengaja menyebut Sari sebagai ikan. Langit menggelap, air memancar dari tanah, dan Sari serta Samosir menghilang. Banjir besar membentuk Danau Toba, dengan pulau kecil di tengahnya dinamakan Pulau Samosir. Kisah ini mengajarkan pentingnya menepati janji."
+            },
+            {
+                title: "Lutung Kasarung",
+                summary: "Pangeran yang dikutuk menjadi lutung di Jawa Barat.",
+                content: "Di Kerajaan Pasir Batang, Jawa Barat, Pangeran Guruminda dikutuk menjadi lutung karena kesombongannya. Ia diasingkan ke hutan, tempat ia bertemu Purbasari, putri raja yang juga diusir oleh kakaknya, Purbararang, karena iri hati. Lutung Kasarung membantu Purbasari dengan membawakan buah-buahan dan menjaganya dari bahaya. Suatu hari, Purbasari memandikan lutung di telaga suci, dan kutukan pun terpecahkan. Guruminda kembali menjadi pangeran tampan. Bersama, mereka kembali ke istana, mengalahkan Purbararang, dan memimpin kerajaan dengan adil. Cerita ini mengajarkan bahwa kebaikan hati dapat memecahkan kutukan dan membawa kebahagiaan."
+            },
+            {
+                title: "Jaka Tarub dan Nawang Wulan",
+                summary: "Cinta seorang pemuda dengan bidadari dari kayangan.",
+                content: "Di sebuah desa di Jawa Tengah, Jaka Tarub, pemuda tampan, suka berburu di hutan. Suatu hari, ia melihat tujuh bidadari mandi di telaga. Terpesona, ia mencuri selendang Nawang Wulan, salah satu bidadari, membuatnya tak bisa kembali ke kayangan. Jaka Tarub menikahi Nawang Wulan, dan mereka dikaruniai anak. Nawang Wulan memiliki keajaiban: nasi yang dimasaknya tak pernah habis. Suatu hari, Jaka Tarub melanggar larangan istrinya untuk membuka periuk nasi, dan keajaiban itu hilang. Nawang Wulan menemukan selendangnya dan kembali ke kayangan, tetapi karena cinta, ia mengizinkan Jaka Tarub mengunjunginya di kayangan. Kisah ini mengajarkan pentingnya kejujuran dalam cinta."
+            },
+            {
+                title: "Asal-Usul Kota Banyuwangi",
+                summary: "Cinta sejati Sri Tanjung di Jawa Timur.",
+                content: "Di Jawa Timur, Sri Tanjung, seorang gadis cantik, bertunangan dengan pemuda desa. Seorang raja lokal jatuh cinta padanya dan memfitnah tunangannya sebagai pengkhianat. Dalam pertempuran, tunangan Sri Tanjung tewas. Untuk membuktikan kesucian cintanya, Sri Tanjung melompat ke sungai sambil berdoa. Ajaibnya, sungai itu mengeluarkan aroma harum, dan airnya menjadi jernih. Raja menyesali perbuatannya, dan sungai itu dinamakan Banyuwangi, yang berarti 'air harum'. Cerita ini mengajarkan bahwa cinta sejati akan selalu terbukti kebenarannya."
+            },
+            {
+                title: "Cindelaras",
+                summary: "Anak raja dan ayam jantan ajaib di Jawa Timur.",
+                content: "Di Kerajaan Jenggala, Jawa Timur, Cindelaras adalah putra raja yang diasingkan karena fitnah selir. Ia dibesarkan oleh ibunya di desa terpencil, tanpa tahu identitas aslinya. Cindelaras memiliki ayam jantan ajaib yang bisa berbicara dan tak pernah kalah dalam adu ayam. Kabar tentang ayam itu sampai ke istana, dan raja mengundang Cindelaras. Dalam pertandingan, ayam Cindelaras mengungkapkan bahwa tuannya adalah putra raja. Raja terkejut dan menyadari kesalahannya. Cindelaras dipersatukan kembali dengan ayahnya, dan selir jahat dihukum. Kisah ini mengajarkan bahwa kebenaran akan selalu terungkap."
+            },
+            {
+                title: "Si Pitung",
+                summary: "Pendekar Betawi melawan ketidakadilan.",
+                content: "Di Jakarta pada masa penjajahan Belanda, Si Pitung adalah pendekar Betawi yang terkenal akan keberanian dan keahlian silatnya. Ia tinggal di kampung Marunda dan sering melihat rakyat miskin menderita karena pajak berat dari Belanda. Dengan kecerdikannya, Pitung mencuri dari tuan tanah kaya dan membagikan hasilnya kepada rakyat. Ia selalu lolos dari kejaran Belanda berkat dukungan warga dan keahliannya menyamar. Meski akhirnya tertangkap, nama Pitung tetap hidup sebagai simbol perlawanan dan keadilan. Cerita ini mengajarkan keberanian untuk melawan ketidakadilan."
+            },
+            {
+                title: "Legenda Batu Menangis",
+                summary: "Gadis durhaka yang menjadi batu di Kalimantan.",
+                content: "Di sebuah desa di Kalimantan Barat, hiduplah Darmi, seorang gadis cantik namun malas dan durhaka. Ia sering memarahi ibunya yang miskin dan bekerja keras. Suatu hari, saat ibunya meminta bantuan, Darmi menolak dan malah menyangkal ibunya di depan orang banyak, mengatakan ibunya bukan keluarganya. Langit tiba-tiba menggelap, petir menyambar, dan Darmi mulai berubah menjadi batu. Dalam penyesalannya, ia menangis meminta maaf, tetapi kutukan tak bisa dibatalkan. Air matanya menjadi sumber air di desa, dan batu itu dinamakan Batu Menangis. Kisah ini mengajarkan pentingnya menghormati orang tua."
+            },
+            {
+                title: "Telaga Warna",
+                summary: "Danau warna-warni akibat kesombongan di Jawa Barat.",
+                content: "Di Jawa Barat, seorang raja dan ratu memiliki putri cantik namun sombong. Untuk ulang tahunnya, mereka memberikan kalung ajaib yang indah, tetapi putri itu membencinya dan melemparnya ke tanah. Kalung itu pecah, dan air memancar dari tempat itu, membentuk danau dengan air berwarna-warni yang indah. Putri dan istana tenggelam di dalamnya. Danau itu dinamakan Telaga Warna, menjadi pengingat bahwa kesombongan dapat membawa malapetaka. Cerita ini mengajarkan pentingnya kerendahan hati."
+            },
+            {
+                title: "Prabu Siliwangi",
+                summary: "Raja Pajajaran yang bijaksana dan sakti.",
+                content: "Prabu Siliwangi adalah raja besar Kerajaan Pajajaran di Jawa Barat, dikenal sebagai pemimpin adil dan sakti. Ia memiliki kekuatan gaib, konon bisa berubah menjadi harimau putih untuk melindungi rakyatnya dari musuh. Dalam masa pemerintahannya, Pajajaran menjadi makmur, dengan sawah yang subur dan rakyat yang sejahtera. Suatu hari, ketika kerajaannya diserang, Prabu Siliwangi memimpin perlawanan dengan gagah berani. Legenda mengatakan ia menghilang ke alam gaib bersama pasukannya, tetapi semangatnya tetap hidup di hati rakyat Sunda. Kisah ini mengajarkan keberanian dan keadilan dalam kepemimpinan."
+            },
+            {
+                title: "Raja Ampat",
+                summary: "Asal-usul kepulauan indah di Papua Barat.",
+                content: "Di Papua Barat, seorang raja dan ratunya hidup di tepi laut. Suatu hari, mereka menemukan tujuh telur ajaib di pantai. Empat telur menetas menjadi pulau-pulau indah: Waigeo, Salawati, Batanta, dan Misool. Tiga telur lainnya menjadi simbol kehidupan laut yang kaya. Raja dan ratu menjaga pulau-pulau itu dengan penuh kasih, dan rakyat setempat menghormatinya sebagai anugerah alam. Kepulauan Raja Ampat kini terkenal akan keindahan lautnya, mengajarkan pentingnya menjaga lingkungan."
+            },
+            {
+                title: "Kisah Si Lebai Malang",
+                summary: "Kebingungan Si Lebai yang lucu di Sumatra.",
+                content: "Di sebuah desa di Sumatra Barat, Si Lebai adalah ulama desa yang dikenal baik hati namun sering bingung. Suatu hari, ia diundang ke dua pesta besar di desa tetangga pada waktu yang sama. Satu pesta menawarkan makanan lezat, yang lain menjanjikan hadiah besar. Karena serakah dan ragu-ragu, Si Lebai bolak-balik antara kedua pesta, berharap mendapat yang terbaik dari keduanya. Namun, ia terlambat di kedua acara, dan akhirnya pulang dengan tangan kosong. Warga menertawakannya, dan ia dijuluki Si Lebai Malang. Kisah ini mengajarkan pentingnya membuat keputusan dengan tegas."
+            },
+            {
+                title: "Legenda Gunung Bromo",
+                summary: "Pengorbanan cinta di Jawa Timur.",
+                content: "Di Jawa Timur, Roro Anteng dan Joko Seger adalah pasangan yang hidup bahagia di kaki gunung. Mereka berjanji kepada dewa gunung untuk mengorbankan anak mereka demi kemakmuran desa. Setelah memiliki banyak anak, mereka tidak rela memenuhi janji. Dewa marah, dan gunung meletus, menelan anak bungsu mereka. Gunung itu dinamakan Bromo, mengenang pengorbanan cinta keluarga itu. Hingga kini, suku Tengger mengadakan upacara Kasada untuk menghormati gunung. Cerita ini mengajarkan pentingnya menepati janji dan menghormati alam."
+            },
+            {
+                title: "Legenda Situ Bagendit",
+                summary: "Wanita kikir yang menjadi danau di Garut.",
+                content: "Di Garut, Jawa Barat, Nyai Bagendit adalah wanita kaya raya yang terkenal kikir. Ia memiliki sawah luas dan rumah megah, tetapi tak pernah membantu warga miskin. Suatu hari, seorang kakek tua meminta sedekah, tetapi Nyai Bagendit mengusirnya dengan kasar. Kakek itu, yang ternyata seorang petapa sakti, mengutuknya. Air memancar dari rumah Nyai Bagendit, menenggelamkan desa dan dirinya. Danau itu dinamakan Situ Bagendit, menjadi pengingat bahwa sifat kikir hanya membawa petaka. Cerita ini mengajarkan pentingnya berbagi dengan sesama."
+            },
+            {
+                title: "Si Manan dan Si Menek",
+                summary: "Persahabatan pemberani di Aceh.",
+                content: "Di Aceh, Si Manan dan Si Menek adalah dua sahabat anak-anak yang suka berpetualang di hutan. Suatu hari, mereka tersesat dan bertemu harimau besar. Dengan kecerdikan, Si Manan berpura-pura menjadi hantu, sementara Si Menek membuat suara menakutkan dengan ranting. Harimau kabur ketakutan, dan kedua sahabat kembali ke desa dengan selamat. Warga memuji keberanian dan kerja sama mereka. Kisah ini mengajarkan bahwa persahabatan dan kecerdikan bisa mengatasi bahaya besar."
+            },
+            {
+                title: "Legenda Gunung Kelud",
+                summary: "Cinta dan pengkhianatan di Jawa Timur.",
+                content: "Di Jawa Timur, Putri Dewi Kilisuci adalah gadis cantik yang dicintai oleh Mahesa Suro dan Lembu Suro, dua pangeran sakti. Dewi Kilisuci menolak mereka karena ingin hidup bebas. Marah, kedua pangeran bersumpah menyerang kerajaannya. Dewi Kilisuci mengelabui mereka untuk masuk ke sumur besar yang kemudian meletus menjadi Gunung Kelud. Letusan itu menenggelamkan mereka, dan Dewi Kilisuci dihormati sebagai pahlawan. Cerita ini mengajarkan keberanian untuk mempertahankan kebebasan."
+            },
+            {
+                title: "Asal-Usul Burung Cendrawasih",
+                summary: "Burung ajaib dari Papua.",
+                content: "Di Papua, seorang gadis bernama Kweiya dikenal karena kecintaannya pada alam. Namun, ia menolak perintah ayahnya untuk menikah, dan sebagai hukuman, ia dikutuk menjadi burung. Burung itu memiliki bulu indah berwarna-warni dan dinamakan Cendrawasih. Burung ini terbang bebas di hutan Papua, menjadi simbol keindahan dan kebebasan. Rakyat setempat menghormatinya sebagai anugerah alam. Kisah ini mengajarkan pentingnya menghargai kebebasan dan keindahan alam."
+            },
+            {
+                title: "Legenda Nyi Roro Kidul",
+                summary: "Ratu laut selatan yang misterius di Jawa.",
+                content: "Di Kerajaan Pajajaran, Putri Kadita adalah putri cantik yang diusir oleh ibu tirinya karena iri hati. Dalam keputusasaan, ia bermeditasi di pantai selatan Jawa. Dewa laut memanggilnya, dan Kadita berubah menjadi Nyi Roro Kidul, ratu gaib yang menguasai laut selatan. Ia melindungi pantai dan membantu nelayan, tetapi juga menghukum mereka yang tidak menghormati laut. Hingga kini, rakyat Jawa menghormatinya dengan upacara dan pakaian hijau, warna kesukaannya. Kisah ini mengajarkan rasa hormat terhadap alam dan kekuatan gaib."
+            },
+            {
+                title: "Si Pahit Lidah",
+                summary: "Pemuda dengan kutukan lidah di Sumatra.",
+                content: "Di Sumatra, seorang pemuda bernama Si Pahit Lidah memiliki kemampuan ajaib: setiap ucapannya menjadi kenyataan. Namun, karena kesombongannya, ia sering mengutuk orang lain, menyebabkan kekacauan. Suatu hari, ia tanpa sengaja mengutuk desanya menjadi rawa besar. Menyesali perbuatannya, ia belajar mengendalikan lidahnya dan menggunakan kekuatannya untuk membantu orang. Kisah ini mengajarkan pentingnya menjaga ucapan dan bertanggung jawab atas kekuatan yang dimiliki."
+            },
+            {
+                title: "Legenda Gunung Merapi",
+                summary: "Kerajaan gaib di Yogyakarta.",
+                content: "Di Yogyakarta, Gunung Merapi dianggap sebagai kerajaan gaib yang dipimpin oleh Empu Pamadi dan Eyang Merapi. Mereka melindungi desa-desa di kaki gunung, tetapi juga menghukum mereka yang merusak alam, seperti menebang pohon sembarangan. Rakyat setempat menghormati gunung dengan upacara Labuhan, mempersembahkan sesaji untuk menjaga keseimbangan. Cerita ini mengajarkan pentingnya hidup selaras dengan alam."
+            },
+            {
+                title: "Asal-Usul Kota Surabaya",
+                summary: "Pertarungan Sura dan Baya di Jawa Timur.",
+                content: "Di Jawa Timur, seekor buaya bernama Sura dan seekor hiu bernama Baya bersaing memperebutkan wilayah di sungai. Pertarungan mereka begitu sengit hingga mengubah alur sungai dan membentuk daratan baru. Akhirnya, mereka berdamai dan menamakan tempat itu Surabaya, gabungan dari nama mereka. Kota ini kini menjadi simbol keberanian dan kerja sama. Cerita ini mengajarkan bahwa persaingan dapat diselesaikan dengan damai."
+            },
+            {
+                title: "Legenda Bledug Kuwu",
+                summary: "Lumpur ajaib di Grobogan, Jawa Tengah.",
+                content: "Di Grobogan, Jawa Tengah, seorang pemuda bernama Jaka Linglung, yang sebenarnya putra naga, membantu desanya melawan musuh. Dalam pertempuran, ia terluka, dan dari tubuhnya keluar lumpur panas yang membentuk Bledug Kuwu. Fenomena lumpur ini menjadi keajaiban alam, dan Jaka Linglung dihormati sebagai pahlawan. Kisah ini mengajarkan pengorbanan demi kebaikan bersama."
+            },
+            {
+                title: "Si Boko Sisem",
+                summary: "Pendekar pemberani dari Bali.",
+                content: "Di Bali, Si Boko Sisem adalah pendekar muda yang melindungi desanya dari penyamun. Dengan keahlian tari Baris dan ilmu silat, ia mengalahkan musuh yang ingin merampok desa. Rakyat memujinya sebagai simbol keberanian dan kesetiaan. Kisah ini mengajarkan bahwa keberanian dapat melindungi komunitas."
+            },
+            {
+                title: "Legenda Pulau Kemaro",
+                summary: "Cinta tragis di Palembang.",
+                content: "Di Palembang, Siti Fatimah, putri Tionghoa, jatuh cinta dengan Tan Bun An, pedagang lokal. Keluarga mereka menolak pernikahan itu. Keduanya melarikan diri dengan perahu, membawa harta untuk membuktikan cinta mereka. Namun, perahu mereka terbalik di Sungai Musi, dan mereka tenggelam. Tempat itu menjadi Pulau Kemaro, simbol cinta abadi. Cerita ini mengajarkan bahwa cinta sejati kadang membutuhkan pengorbanan."
+            },
+            {
+                title: "Asal-Usul Gunung Rinjani",
+                summary: "Putri yang menjadi gunung di Lombok.",
+                content: "Di Lombok, Putri Anjani adalah putri raja yang mencintai alam. Ia sering bermeditasi di puncak gunung untuk mencari kedamaian. Setelah kematiannya, rakyat percaya jiwanya menyatu dengan gunung, yang dinamakan Gunung Rinjani. Gunung ini menjadi tempat suci, dan rakyat menghormatinya dengan upacara. Kisah ini mengajarkan pentingnya menjaga alam dan spiritualitas."
+            },
+            {
+                title: "Legenda Rawa Pening",
+                summary: "Anak ajaib dan danau di Jawa Tengah.",
+                content: "Di Jawa Tengah, seorang janda menemukan anak ajaib bernama Baru Klinting, yang sebenarnya putra naga. Ketika desa dilanda banjir besar, Baru Klinting mencoba menyelamatkan warga, tetapi mereka tidak percaya. Banjir akhirnya menenggelamkan desa, membentuk Rawa Pening. Baru Klinting menjadi penutup danau, menjaga keseimbangan alam. Cerita ini mengajarkan pentingnya mendengarkan nasihat dan menjaga alam."
+            },
+            {
+                title: "Si Jampang",
+                summary: "Pendekar Betawi yang cerdik.",
+                content: "Di Jakarta, Si Jampang adalah pendekar Betawi yang terkenal cerdas dan pemberani. Ia sering membantu rakyat miskin melawan tuan tanah serakah. Dengan kecerdikannya, ia menyamar untuk menipu musuh dan membawa keadilan. Nama Si Jampang menjadi legenda di kalangan rakyat Betawi. Kisah ini mengajarkan bahwa kecerdasan dan keberanian bisa mengubah ketidakadilan."
+            },
+            {
+                title: "Legenda Gunung Kawi",
+                summary: "Petapa sakti di Jawa Timur.",
+                content: "Di Jawa Timur, dua petapa, Eyang Jugo dan Eyang Semar, bertapa di Gunung Kawi untuk mencari kebijaksanaan. Mereka membantu rakyat dengan ilmu gaib, seperti menyembuhkan penyakit dan melindungi desa dari bencana. Gunung Kawi menjadi tempat suci, dan rakyat menghormatinya dengan doa. Cerita ini mengajarkan pentingnya kebijaksanaan dan kebaikan."
+            },
+            {
+                title: "Asal-Usul Burung Kolplay",
+                summary: "Burung ajaib dari Maluku.",
+                content: "Di Maluku, seorang pemuda menyelamatkan burung yang terluka. Sebagai balasan, burung itu mengajarkannya lagu-lagu indah yang membawa kedamaian. Burung itu dinamakan Kolplay, dan suaranya menjadi simbol harmoni di Maluku. Cerita ini mengajarkan bahwa kebaikan kepada makhluk hidup akan membawa kebahagiaan."
+            },
+            {
+                title: "Legenda Sungai Mahakam",
+                summary: "Naga penjaga sungai di Kalimantan.",
+                content: "Di Kalimantan Timur, Sungai Mahakam dijaga oleh naga bernama Mahakam. Ia melindungi desa dari banjir dan musuh, tetapi meminta rakyat menghormati sungai. Ketika seorang pemuda merusak sungai, naga marah, menyebabkan banjir kecil. Rakyat belajar menghormati alam, dan sungai tetap menjadi sumber kehidupan. Kisah ini mengajarkan pentingnya menjaga lingkungan."
+            },
+            {
+                title: "Si Borobudur",
+                summary: "Pembangunan Candi Borobudur di Jawa Tengah.",
+                content: "Di Jawa Tengah, Gunadharma, seorang arsitek sakti, membangun Candi Borobudur untuk menghormati Buddha. Dengan kebijaksanaan dan kerja keras, ia merancang candi megah dengan ribuan relief yang menceritakan kehidupan Buddha. Candi ini menjadi warisan dunia, mengajarkan pentingnya dedikasi dan spiritualitas."
+            },
+            {
+                title: "Legenda Pulau Samosir",
+                summary: "Anak dan ibunya di Danau Toba.",
+                content: "Di Sumatra Utara, Samosir adalah anak Toba dan Sari, wanita ikan mas. Ketika Toba melanggar janji untuk tidak menyebut asal-usul Sari, ia dan Samosir menghilang, dan air membentuk Danau Toba. Pulau kecil di tengah danau dinamakan Pulau Samosir, melambangkan cinta keluarga. Kisah ini mengajarkan pentingnya menjaga kepercayaan."
+            },
+            {
+                title: "Asal-Usul Kota Manado",
+                summary: "Persatuan suku di Sulawesi Utara.",
+                content: "Di Sulawesi Utara, suku-suku bersatu untuk melawan musuh di tepi laut. Dipimpin oleh Dotu Lolong Lasut, mereka berhasil menang dan menamakan tempat itu Manado, yang berarti 'di tepi laut'. Kota ini menjadi simbol persatuan dan keberanian. Cerita ini mengajarkan pentingnya kerja sama."
+            },
+            {
+                title: "Legenda Batu Gantung",
+                summary: "Gadis dan anjing setia di Sumatra Utara.",
+                content: "Di Danau Toba, Seruni, seorang gadis, ingin melarikan diri dari pernikahan paksa. Ia bersembunyi di gua bersama anjing setianya, Tokoh. Gua itu runtuh, tetapi sebuah batu besar tergantung di tebing, dinamakan Batu Gantung. Batu ini mengenang kesetiaan anjing dan keberanian Seruni. Kisah ini mengajarkan pentingnya kesetiaan."
+            },
+            {
+                title: "Si Kelingking",
+                summary: "Anak kecil dengan kekuatan besar di Jawa.",
+                content: "Di Jawa, seorang janda memakan ikan ajaib dan melahirkan Si Kelingking, anak kecil seukuran jari kelingking. Meski kecil, ia memiliki kekuatan luar biasa. Ketika raksasa mengancam desa, Si Kelingking mengalahkannya dengan kecerdikan dan kekuatannya. Ia menjadi pahlawan desa, mengajarkan bahwa keberanian tidak ditentukan oleh ukuran tubuh."
+            },
+            {
+                title: "Legenda Gunung Agung",
+                summary: "Gunung suci di Bali.",
+                content: "Di Bali, Gunung Agung dianggap tempat tinggal Dewa Besar. Rakyat menghormatinya dengan upacara suci, seperti Ngaben dan Melasti. Gunung ini menjadi simbol spiritualitas dan kekuatan alam, mengajarkan pentingnya menjaga keseimbangan antara manusia dan alam."
+            },
+            {
+                title: "Asal-Usul Danau Laut Tawar",
+                summary: "Ikan raksasa di Aceh.",
+                content: "Di Aceh, seorang nelayan menangkap ikan raksasa yang berubah menjadi danau besar. Airnya jernih dan dinamakan Danau Laut Tawar. Rakyat setempat menghormati danau ini sebagai anugerah alam, mengajarkan pentingnya menjaga lingkungan."
+            },
+            {
+                title: "Legenda Tangkuban Perahu",
+                summary: "Kisah lain dari Sangkuriang.",
+                content: "Di Jawa Barat, kisah Sangkuriang dan Dayang Sumbi juga menceritakan asal-usul Gunung Tangkuban Perahu. Perahu yang ditendang Sangkuriang menjadi gunung dengan bentuk seperti perahu terbalik, mengenang cinta tragis dan kemarahannya. Cerita ini mengajarkan pentingnya mengendalikan emosi."
+            },
+            {
+                title: "Si Tanduk Panjang",
+                summary: "Pemuda dengan tanduk ajaib di Sumatra.",
+                content: "Di Sumatra, Si Tanduk Panjang adalah pemuda yang memiliki tanduk ajaib yang bisa mengabulkan permintaan. Awalnya, ia menggunakan tanduk untuk kesenangan pribadi, tetapi setelah menyebabkan kekacauan, ia belajar menggunakannya untuk membantu desa menjadi makmur. Kisah ini mengajarkan tanggung jawab atas kekuatan yang dimiliki."
+            },
+            {
+                title: "Legenda Pulau Bintan",
+                summary: "Pulau dari cinta di Kepulauan Riau.",
+                content: "Di Kepulauan Riau, seorang putri dan nelayan jatuh cinta, tetapi keluarga mereka menolak. Mereka melarikan diri ke laut dan berdoa menjadi pulau agar tetap bersama. Doa mereka terkabul, dan Pulau Bintan lahir, menjadi simbol cinta abadi. Cerita ini mengajarkan kekuatan cinta sejati."
+            },
+            {
+                title: "Asal-Usul Kota Bandung",
+                summary: "Danau yang menjadi kota di Jawa Barat.",
+                content: "Di Jawa Barat, sebuah danau besar bernama Bandung dikuasai oleh makhluk gaib. Seorang petapa sakti mengeringkan danau itu dengan ilmunya, dan daratan itu menjadi kota Bandung. Kota ini kini menjadi pusat budaya Sunda, mengajarkan pentingnya keberanian dan kebijaksanaan."
+            },
+            {
+                title: "Legenda Gunung Semeru",
+                summary: "Gunung tertinggi di Jawa Timur.",
+                content: "Di Jawa Timur, Gunung Semeru dianggap tempat tinggal dewa. Rakyat setempat menghormatinya dengan upacara, seperti mempersembahkan sesaji. Gunung ini menjadi simbol kekuatan dan spiritualitas, mengajarkan pentingnya menjaga hubungan dengan alam."
+            },
+            {
+                title: "Si Bujang Lapuk",
+                summary: "Pemuda miskin yang cerdas di Sumatra.",
+                content: "Di Sumatra, Si Bujang Lapuk adalah pemuda miskin yang sangat cerdas. Ia sering menipu orang kaya serakah untuk membantu rakyat miskin. Dengan akalnya, ia membawa keadilan ke desanya. Kisah ini mengajarkan bahwa kecerdasan dapat mengatasi kesulitan."
+            },
+            {
+                title: "Legenda Pantai Parangtritis",
+                summary: "Pantai suci Nyi Roro Kidul di Yogyakarta.",
+                content: "Di Yogyakarta, Pantai Parangtritis adalah tempat kekuasaan Nyi Roro Kidul, ratu laut selatan. Ia melindungi nelayan, tetapi menghukum mereka yang tidak menghormati laut dengan pakaian hijau. Pantai ini menjadi tempat suci, mengajarkan rasa hormat terhadap alam dan tradisi."
+            },
+            {
+                title: "Asal-Usul Danau Maninjau",
+                summary: "Cinta tragis di Sumatra Barat.",
+                content: "Di Sumatra Barat, Bujang Sembilan dan Siti adalah sepasang kekasih yang dilarang menikah oleh keluarga. Mereka melompat ke jurang sebagai bukti cinta mereka. Air memancar dari jurang itu, membentuk Danau Maninjau. Danau ini menjadi simbol cinta abadi, mengajarkan kekuatan cinta sejati."
+            }
+        ];
+
+        const storyList = document.getElementById('story-list');
+        const popup = document.getElementById('popup');
+        const popupTitle = document.getElementById('popup-title');
+        const popupContent = document.getElementById('popup-content');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const backBtn = document.getElementById('back-btn');
+        const closeBtn = document.querySelector('.close-btn');
+        let currentStoryIndex = 0;
+
+        function showPopup(index) {
+            currentStoryIndex = index;
+            popupTitle.textContent = stories[index].title;
+            popupContent.textContent = stories[index].content;
+            prevBtn.textContent = index > 0 ? stories[index - 1].title : '';
+            nextBtn.textContent = index < stories.length - 1 ? stories[index + 1].title : '';
+            prevBtn.disabled = index === 0;
+            nextBtn.disabled = index === stories.length - 1;
+            popup.classList.add('show');
+        }
+
+        function closePopup() {
+            popup.classList.remove('show');
+        }
+
+        stories.forEach((story, index) => {
+            const storyCard = document.createElement('div');
+            storyCard.className = 'story-card bg-white rounded-lg shadow-lg p-6 cursor-pointer';
+            storyCard.innerHTML = `
+                <h2 class="text-2xl font-semibold text-purple-600">${story.title}</h2>
+                <p class="text-gray-600 mt-2">${story.summary}</p>
+            `;
+            storyCard.addEventListener('click', () => showPopup(index));
+            storyList.appendChild(storyCard);
+        });
+
+        prevBtn.addEventListener('click', () => {
+            if (currentStoryIndex > 0) {
+                showPopup(currentStoryIndex - 1);
+            }
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (currentStoryIndex < stories.length - 1) {
+                showPopup(currentStoryIndex + 1);
+            }
+        });
+
+        backBtn.addEventListener('click', closePopup);
+        closeBtn.addEventListener('click', closePopup);
+    </script>
+  <!-- AUDIO -->
+  <audio id="bg-audio" src="skyhigh.mp3" loop hidden></audio>
+  <!-- SCRIPT UNTUK AUTOPLAY SETELAH KLIK -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.body.addEventListener('click', function () {
+        var audio = document.getElementById('bg-audio');
+        audio.play().catch(err => {
+          console.log('Autoplay diblokir:', err);
+        });
+      }, { once: true });
+    });
+  </script>
+</body>
+</html>

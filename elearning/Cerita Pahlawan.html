@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pahlawan Indonesia</title>
+  <link rel="icon" type="image/png" href="https://png.pngtree.com/png-vector/20240831/ourmid/pngtree-silhouette-of-indonesian-public-figure-png-image_13686210.png">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.development.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.development.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.25.6/babel.min.js"></script>
+  <script src="https://cdn.tailwindcss.com/3.4.10"></script>
+  <style>
+    .watermark {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      color: rgba(0, 0, 0, 0.3);
+      font-size: 12px;
+      font-family: Arial, sans-serif;
+      z-index: 1000;
+    }
+    .watermark a {
+      color: rgba(0, 0, 0, 0.5);
+      text-decoration: none;
+    }
+    .watermark a:hover {
+      color: rgba(0, 0, 0, 0.8);
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-b from-blue-200 to-yellow-100 min-h-screen font-sans">
+  <div id="root"></div>
+  <div class="watermark"><a href="https://id.linkedin.com/in/mochamad-fuad-asyhary">By Mochamad Fuad Asyhary</a></div>
+  <script type="text/javascript">
+    var gk_isXlsx = false;
+    var gk_xlsxFileLookup = {};
+    var gk_fileData = {};
+    function filledCell(cell) {
+      return cell !== '' && cell != null;
+    }
+    function loadFileData(filename) {
+      if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+        try {
+          var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+          var firstSheetName = workbook.SheetNames[0];
+          var worksheet = workbook.Sheets[firstSheetName];
+          var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+          var filteredData = jsonData.filter(row => row.some(filledCell));
+          var headerRowIndex = filteredData.findIndex((row, index) =>
+            row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+          );
+          if (headerRowIndex === -1 || headerRowIndex > 25) {
+            headerRowIndex = 0;
+          }
+          var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex));
+          csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+          return csv;
+        } catch (e) {
+          console.error('Error loading XLSX file:', e);
+          return "";
+        }
+      }
+      return gk_fileData[filename] || "";
+    }
+  </script>
+  <script type="text/babel">
+    const { useState } = React;
+
+    class ErrorBoundary extends React.Component {
+      state = { hasError: false };
+      static getDerivedStateFromError(error) {
+        console.error('ErrorBoundary caught an error:', error);
+        return { hasError: true };
+      }
+      render() {
+        if (this.state.hasError) {
+          return <div className="text-center text-red-600 p-4">Terjadi kesalahan saat memuat aplikasi. Silakan periksa koneksi internet atau coba browser lain.</div>;
+        }
+        return this.props.children;
+      }
+    }
+
+    const heroes = [
+      {
+        name: "Soekarno",
+        story: "Soekarno, atau Bung Karno, adalah Presiden pertama Indonesia dan Bapak Proklamator. Lahir di Surabaya pada 6 Juni 1901, ia dibesarkan oleh ayahnya, Raden Soekemi Sosrodihardjo, seorang guru, dan ibunya, Ida Ayu Nyoman Rai dari Bali. Saat remaja, ia aktif di Jong Java di HBS Surabaya. Ia melanjutkan pendidikan di Technische Hoogeschool (sekarang ITB) di Bandung, mendirikan Algemeene Studieclub. Pada 1927, ia mendirikan Partai Nasional Indonesia (PNI) untuk memperjuangkan kemerdekaan. Ia sering dipenjara Belanda di Banceuy dan Sukamiskin, serta diasingkan ke Ende, Flores, dan Bengkulu. Pada 1 Juni 1945, ia merumuskan Pancasila sebagai dasar negara. Bersama Mohammad Hatta, ia memproklamasikan kemerdekaan pada 17 Agustus 1945. Sebagai presiden (1945–1967), ia memimpin Indonesia melawan agresi Belanda dan menggagas Konferensi Asia-Afrika 1955. Soekarno wafat pada 21 Juni 1970, dimakamkan di Blitar, dan dianugerahi gelar Pahlawan Proklamator pada 1988."
+      },
+      {
+        name: "Mohammad Hatta",
+        story: "Mohammad Hatta, atau Bung Hatta, adalah Wakil Presiden pertama Indonesia. Lahir di Bukittinggi, Sumatera Barat, pada 12 Agustus 1902, ia berasal dari keluarga pedagang Minangkabau. Ia belajar di Handels Hogeschool di Rotterdam, Belanda, dan aktif di Perhimpunan Indonesia. Dikenal sebagai Bapak Koperasi Indonesia, ia menulis tentang ekonomi rakyat. Bersama Soekarno, ia memproklamasikan kemerdekaan pada 17 Agustus 1945. Bung Hatta memimpin diplomasi di Perjanjian Linggarjati (1947) dan Konferensi Meja Bundar (1949). Ia mundur pada 1956 karena berbeda pandangan dengan Soekarno. Ia wafat pada 14 Maret 1980 di Jakarta, dimakamkan di Taman Makam Pahlawan Kalibata, dan dianugerahi gelar Pahlawan Proklamator pada 1988."
+      },
+      {
+        name: "Cut Nyak Dhien",
+        story: "Cut Nyak Dhien adalah pahlawan wanita Aceh, dijuluki Srikandi Indonesia. Lahir pada 1848 di Lampadang, Aceh Besar, ia berasal dari keluarga bangsawan. Suaminya, Teuku Ibrahim Lamnga, gugur melawan Belanda pada 1878. Ia kemudian menikah dengan Teuku Umar pada 1880, dan mereka memimpin pasukan gerilya di Perang Aceh. Setelah Teuku Umar gugur pada 1899, ia tetap berjuang meski usianya lanjut. Ditangkap pada 1905 karena dikhianati, ia diasingkan ke Sumedang, Jawa Barat. Ia wafat pada 6 November 1908 dan dianugerahi gelar Pahlawan Nasional pada 2 Mei 1964."
+      },
+      {
+        name: "R.A. Kartini",
+        story: "Raden Ajeng Kartini, lahir di Jepara pada 21 April 1879, adalah pelopor emansipasi wanita. Putri bupati Jepara, R.M. Sosroningrat, ia belajar di ELS hingga usia 12 tahun, lalu dipingit sesuai adat Jawa. Ia menulis surat tentang ketidakadilan terhadap perempuan, diterbitkan dalam *Habis Gelap Terbitlah Terang* (1911). Pada 1903, ia mendirikan sekolah untuk perempuan di Jepara. Kartini wafat pada 17 September 1904 saat melahirkan anaknya. Ia dianugerahi gelar Pahlawan Nasional pada 1964, dan tanggal kelahirannya diperingati sebagai Hari Kartini."
+      },
+      {
+        name: "Pangeran Diponegoro",
+        story: "Pangeran Diponegoro, lahir sebagai Raden Mas Ontowiryo pada 11 November 1785 di Yogyakarta, memimpin Perang Jawa (1825–1830) melawan Belanda. Anak Sultan Hamengkubuwono III, ia melawan karena campur tangan Belanda di keraton. Dengan strategi gerilya, ia memimpin petani dan bangsawan. Ditangkap pada 1830 melalui tipu muslihat, ia diasingkan ke Manado dan Makassar, wafat pada 8 Januari 1855. Ia dianugerahi gelar Pahlawan Nasional pada 1973."
+      },
+      {
+        name: "Sultan Hasanuddin",
+        story: "Sultan Hasanuddin, lahir di Makassar pada 12 Januari 1631, dijuluki 'Ayam Jantan dari Timur.' Raja Gowa ke-16, ia naik tahta pada 1653 dan melawan Belanda untuk mempertahankan perdagangan rempah-rempah. Ia memimpin Pertempuran Somba Opu (1669), tetapi kalah dan menandatangani Perjanjian Bongaya (1667). Ia wafat pada 12 Juni 1670, dimakamkan di Makassar, dan dianugerahi gelar Pahlawan Nasional pada 1973."
+      },
+      {
+        name: "Dewi Sartika",
+        story: "Dewi Sartika, lahir di Cicalengka, Bandung, pada 4 Desember 1884, adalah pelopor pendidikan perempuan. Dari keluarga ningrat, ia mendirikan Sakola Istri pada 1904, sekolah perempuan pertama di Indonesia, mengajarkan membaca, menulis, dan keterampilan. Ia mendapat penghargaan dari Belanda dan mengungsi ke Cineam saat perang kemerdekaan. Ia wafat pada 11 September 1947 dan dianugerahi gelar Pahlawan Nasional pada 1966."
+      },
+      {
+        name: "Kapitan Pattimura",
+        story: "Kapitan Pattimura, atau Thomas Matulessy, lahir di Saparua, Maluku, pada 8 Juni 1783. Ia memimpin perlawanan melawan Belanda pada 1817, merebut Benteng Duurstede. Sebagai prajurit terlatih, ia menyatukan Ternate dan Tidore. Ditangkap pada 1817 karena dikhianati, ia dieksekusi di Ambon pada 16 Desember 1817. Ia dianugerahi gelar Pahlawan Nasional pada 1973."
+      },
+      {
+        name: "Jenderal Soedirman",
+        story: "Jenderal Soedirman, lahir di Purbalingga pada 24 Januari 1916, adalah Panglima Besar TNI pertama. Meski sakit tuberkulosis, ia memimpin Perang Gerilya melawan Belanda (1948–1949), termasuk Pertempuran Ambarawa (1945) dan Serangan Umum 1 Maret 1949. Ia wafat pada 29 Januari 1950 di Magelang, dimakamkan di Taman Makam Pahlawan Semaki, Yogyakarta, dan dianugerahi gelar Pahlawan Nasional pada 1964."
+      },
+      {
+        name: "H.O.S. Tjokroaminoto",
+        story: "Haji Oemar Said Tjokroaminoto, lahir di Ponorogo pada 16 Agustus 1882, adalah pendiri Sarekat Islam, organisasi massa nasionalis pertama. Ia menjadi guru bagi Soekarno dan Tan Malaka. Ditangkap Belanda pada 1920, ia tetap mengajarkan persatuan. Ia wafat pada 17 Desember 1934 dan dianugerahi gelar Pahlawan Nasional pada 1961."
+      },
+      {
+        name: "Bung Tomo",
+        story: "Sutomo, atau Bung Tomo, lahir di Surabaya pada 3 Oktober 1920, dikenal karena pidato-pidatonya yang mengobarkan semangat dalam Pertempuran Surabaya (10 November 1945). Semboyannya 'Merdeka atau Mati' menggema di hati rakyat. Ia wafat pada 7 Oktober 1981 di Padang Arafah saat haji dan dianugerahi gelar Pahlawan Nasional pada 2008."
+      },
+      {
+        name: "Tan Malaka",
+        story: "Tan Malaka, lahir di Suliki, Sumatera Barat, pada 2 Juni 1897, adalah tokoh revolusioner. Ia menulis *Madilog* dan memengaruhi Soekarno dan Hatta. Menentang perundingan dengan Belanda, ia mendirikan Persatuan Perjuangan. Ia dieksekusi pada 21 Februari 1949 dan dianugerahi gelar Pahlawan Nasional pada 1963."
+      },
+      {
+        name: "Sutan Sjahrir",
+        story: "Sutan Sjahrir, lahir di Padang Panjang pada 5 Maret 1909, adalah Perdana Menteri pertama Indonesia. Ia aktif di Perhimpunan Indonesia di Belanda dan memimpin diplomasi untuk pengakuan kemerdekaan, seperti Perjanjian Linggarjati (1947). Ia wafat pada 9 April 1966 di Swiss dan dianugerahi gelar Pahlawan Nasional pada 1966."
+      },
+      {
+        name: "Ki Hajar Dewantara",
+        story: "Ki Hajar Dewantara, lahir sebagai R.M. Suwardi Suryaningrat di Yogyakarta pada 2 Mei 1889, mendirikan Taman Siswa pada 1922 untuk pendidikan pribumi. Ia juga anggota Tiga Serangkai dan Menteri Pendidikan pertama. Ia wafat pada 26 April 1959 dan dianugerahi gelar Pahlawan Nasional pada 1959."
+      },
+      {
+        name: "Dr. Cipto Mangunkusumo",
+        story: "Dr. Cipto Mangunkusumo, lahir di Jepara pada 4 Maret 1886, adalah dokter dan anggota Tiga Serangkai. Ia memberikan pengobatan gratis dan kritis terhadap Belanda, diasingkan karena aktivitasnya. Ia wafat pada 8 Maret 1943 dan dianugerahi gelar Pahlawan Nasional pada 1964."
+      },
+      {
+        name: "Frans Kaisiepo",
+        story: "Frans Kaisiepo, lahir di Biak, Papua, pada 10 Oktober 1921, memperjuangkan integrasi Papua ke Indonesia. Ia mengibarkan Merah Putih di Papua pada 1945 dan menjadi Gubernur Papua (1964–1973). Ia wafat pada 10 April 1979 dan dianugerahi gelar Pahlawan Nasional pada 1993."
+      },
+      {
+        name: "Achmad Soebardjo",
+        story: "Achmad Soebardjo, lahir di Karawang pada 23 Maret 1896, adalah Menteri Luar Negeri pertama Indonesia. Ia berperan dalam perumusan proklamasi dan diplomasi Konferensi Meja Bundar (1949). Ia wafat pada 15 Desember 1978 dan dianugerahi gelar Pahlawan Nasional pada 2009."
+      },
+      {
+        name: "Haji Agus Salim",
+        story: "Haji Agus Salim, lahir di Kota Gadang, Sumatera Barat, pada 8 Oktober 1884, adalah diplomat dan tokoh Sarekat Islam. Ia menjadi Menteri Luar Negeri (1947–1949) dan terlibat dalam Konferensi Meja Bundar. Ia wafat pada 4 November 1954 dan dianugerahi gelar Pahlawan Nasional pada 1961."
+      },
+      {
+        name: "Sukarni Kartodiwirjo",
+        story: "Sukarni Kartodiwirjo, lahir di Blitar pada 14 Juli 1916, adalah tokoh pemuda yang mendesak proklamasi melalui peristiwa Rengasdengklok. Ia aktif di Indonesia Muda dan Lapangan Ikada. Ia wafat pada 7 Mei 1971 dan dianugerahi gelar Pahlawan Nasional pada 2008."
+      },
+      {
+        name: "Tuanku Imam Bonjol",
+        story: "Tuanku Imam Bonjol, lahir di Kampung Tanjung Bunga, Sumatera Barat, pada 1772, memimpin Perang Paderi (1803–1838) melawan Belanda. Ia ditangkap pada 1837 dan diasingkan ke Manado, wafat pada 6 November 1864. Ia dianugerahi gelar Pahlawan Nasional pada 1973."
+      },
+      {
+        name: "Teuku Umar",
+        story: "Teuku Umar, lahir di Meulaboh, Aceh, pada 1854, adalah pahlawan Perang Aceh. Bersama Cut Nyak Dhien, ia menggunakan taktik pura-pura menyerah untuk mendapatkan senjata Belanda. Ia gugur pada 11 Februari 1899 dan dianugerahi gelar Pahlawan Nasional pada 1973."
+      },
+      {
+        name: "Tjut Meutia",
+        story: "Tjut Meutia, lahir di Perlak, Aceh, pada 1870, adalah pahlawan wanita Perang Aceh. Bersama suaminya, ia melawan Belanda hingga gugur pada 24 Oktober 1910. Ia dianugerahi gelar Pahlawan Nasional pada 1964, menjadi simbol keberanian wanita Aceh."
+      },
+      {
+        name: "Muhammad Yamin",
+        story: "Muhammad Yamin, lahir di Sawahlunto, Sumatera Barat, pada 28 Agustus 1903, adalah tokoh Sumpah Pemuda 1928 dan perumus Pancasila. Ia menulis puisi nasionalis dan menjabat sebagai menteri. Ia wafat pada 17 Oktober 1962 dan dianugerahi gelar Pahlawan Nasional pada 1973."
+      },
+      {
+        name: "Soetomo",
+        story: "Dr. Soetomo, lahir di Ngepeh, Jawa Timur, pada 30 Juli 1888, mendirikan Budi Utomo pada 1908, organisasi modern pertama di Indonesia. Ia memajukan pendidikan dan nasionalisme. Ia wafat pada 30 Mei 1938 dan dianugerahi gelar Pahlawan Nasional pada 1961."
+      },
+      {
+        name: "I Gusti Ngurah Rai",
+        story: "I Gusti Ngurah Rai, lahir di Carangsari, Bali, pada 30 Januari 1917, memimpin Puputan Margarana (1946) melawan Belanda. Ia gugur pada 20 November 1946. Namanya diabadikan di Bandara Ngurah Rai, dan ia dianugerahi gelar Pahlawan Nasional pada 1975."
+      },
+      {
+        name: "Sisingamangaraja XII",
+        story: "Sisingamangaraja XII, lahir di Bakkara, Sumatera Utara, pada 18 Februari 1845, memimpin Perang Batak (1878–1907) melawan Belanda. Ia gugur pada 17 Juni 1907 dan dianugerahi gelar Pahlawan Nasional pada 1961, menjadi simbol perjuangan Batak."
+      },
+      {
+        name: "Ahmad Yani",
+        story: "Ahmad Yani, lahir di Purworejo, Jawa Tengah, pada 19 Juni 1922, adalah Kepala Staf Angkatan Darat yang memodernisasi TNI AD. Ia gugur sebagai Pahlawan Revolusi pada 1 Oktober 1965 dalam peristiwa G30S/PKI dan dianugerahi gelar Pahlawan Nasional pada 1965."
+      },
+      {
+        name: "Abdulrahman Saleh",
+        story: "Abdulrahman Saleh, lahir di Jakarta pada 1 Juli 1909, adalah pionir penerbangan TNI AU. Ia gugur pada 29 Juli 1947 ketika pesawatnya ditembak Belanda saat mengangkut bantuan medis. Ia dianugerahi gelar Pahlawan Nasional pada 1975."
+      },
+      {
+        name: "Adam Malik",
+        story: "Adam Malik, lahir di Pematang Siantar, Sumatera Utara, pada 22 Juli 1917, adalah diplomat dan Wakil Presiden (1978–1983). Ia berperan dalam pembentukan ASEAN dan politik luar negeri bebas aktif. Ia wafat pada 5 September 1984 dan dianugerahi gelar Pahlawan Nasional pada 1990."
+      },
+      {
+        name: "Martha Christina Tiahahu",
+        story: "Martha Christina Tiahahu, lahir di Maluku Tengah pada 4 Januari 1800, adalah pahlawan wanita yang membantu Kapitan Pattimura melawan Belanda pada 1817. Ditangkap dan menolak makan di kapal pengasingan, ia wafat pada 2 Januari 1818. Ia dianugerahi gelar Pahlawan Nasional pada 1969."
+      },
+      {
+        name: "Supriyadi",
+        story: "Supriyadi, lahir di Trenggalek, Jawa Timur, pada 13 April 1923, adalah pemimpin pemberontakan PETA di Blitar pada Februari 1945 melawan Jepang. Setelah pemberontakan gagal, ia menghilang dan diduga gugur. Ia dianugerahi gelar Pahlawan Nasional pada 1975."
+      },
+      {
+        name: "Syafruddin Prawiranegara",
+        story: "Syafruddin Prawiranegara, lahir di Serang, Banten, pada 28 Februari 1911, adalah tokoh ekonomi dan politik. Ia memimpin Pemerintahan Darurat Republik Indonesia (PDRI) di Sumatera pada 1948–1949. Ia wafat pada 15 Februari 1989 dan dianugerahi gelar Pahlawan Nasional pada 2011."
+      },
+      {
+        name: "Fatmawati",
+        story: "Fatmawati, lahir di Bengkulu pada 5 Februari 1923, adalah istri Soekarno dan penjahit bendera Merah Putih pertama untuk Proklamasi 1945. Ia aktif mendukung perjuangan kemerdekaan. Ia wafat pada 14 Mei 1980 dan dianugerahi gelar Pahlawan Nasional pada 2000."
+      },
+      {
+        name: "Oerip Soemohardjo",
+        story: "Oerip Soemohardjo, lahir di Purworejo, Jawa Tengah, pada 22 Februari 1893, adalah Kepala Staf Angkatan Darat pertama TNI. Ia mengorganisir TNI pada masa awal kemerdekaan. Ia wafat pada 17 November 1948 dan dianugerahi gelar Pahlawan Nasional pada 1964."
+      },
+      {
+        name: "Sultan Agung",
+        story: "Sultan Agung, lahir di Mataram pada 1593, adalah raja Mataram yang memimpin perlawanan melawan Belanda di Batavia (1628–1629). Ia memperluas wilayah Mataram dan memperkuat budaya Jawa. Ia wafat pada 1645 dan dianugerahi gelar Pahlawan Nasional pada 1975."
+      },
+      {
+        name: "Raden Mas Said",
+        story: "Raden Mas Said, atau Pangeran Sambernyawa, lahir di Surakarta pada 1725, memimpin perlawanan melawan Belanda dan keraton Surakarta. Ia mendirikan Kadipaten Mangkunegaran. Ia wafat pada 1795 dan dianugerahi gelar Pahlawan Nasional pada 1988."
+      },
+      {
+        name: "Tjipto Mangoenkoesoemo",
+        story: "Tjipto Mangoenkoesoemo, lahir di Jepara pada 1886, adalah tokoh Tiga Serangkai bersama Douwes Dekker dan Ki Hajar Dewantara. Ia kritis terhadap Belanda dan diasingkan. Ia wafat pada 8 Maret 1943 dan dianugerahi gelar Pahlawan Nasional pada 1964."
+      },
+      {
+        name: "Hasan Basry",
+        story: "Hasan Basry, lahir di Kandangan, Kalimantan Selatan, pada 17 Juni 1923, memimpin perjuangan gerilya melawan Belanda di Kalimantan pada 1945–1949. Ia wafat pada 15 Juli 1984 dan dianugerahi gelar Pahlawan Nasional pada 2001."
+      },
+      {
+        name: "Raja Haji Fisabilillah",
+        story: "Raja Haji Fisabilillah, lahir di Riau pada 1725, memimpin perlawanan melawan Belanda di Selat Malaka. Ia gugur pada 1784 dalam pertempuran di Teluk Ketapang. Ia dianugerahi gelar Pahlawan Nasional pada 1997."
+      },
+      {
+        name: "Andi Djemma",
+        story: "Andi Djemma, lahir di Luwu, Sulawesi Selatan, pada 1901, adalah Raja Luwu yang memimpin perlawanan melawan Belanda dan bergabung dalam perjuangan kemerdekaan. Ia wafat pada 1965 dan dianugerahi gelar Pahlawan Nasional pada 2002."
+      },
+      {
+        name: "Sultan Mahmud Badaruddin II",
+        story: "Sultan Mahmud Badaruddin II, lahir di Palembang pada 1767, memimpin perlawanan melawan Belanda di Palembang pada 1811–1812. Ia diasingkan ke Ternate dan wafat pada 1852. Ia dianugerahi gelar Pahlawan Nasional pada 1984."
+      },
+      {
+        name: "Tengku Cik di Tiro",
+        story: "Tengku Cik di Tiro, lahir di Aceh pada 1836, adalah ulama dan pejuang Perang Aceh melawan Belanda. Ia memimpin gerilya hingga gugur pada 1891. Ia dianugerahi gelar Pahlawan Nasional pada 1973."
+      },
+      {
+        name: "Sam Ratulangi",
+        story: "Sam Ratulangi, lahir di Tondano, Sulawesi Utara, pada 5 November 1890, adalah tokoh pendidikan dan nasionalis. Ia menjadi Gubernur Sulawesi pertama dan diasingkan Belanda. Ia wafat pada 30 Juni 1949 dan dianugerahi gelar Pahlawan Nasional pada 1961."
+      },
+      {
+        name: "Wahidin Soedirohoesodo",
+        story: "Wahidin Soedirohoesodo, lahir di Yogyakarta pada 7 Januari 1852, adalah pelopor kebangkitan nasional melalui pendidikan. Ia menginspirasi berdirinya Budi Utomo. Ia wafat pada 26 Mei 1917 dan dianugerahi gelar Pahlawan Nasional pada 1973."
+      },
+      {
+        name: "Sultan Thaha Syaifuddin",
+        story: "Sultan Thaha Syaifuddin, lahir di Jambi pada 1816, memimpin perlawanan melawan Belanda di Jambi pada 1858–1904. Ia gugur pada 1904 dan dianugerahi gelar Pahlawan Nasional pada 1977."
+      }
+    ];
+
+    const HeroCard = ({ hero, onClick }) => {
+      const summary = hero.story.length > 100 ? hero.story.substring(0, 100) + "..." : hero.story;
+      return (
+        <div
+          className="bg-white rounded-lg shadow-lg p-4 m-4 w-64 flex flex-col items-center transform transition duration-300 hover:scale-105 cursor-pointer"
+          onClick={() => onClick(hero)}
+        >
+          <h2 className="text-xl font-bold text-blue-800 text-center">{hero.name}</h2>
+          <p className="text-gray-600 text-sm text-center mt-2">{summary}</p>
+        </div>
+      );
+    };
+
+    const HeroPopup = ({ hero, onClose, onPrev, onNext, prevHeroName, nextHeroName }) => (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="bg-white rounded-lg p-6 max-w-2xl w-11/12 max-h-[80vh] overflow-y-auto">
+          <h2 className="text-2xl font-bold text-blue-800 mb-4">{hero.name}</h2>
+          <p className="text-gray-700 mb-4 text-justify">{hero.story}</p>
+          <div className="flex justify-between gap-2">
+            <button
+              onClick={onPrev}
+              className="bg-yellow-400 text-blue-800 px-4 py-2 rounded-full hover:bg-yellow-500 transition duration-300 text-sm disabled:bg-gray-300"
+              disabled={!prevHeroName}
+            >
+              {prevHeroName ? `Sebelumnya: ${prevHeroName}` : "Tidak ada cerita sebelumnya"}
+            </button>
+            <button
+              onClick={onClose}
+              className="bg-red-400 text-white px-4 py-2 rounded-full hover:bg-red-500 transition duration-300 text-sm"
+            >
+              Kembali
+            </button>
+            <button
+              onClick={onNext}
+              className="bg-green-400 text-blue-800 px-4 py-2 rounded-full hover:bg-green-500 transition duration-300 text-sm disabled:bg-gray-300"
+              disabled={!nextHeroName}
+            >
+              {nextHeroName ? `Selanjutnya: ${nextHeroName}` : "Tidak ada cerita selanjutnya"}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+
+    const App = () => {
+      const [selectedHero, setSelectedHero] = useState(null);
+      const [currentIndex, setCurrentIndex] = useState(0);
+
+      console.log('App rendering, heroes length:', heroes.length); // Debug log
+
+      const handleCardClick = (hero, index) => {
+        setSelectedHero(hero);
+        setCurrentIndex(index);
+      };
+
+      const handleClosePopup = () => {
+        setSelectedHero(null);
+      };
+
+      const handlePrevHero = () => {
+        if (currentIndex > 0) {
+          setSelectedHero(heroes[currentIndex - 1]);
+          setCurrentIndex(currentIndex - 1);
+        }
+      };
+
+      const handleNextHero = () => {
+        if (currentIndex < heroes.length - 1) {
+          setSelectedHero(heroes[currentIndex + 1]);
+          setCurrentIndex(currentIndex + 1);
+        }
+      };
+
+      return (
+        <ErrorBoundary>
+          <div className="container mx-auto p-4">
+            <h1 className="text-4xl font-bold text-center text-blue-800 mb-8">Pahlawan Indonesia</h1>
+            {heroes.length === 0 ? (
+              <p className="text-center text-gray-600">Tidak ada data pahlawan.</p>
+            ) : (
+              <div className="grid grid-cols-2 justify-items-center sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {heroes.map((hero, index) => (
+                  <HeroCard key={hero.name} hero={hero} onClick={() => handleCardClick(hero, index)} />
+                ))}
+              </div>
+            )}
+            {selectedHero && (
+              <HeroPopup
+                hero={selectedHero}
+                onClose={handleClosePopup}
+                onPrev={handlePrevHero}
+                onNext={handleNextHero}
+                prevHeroName={currentIndex > 0 ? heroes[currentIndex - 1].name : null}
+                nextHeroName={currentIndex < heroes.length - 1 ? heroes[currentIndex + 1].name : null}
+              />
+            )}
+          </div>
+        </ErrorBoundary>
+      );
+    };
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+  <!-- AUDIO -->
+  <audio id="bg-audio" src="skyhigh.mp3" loop hidden></audio>
+  <!-- SCRIPT UNTUK AUTOPLAY SETELAH KLIK -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.body.addEventListener('click', function () {
+        var audio = document.getElementById('bg-audio');
+        audio.play().catch(err => {
+          console.log('Autoplay diblokir:', err);
+        });
+      }, { once: true });
+    });
+  </script>
+</body>
+</html>
