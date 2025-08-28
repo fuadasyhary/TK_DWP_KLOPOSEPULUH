@@ -50,7 +50,7 @@
 
     .badge{display:inline-flex;gap:8px;align-items:center;padding:8px 12px;border-radius:999px;background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#fff;font-weight:700}
 
-    .actions{display:flex;gap:10px;margin-top:12px}
+    .actions{display:grid;gap:10px;margin-top:12px;justify-content: space-around;}
     .btn{padding:10px 14px;border-radius:12px;border:0;cursor:pointer;font-weight:600}
     .btn-primary{background:var(--accent);color:white}
     .btn-ghost{background:transparent;border:1px solid rgba(0,0,0,0.06)}
@@ -226,17 +226,17 @@
           
         <p style="margin:3px 0 0;color:var(--muted)">3. Melatih Untuk Hidup Bersama Dan Berguna Bagi Orang Lain</p>
 
+        <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">
+          <div class="card" style="padding:10px;border-radius:12px">No. SK Pendirian<br><strong>077/104.10/i-90</strong></div>
+          <div class="card" style="padding:10px;border-radius:12px">Tgl SK Pendirian<br><strong>17 Jan 1990</strong></div>
+          <div class="card" style="padding:10px;border-radius:12px">SK Operasional<br><strong>421.1/1810/438.5.1/2019</strong></div>
+        </div>
+
         <div class="actions">
           <button class="btn btn-primary" onclick="scrollToProfile()">Lihat Profil Lengkap</button>
           <button class="btn btn-ghost" onclick="window.open('https://edukasianak.netlify.app/', '_blank')">Apps Edukasi Anak</button>
           <button class="btn btn-ghost" onclick="window.open('https://forms.zohopublic.com/tkdwpklopox/form/PendaftaranSiswaTK/formperma/6LN1Dx6Z1YKB5_Q94LM3DKG4fCyGJJly-_FvFA-414s', '_blank')">Pendaftaran / Pindahan</button>
           <button class="btn btn-ghost" onclick="openReportPopup()">Report Pendaftaran</button>
-        </div>
-
-        <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">
-          <div class="card" style="padding:10px;border-radius:12px">No. SK Pendirian<br><strong>077/104.10/i-90</strong></div>
-          <div class="card" style="padding:10px;border-radius:12px">Tgl SK Pendirian<br><strong>17 Jan 1990</strong></div>
-          <div class="card" style="padding:10px;border-radius:12px">SK Operasional<br><strong>421.1/1810/438.5.1/2019</strong></div>
         </div>
       </div>
     </section>
@@ -516,12 +516,12 @@
 
         <div class="field">
           <div class="k">Alamat Lengkap TK DWP Kloposepuluh Pasegan</div>
-          <div class="v">KLOPOSEPULUH Pasegan (Sebelah SDN Kloposepuluh 1), KEC. SUKODONO, KAB. SIDOARJO, PROV. JAWA TIMUR</div>
+          <div class="v">Pasegan (Sebelah SDN Kloposepuluh 1), KLOPOSEPULUH, KEC. SUKODONO, KAB. SIDOARJO, PROV. JAWA TIMUR</div>
         </div>
 
         <div class="field">
           <div class="k">Alamat Lengkap TK DWP Kloposepuluh Wonokoyo</div>
-          <div class="v">KLOPOSEPULUH Wonokoyo 23 RW 06 (Sebelah SDN Kloposepuluh 2), KEC. SUKODONO, KAB. SIDOARJO, PROV. JAWA TIMUR</div>
+          <div class="v">KLOPOSEPULUH RT 23 RW 06 (Sebelah SDN Kloposepuluh 2), KEC. SUKODONO, KAB. SIDOARJO, PROV. JAWA TIMUR</div>
         </div>
 
         <div class="field">
@@ -536,22 +536,22 @@
       <div class="map-container" style="margin:20px 0; text-align:center;">
         <h2>Lokasi Sekolah Pasegan</h2>
         <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d247.28926787964912!2d112.68678510320208!3d-7.395481311682645!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd7e3f14b213ea1%3A0x449bd3a46273fda!2sTK%20Dharma%20Wanita%20Persatuan%20Klopo%20Sepuluh%20Pasegan!5e0!3m2!1sid!2sid!4v1756187581448!5m2!1sid!2sid" 
-            width="400" 
-            height="400" 
+            width="250" 
+            height="250" 
             style="border:0;" 
             allowfullscreen="" 
             loading="lazy" 
             referrerpolicy="no-referrer-when-downgrade">
-      </iframe>
-      <h2>Lokasi Sekolah Wonokoyo</h2>
-      <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3956.593248236775!2d112.69582954783125!3d-7.399389320171529!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd7e39b3a14f9b5%3A0x7272805c771ac88f!2sTK%20Dharma%20Wanita%20Persatuan%20Kloposepuluh%20Wonokoyo!5e0!3m2!1sid!2sid!4v1756343384044!5m2!1sid!2sid" 
-          width="400" 
-          height="400" 
-          style="border:0;" 
-          allowfullscreen="" 
-          loading="lazy" 
-          referrerpolicy="no-referrer-when-downgrade">
-    </iframe>
+        </iframe>
+        <h2>Lokasi Sekolah Wonokoyo</h2>
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3956.593248236775!2d112.69582954783125!3d-7.399389320171529!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd7e39b3a14f9b5%3A0x7272805c771ac88f!2sTK%20Dharma%20Wanita%20Persatuan%20Kloposepuluh%20Wonokoyo!5e0!3m2!1sid!2sid!4v1756343384044!5m2!1sid!2sid" 
+            width="250" 
+            height="250" 
+            style="border:0;" 
+            allowfullscreen="" 
+            loading="lazy" 
+            referrerpolicy="no-referrer-when-downgrade">
+        </iframe>
       </div>
     </section>
 
