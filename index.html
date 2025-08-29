@@ -205,23 +205,6 @@
       border-color:var(--accent);
     }
 
-    /* ✨ Ripple pelangi pas klik di HP */
-    .ripple {
-      position: absolute;
-      border-radius: 50%;
-      background: radial-gradient(circle, #ff8a00, #e52e71, #9b00ff, #0078ff);
-      transform: scale(0);
-      animation: ripple 0.6s linear;
-      pointer-events: none;
-      z-index: 9999;
-    }
-    @keyframes ripple {
-      to {
-        transform: scale(4);
-        opacity: 0;
-      }
-    }
-
     /* playful confetti */
     .confetti{position:absolute;pointer-events:none;z-index:0;opacity:0.9}
   </style>
@@ -237,7 +220,7 @@
       <div class="sub">NPSN: <strong>20563203</strong> • PAUD — SWASTA</div>
     </div>
     <div style="margin-left:auto;display:flex;flex-direction:column;align-items:flex-end">
-      <div class="badge">AKREDITASI: C</div>
+      <a href="https://ban-pdm.id/satuanpendidikan/20563203"><div class="badge">AKREDITASI: C</div></a>
       <div class="sub" style="margin-top:8px">Naungan: YAYASAN DHARMA WANITA PERSATUAN SIDOARJO</div>
     </div>
   </header>
@@ -280,9 +263,9 @@
         <p style="margin:3px 0 0;color:var(--muted)">3. Melatih Untuk Hidup Bersama Dan Berguna Bagi Orang Lain</p>
 
         <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">
-          <div class="card" style="padding:10px;border-radius:12px">No. SK Pendirian<br><strong>077/104.10/i-90</strong></div>
+          <div class="card" style="padding:10px;border-radius:12px">No. SK Pendirian<br><a href="https://dapo.kemendikdasmen.go.id/sekolah/01A883E38029620E2DF6"><strong>077/104.10/i-90</strong></a></div>
           <div class="card" style="padding:10px;border-radius:12px">Tgl SK Pendirian<br><strong>17 Jan 1990</strong></div>
-          <div class="card" style="padding:10px;border-radius:12px">SK Operasional<br><strong>421.1/1810/438.5.1/2019</strong></div>
+          <div class="card" style="padding:10px;border-radius:12px">SK Operasional<br><a href="https://dapo.kemendikdasmen.go.id/sekolah/01A883E38029620E2DF6"><strong>421.1/1810/438.5.1/2019</strong></a></div>
         </div>
 
         <div class="actions">
@@ -389,123 +372,159 @@
 
       </div>
     </section>
+    
+    <!-- 🔥 Profil Guru -->
+    <section class="card" style="margin-top:14px">
+      <h2 style="margin:0 0 16px 0; text-align:center;">Profil Guru</h2>
+      <div class="guru-grid">
+        <div class="guru-card">
+          <img src="guru/yuli.jpeg" alt="Ibu Yuli" class="guru-img">
+          <h3>Bu Yuli</h3>
+          <p>Kepala Sekolah</p>
+        </div>
+
+        <div class="guru-card">
+          <img src="guru/niken.png" alt="Ibu Niken" class="guru-img">
+          <h3>Bu Niken</h3>
+          <p>Guru Kelas A</p>
+        </div>
+
+        <div class="guru-card">
+          <img src="guru/ririn.png" alt="Ibu Ririn" class="guru-img">
+          <h3>Bu Ririn</h3>
+          <p>Guru Kelas A</p>
+        </div>
+
+        <div class="guru-card">
+          <img src="guru/jijah.png" alt="Ibu Azizah" class="guru-img">
+          <h3>Bu Azizah</h3>
+          <p>Guru Kelas B</p>
+        </div>
+
+        <div class="guru-card">
+          <img src="guru/nita.png" alt="Ibu Nita" class="guru-img">
+          <h3>Bu Nita</h3>
+          <p>Guru Kelas B</p>
+        </div>
+      </div>
+    </section>
       
-  <!-- 🔥 Section Galeri dengan Tab -->
-  <section class="card" style="margin-top:14px">
-    <h2 style="margin:0 0 16px 0; text-align:center;">Galeri Sekolah</h2>
-    
-    <!-- Tab Navigation -->
-    <div class="gallery-tabs" style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:16px;">
-      <button class="tab-btn active" onclick="showGallery('mpls')">MPLS</button>
-      <button class="tab-btn" onclick="showGallery('sekolah')">Sekolah</button>
-      <button class="tab-btn" onclick="showGallery('senam')">Senam</button>
-      <button class="tab-btn" onclick="showGallery('makan')">Makan Bersama</button>
-      <button class="tab-btn" onclick="showGallery('agama')">Belajar Nilai Agama</button>
-      <button class="tab-btn" onclick="showGallery('takjil')">Bagi Takjil</button>
-      <button class="tab-btn" onclick="showGallery('manasik')">Manasik Haji</button>
-      <button class="tab-btn" onclick="showGallery('pelepasan')">Pelepasan Siswa</button>
-    </div>
-    
-    <!-- Galeri Content -->
-    <div id="galeri-container">
-    
-      <!-- MPLS -->
-      <div class="gallery-grid gallery-content" id="mpls">
-        <img src="mpls/1.jpeg" alt="Kegiatan 1">
-        <img src="mpls/2.jpeg" alt="Kegiatan 2">
-        <img src="mpls/3.jpeg" alt="Kegiatan 3">
-        <img src="mpls/4.jpeg" alt="Kegiatan 4">
-        <img src="mpls/5.jpeg" alt="Kegiatan 5">
-        <img src="mpls/6.jpeg" alt="Kegiatan 6">
-        <img src="mpls/7.jpeg" alt="Kegiatan 7">
-        <img src="mpls/8.jpeg" alt="Kegiatan 8">
-        <img src="mpls/9.jpeg" alt="Kegiatan 9">
-        <img src="mpls/10.jpeg" alt="Kegiatan 10">
-        <img src="mpls/11.jpeg" alt="Kegiatan 11">
-        <img src="mpls/12.jpeg" alt="Kegiatan 12">
-        <img src="mpls/13.jpeg" alt="Kegiatan 13">
-        <img src="mpls/14.jpeg" alt="Kegiatan 14">
-        <img src="mpls/15.jpeg" alt="Kegiatan 15">
-        <img src="mpls/16.jpeg" alt="Kegiatan 16">
-        <img src="mpls/17.jpeg" alt="Kegiatan 17">
-        <!-- tambahkan sesuai kebutuhan -->
+    <!-- 🔥 Section Galeri dengan Tab -->
+    <section class="card" style="margin-top:14px">
+      <h2 style="margin:0 0 16px 0; text-align:center;">Galeri Sekolah</h2>
+      
+      <!-- Tab Navigation -->
+      <div class="gallery-tabs" style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:16px;">
+        <button class="tab-btn active" onclick="showGallery('mpls')">MPLS</button>
+        <button class="tab-btn" onclick="showGallery('sekolah')">Sekolah</button>
+        <button class="tab-btn" onclick="showGallery('senam')">Senam</button>
+        <button class="tab-btn" onclick="showGallery('makan')">Makan Bersama</button>
+        <button class="tab-btn" onclick="showGallery('agama')">Belajar Nilai Agama</button>
+        <button class="tab-btn" onclick="showGallery('takjil')">Bagi Takjil</button>
+        <button class="tab-btn" onclick="showGallery('manasik')">Manasik Haji</button>
+        <button class="tab-btn" onclick="showGallery('pelepasan')">Pelepasan Siswa</button>
       </div>
+      
+      <!-- Galeri Content -->
+      <div id="galeri-container">
+      
+        <!-- MPLS -->
+        <div class="gallery-grid gallery-content" id="mpls">
+          <img src="mpls/1.jpeg" alt="Kegiatan 1">
+          <img src="mpls/2.jpeg" alt="Kegiatan 2">
+          <img src="mpls/3.jpeg" alt="Kegiatan 3">
+          <img src="mpls/4.jpeg" alt="Kegiatan 4">
+          <img src="mpls/5.jpeg" alt="Kegiatan 5">
+          <img src="mpls/6.jpeg" alt="Kegiatan 6">
+          <img src="mpls/7.jpeg" alt="Kegiatan 7">
+          <img src="mpls/8.jpeg" alt="Kegiatan 8">
+          <img src="mpls/9.jpeg" alt="Kegiatan 9">
+          <img src="mpls/10.jpeg" alt="Kegiatan 10">
+          <img src="mpls/11.jpeg" alt="Kegiatan 11">
+          <img src="mpls/12.jpeg" alt="Kegiatan 12">
+          <img src="mpls/13.jpeg" alt="Kegiatan 13">
+          <img src="mpls/14.jpeg" alt="Kegiatan 14">
+          <img src="mpls/15.jpeg" alt="Kegiatan 15">
+          <img src="mpls/16.jpeg" alt="Kegiatan 16">
+          <img src="mpls/17.jpeg" alt="Kegiatan 17">
+          <!-- tambahkan sesuai kebutuhan -->
+        </div>
+      
+        <!-- Sekolah -->
+        <div class="gallery-grid gallery-content" id="sekolah" style="display:none;">
+          <img src="sekolah/1.jpeg" alt="Kegiatan 1">
+          <img src="sekolah/2.jpeg" alt="Kegiatan 2">
+          <img src="sekolah/3.jpeg" alt="Kegiatan 3">
+          <img src="sekolah/4.jpeg" alt="Kegiatan 4">
+          <img src="sekolah/5.jpeg" alt="Kegiatan 5">
+          <img src="sekolah/6.jpeg" alt="Kegiatan 6">
+          <img src="sekolah/7.jpeg" alt="Kegiatan 7">
+          <img src="sekolah/8.jpeg" alt="Kegiatan 8">
+        </div>
+      
+        <!-- Senam -->
+        <div class="gallery-grid gallery-content" id="senam" style="display:none;">
+          <img src="senam/1.jpeg" alt="Kegiatan 1">
+          <img src="senam/2.jpeg" alt="Kegiatan 2">
+          <img src="senam/3.jpeg" alt="Kegiatan 3">
+          <img src="senam/4.jpeg" alt="Kegiatan 4">
+          <img src="senam/5.jpeg" alt="Kegiatan 5">
+          <img src="senam/6.jpeg" alt="Kegiatan 6">
+          <img src="senam/7.jpeg" alt="Kegiatan 7">
+          <img src="senam/8.jpeg" alt="Kegiatan 8">
+          <img src="senam/9.jpeg" alt="Kegiatan 9">
+          <img src="senam/10.jpeg" alt="Kegiatan 10">
+        </div>
+      
+        <!-- Makan Bersama -->
+        <div class="gallery-grid gallery-content" id="makan" style="display:none;">
+          <img src="makan_bersama/1.jpeg" alt="Kegiatan 1">
+          <img src="makan_bersama/2.jpeg" alt="Kegiatan 2">
+          <img src="makan_bersama/3.jpeg" alt="Kegiatan 3">
+          <img src="makan_bersama/4.jpeg" alt="Kegiatan 4">
+          <img src="makan_bersama/5.jpeg" alt="Kegiatan 5">
+          <img src="makan_bersama/6.jpeg" alt="Kegiatan 6">
+          <img src="makan_bersama/7.jpeg" alt="Kegiatan 7">
+          <img src="makan_bersama/8.jpeg" alt="Kegiatan 8">
+          <img src="makan_bersama/9.jpeg" alt="Kegiatan 9">
+        </div>
+      
+        <!-- Belajar Nilai Agama -->
+        <div class="gallery-grid gallery-content" id="agama" style="display:none;">
+          <img src="belajar_nilai_agama/1.jpeg" alt="Agama 1">
+          <img src="belajar_nilai_agama/2.jpeg" alt="Agama 2">
+        </div>
+      
+        <!-- Bagi Takjil -->
+        <div class="gallery-grid gallery-content" id="takjil" style="display:none;">
+          <img src="bagi_takjil/1.jpeg" alt="Kegiatan 1">
+          <img src="bagi_takjil/2.jpeg" alt="Kegiatan 2">
+          <img src="bagi_takjil/3.jpeg" alt="Kegiatan 3">
+          <img src="bagi_takjil/4.jpeg" alt="Kegiatan 4">
+        </div>
+      
+        <!-- Manasik Haji -->
+        <div class="gallery-grid gallery-content" id="manasik" style="display:none;">
+          <img src="manasik_haji/1.jpeg" alt="Kegiatan 3">
+          <img src="manasik_haji/2.jpeg" alt="Kegiatan 4">
+          <img src="manasik_haji/3.jpeg" alt="Kegiatan 5">
+          <img src="manasik_haji/4.jpeg" alt="Kegiatan 6">
+          <img src="manasik_haji/5.jpeg" alt="Kegiatan 7">
+          <img src="manasik_haji/6.jpeg" alt="Kegiatan 8">
+          <img src="manasik_haji/7.jpeg" alt="Kegiatan 9">
+          <img src="manasik_haji/8.jpeg" alt="Kegiatan 10">
+          <img src="manasik_haji/9.jpeg" alt="Kegiatan 11">
+        </div>
+      
+        <!-- Pelepasan -->
+        <div class="gallery-grid gallery-content" id="pelepasan" style="display:none;">
+          <img src="pelepasan siswa/1.jpeg" alt="Kegiatan 1">
+          <img src="pelepasan siswa/2.jpeg" alt="Kegiatan 2">
+          <img src="pelepasan siswa/3.jpeg" alt="Kegiatan 12">
+          <img src="pelepasan siswa/4.jpeg" alt="Kegiatan 13">
+        </div>
     
-      <!-- Sekolah -->
-      <div class="gallery-grid gallery-content" id="sekolah" style="display:none;">
-        <img src="sekolah/1.jpeg" alt="Kegiatan 1">
-        <img src="sekolah/2.jpeg" alt="Kegiatan 2">
-        <img src="sekolah/3.jpeg" alt="Kegiatan 3">
-        <img src="sekolah/4.jpeg" alt="Kegiatan 4">
-        <img src="sekolah/5.jpeg" alt="Kegiatan 5">
-        <img src="sekolah/6.jpeg" alt="Kegiatan 6">
-        <img src="sekolah/7.jpeg" alt="Kegiatan 7">
-        <img src="sekolah/8.jpeg" alt="Kegiatan 8">
       </div>
-    
-      <!-- Senam -->
-      <div class="gallery-grid gallery-content" id="senam" style="display:none;">
-        <img src="senam/1.jpeg" alt="Kegiatan 1">
-        <img src="senam/2.jpeg" alt="Kegiatan 2">
-        <img src="senam/3.jpeg" alt="Kegiatan 3">
-        <img src="senam/4.jpeg" alt="Kegiatan 4">
-        <img src="senam/5.jpeg" alt="Kegiatan 5">
-        <img src="senam/6.jpeg" alt="Kegiatan 6">
-        <img src="senam/7.jpeg" alt="Kegiatan 7">
-        <img src="senam/8.jpeg" alt="Kegiatan 8">
-        <img src="senam/9.jpeg" alt="Kegiatan 9">
-        <img src="senam/10.jpeg" alt="Kegiatan 10">
-      </div>
-    
-      <!-- Makan Bersama -->
-      <div class="gallery-grid gallery-content" id="makan" style="display:none;">
-        <img src="makan_bersama/1.jpeg" alt="Kegiatan 1">
-        <img src="makan_bersama/2.jpeg" alt="Kegiatan 2">
-        <img src="makan_bersama/3.jpeg" alt="Kegiatan 3">
-        <img src="makan_bersama/4.jpeg" alt="Kegiatan 4">
-        <img src="makan_bersama/5.jpeg" alt="Kegiatan 5">
-        <img src="makan_bersama/6.jpeg" alt="Kegiatan 6">
-        <img src="makan_bersama/7.jpeg" alt="Kegiatan 7">
-        <img src="makan_bersama/8.jpeg" alt="Kegiatan 8">
-        <img src="makan_bersama/9.jpeg" alt="Kegiatan 9">
-      </div>
-    
-      <!-- Belajar Nilai Agama -->
-      <div class="gallery-grid gallery-content" id="agama" style="display:none;">
-        <img src="belajar_nilai_agama/1.jpeg" alt="Agama 1">
-        <img src="belajar_nilai_agama/2.jpeg" alt="Agama 2">
-      </div>
-    
-      <!-- Bagi Takjil -->
-      <div class="gallery-grid gallery-content" id="takjil" style="display:none;">
-        <img src="bagi_takjil/1.jpeg" alt="Kegiatan 1">
-        <img src="bagi_takjil/2.jpeg" alt="Kegiatan 2">
-        <img src="bagi_takjil/3.jpeg" alt="Kegiatan 3">
-        <img src="bagi_takjil/4.jpeg" alt="Kegiatan 4">
-      </div>
-    
-      <!-- Manasik Haji -->
-      <div class="gallery-grid gallery-content" id="manasik" style="display:none;">
-        <img src="manasik_haji/1.jpeg" alt="Kegiatan 3">
-        <img src="manasik_haji/2.jpeg" alt="Kegiatan 4">
-        <img src="manasik_haji/3.jpeg" alt="Kegiatan 5">
-        <img src="manasik_haji/4.jpeg" alt="Kegiatan 6">
-        <img src="manasik_haji/5.jpeg" alt="Kegiatan 7">
-        <img src="manasik_haji/6.jpeg" alt="Kegiatan 8">
-        <img src="manasik_haji/7.jpeg" alt="Kegiatan 9">
-        <img src="manasik_haji/8.jpeg" alt="Kegiatan 10">
-        <img src="manasik_haji/9.jpeg" alt="Kegiatan 11">
-      </div>
-    
-      <!-- Pelepasan -->
-      <div class="gallery-grid gallery-content" id="pelepasan" style="display:none;">
-        <img src="pelepasan siswa/1.jpeg" alt="Kegiatan 1">
-        <img src="pelepasan siswa/2.jpeg" alt="Kegiatan 2">
-        <img src="pelepasan siswa/3.jpeg" alt="Kegiatan 12">
-        <img src="pelepasan siswa/4.jpeg" alt="Kegiatan 13">
-      </div>
-    
-    </div>
     </section>
 
     <!-- Modal Full Galeri -->
@@ -781,33 +800,7 @@
       document.getElementById(id).style.display = 'grid';
       event.target.classList.add('active');
     }
-    // === ✏️ Cursor Pensil (Desktop Only) ===
-    if (!/Mobi|Android/i.test(navigator.userAgent)) {
-      const cursorPencil = document.createElement("div");
-      cursorPencil.classList.add("cursor-pencil");
-      cursorPencil.textContent = "✏️";
-      document.body.appendChild(cursorPencil);
-
-      document.addEventListener("mousemove", (e) => {
-        cursorPencil.style.left = e.pageX + "px";
-        cursorPencil.style.top = e.pageY + "px";
-        cursorPencil.style.transform = "translate(-50%, -50%) rotate(-20deg)";
-      });
-    }
-
-    // === 🌈 Ripple Effect (HP Only) ===
-    if (/Mobi|Android/i.test(navigator.userAgent)) {
-      document.addEventListener("click", function(e) {
-        const ripple = document.createElement("span");
-        ripple.classList.add("ripple");
-        document.body.appendChild(ripple);
-
-        ripple.style.left = e.clientX + "px";
-        ripple.style.top = e.clientY + "px";
-
-        setTimeout(() => ripple.remove(), 600);
-      });
-    }
+    
   </script>
 </body>
 </html>
