@@ -112,15 +112,30 @@
       text-align: center;
     }
     .guru-card {
-      background: #fff;
-      border-radius: 16px;
-      padding: 16px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      position: relative;
+      overflow: hidden;
     }
-    .guru-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+
+    .guru-card:hover .guru-img {
+      transform: scale(1.05) rotate(-2deg);
+      transition: transform 0.4s ease-in-out;
+    }
+
+    /* Confetti/bintang */
+    .guru-card::after {
+      content: "✨✨✨";
+      position: absolute;
+      top: 40%;
+      left: 50%;
+      transform: translateX(-50%) scale(0);
+      font-size: 20px;
+      opacity: 0;
+      transition: all 0.5s ease-in-out;
+    }
+
+    .guru-card:hover::after {
+      transform: translateX(-50%) scale(1.5);
+      opacity: 1;
     }
     .guru-img {
       width: 120px;
@@ -203,6 +218,107 @@
       background:var(--accent);
       color:white;
       border-color:var(--accent);
+    }
+
+    /* FORM TESTIMONI */
+    .testi-card {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 20px;
+      margin: 20px 0;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+    }
+
+    #testiForm {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    #testiForm input,
+    #testiForm textarea,
+    #testiForm select {
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid #ddd;
+      font-size: 14px;
+      outline: none;
+      transition: border 0.2s;
+      font-family: Inter, sans-serif;
+    }
+
+    #testiForm input:focus,
+    #testiForm textarea:focus,
+    #testiForm select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(255,122,162,0.2);
+    }
+
+    #testiForm button {
+      background: var(--accent);
+      color: white;
+      font-weight: 600;
+      padding: 12px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    #testiForm button:hover {
+      background: #ff5a8d;
+    }
+
+    /* LIST TESTIMONI */
+    #testimoniList {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-height: 400px;   /* tinggi maksimal container */
+    overflow-y: auto;    /* muncul scroll kalau lebih dari 5 */
+    padding-right: 6px;  /* biar ada jarak dari scrollbar */
+  }
+
+  #testimoniList::-webkit-scrollbar {
+    width: 6px;
+  }
+  #testimoniList::-webkit-scrollbar-thumb {
+    background: var(--accent);
+    border-radius: 6px;
+  }
+
+    .testimoni-item {
+      background: var(--glass);
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+      animation: fadeIn 0.3s ease;
+    }
+
+    .testimoni-item p {
+      margin: 0;
+      font-size: 15px;
+      color: #444;
+    }
+
+    .testimoni-item .stars {
+      margin: 6px 0;
+      color: #FFD166;
+      font-size: 18px;
+    }
+
+    .testimoni-item h4 {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--accent);
+      text-align: right;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px);}
+      to { opacity: 1; transform: translateY(0);}
     }
 
     /* playful confetti */
@@ -600,7 +716,30 @@
         </iframe>
       </div>
     </section>
-
+    
+    <section class="card" style="margin-top:14px">
+      <h2 style="text-align:center;margin-bottom:16px;">💬 Testimoni Orang Tua</h2>
+      
+      <!-- Form -->
+      <div class="testi-card">
+        <form id="testiForm">
+          <input type="text" id="nama" placeholder="Nama Anda" required>
+          <textarea id="pesan" placeholder="Tulis pesan Anda..." required></textarea>
+          <select id="rating">
+            <option value="5">⭐⭐⭐⭐⭐ Sangat Puas</option>
+            <option value="4">⭐⭐⭐⭐ Puas</option>
+            <option value="3">⭐⭐⭐ Cukup</option>
+            <option value="2">⭐⭐ Kurang</option>
+            <option value="1">⭐ Tidak Puas</option>
+          </select>
+          <button type="submit">Kirim Testimoni</button>
+        </form>
+      </div>
+    
+      <!-- List Testimoni -->
+      <div id="testimoniList"></div>
+    </section>
+    
   </main>
   <!-- 🔥 Modal Report -->
   <div id="report-modal" style="display:none;position:fixed;inset:0;background:rgba(3,6,18,0.45);align-items:center;justify-content:center;padding:20px;z-index:9999">
@@ -649,6 +788,26 @@
   <footer><a href="https://id.linkedin.com/in/mochamad-fuad-asyhary">
     ©Mochamad Fuad Asyhary</a>
   </footer>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
+
+  <script>
+    // 🔥 Ganti dengan konfigurasi dari Firebase Console
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+      databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_PROJECT_ID.appspot.com",
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+
+    const app = firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+  </script>
 
   <script> 
     let attemptCount = 0;
@@ -801,6 +960,58 @@
       event.target.classList.add('active');
     }
     
+  </script>
+  <!-- hapus yang lama, ganti pakai ini -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+    import { getDatabase, ref, push, onChildAdded } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+
+    // ✅ Config kamu sendiri
+    const firebaseConfig = {
+      apiKey: "AIzaSyA8bzx6ispP9u2e3fzKGqqEY2Zmle_CEHY",
+      authDomain: "testimoni-tk-dwp-kloposepuluh.firebaseapp.com",
+      databaseURL: "https://testimoni-tk-dwp-kloposepuluh-default-rtdb.firebaseio.com",
+      projectId: "testimoni-tk-dwp-kloposepuluh",
+      storageBucket: "testimoni-tk-dwp-kloposepuluh.appspot.com",
+      messagingSenderId: "148758047246",
+      appId: "1:148758047246:web:6f408f3d622393bb356a5f"
+    };
+
+    // ✅ Inisialisasi
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    // ✅ Event form
+    const form = document.getElementById("testiForm");
+    const list = document.getElementById("testimoniList");
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const nama = document.getElementById("nama").value;
+      const pesan = document.getElementById("pesan").value;
+      const rating = document.getElementById("rating").value;
+
+      push(ref(db, "testimoni"), {
+        nama,
+        pesan,
+        rating
+      });
+
+      form.reset();
+    });
+
+    // ✅ Baca otomatis
+    onChildAdded(ref(db, "testimoni"), (snapshot) => {
+      const data = snapshot.val();
+      const div = document.createElement("div");
+      div.classList.add("testimonial");
+      div.innerHTML = `
+        <p>"${data.pesan}"</p>
+        <div class="stars">${"⭐".repeat(data.rating)}</div>
+        <h4>- ${data.nama}</h4>
+      `;
+      list.prepend(div);
+    });
   </script>
 </body>
 </html>
