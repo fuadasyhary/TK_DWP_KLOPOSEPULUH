@@ -1032,10 +1032,7 @@
     // ✅ Event form
     const form = document.getElementById("testiForm");
     const list = document.getElementById("testimoniList");
-    const user = auth.currentUser;   // ✅ ambil user login dulu
     
-    const foto = user.photoURL;
-
     form.addEventListener("submit", (e) => {
       e.preventDefault();
       
@@ -1066,6 +1063,7 @@
       }
     const user = auth.currentUser;
       
+    const foto = user.photoURL;
       push(ref(gdb, "testimoni"), {
         foto,
         nama,
@@ -1095,6 +1093,7 @@
   </script>
 </body>
 </html>
+
 
 
 
