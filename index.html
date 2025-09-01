@@ -725,7 +725,6 @@
       <button id="googleLoginBtn" class="btn btn-primary">Login dengan Google</button>
       <div id="userInfo" style="margin-top:20px;"></div><br>
         <form id="testiForm">
-          <input type="text" id="nama" placeholder="Nama otomatis dari Google" readonly>
           <textarea id="pesan" placeholder="Tulis pesan Anda..." required></textarea>
           <select id="rating">
             <option value="5">⭐⭐⭐⭐⭐ Sangat Puas</option>
@@ -1036,7 +1035,6 @@
     form.addEventListener("submit", (e) => {
       e.preventDefault();
       
-      const nama = document.getElementById("nama").value;
       const pesan = document.getElementById("pesan").value;
       const rating = document.getElementById("rating").value;
       const kritik = document.getElementById("kritik").value;
@@ -1048,8 +1046,9 @@
                         hour:"2-digit", minute:"2-digit", second:"2-digit" };
       const tanggalJam = now.toLocaleDateString("id-ID", options);
 
+      const user = auth.currentUser;
       // ✅ Validasi
-      if (!nama) {
+      if (!user) {
         alert("Login dulu sebelum kirim testimoni!");
         return;
       }
@@ -1061,9 +1060,9 @@
         alert("Kalau ada Kritik, Saran juga wajib diisi!");
         return;
       }
-    const user = auth.currentUser;
       
     const foto = user.photoURL;
+    const nama = user.displayName;
       push(ref(gdb, "testimoni"), {
         foto,
         nama,
@@ -1103,6 +1102,7 @@
   </script>
 </body>
 </html>
+
 
 
 
