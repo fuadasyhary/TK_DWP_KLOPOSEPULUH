@@ -1022,67 +1022,86 @@
   </script>
   <!-- Login Google -->
   <script type="module">
-  // Import Firebase
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-  import { getAuth, signInWithPopup, GoogleAuthProvider, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-  import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-  // ✅ Ganti dengan config project Firebase milikmu
-  const firebaseConfig = {
-        apiKey: "AIzaSyA8bzx6ispP9u2e3fzKGqqEY2Zmle_CEHY",
-        authDomain: "testimoni-tk-dwp-kloposepuluh.firebaseapp.com",
-        databaseURL: "https://testimoni-tk-dwp-kloposepuluh-default-rtdb.firebaseio.com",
-        projectId: "testimoni-tk-dwp-kloposepuluh",
-        storageBucket: "testimoni-tk-dwp-kloposepuluh.firebasestorage.app",
-        messagingSenderId: "148758047246",
-        appId: "1:148758047246:web:6f408f3d622393bb356a5f",
-        measurementId: "G-34N9E2FXVX"
-  };
-
-  // Init Firebase
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
-  const provider = new GoogleAuthProvider();
-
-  // Tombol login
-  document.getElementById("googleLoginBtn").addEventListener("click", () => {
-    signInWithPopup(auth, provider)
-      .then(async (result) => {
+    // Import Firebase SDK
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { 
+      getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, 
+      getRedirectResult, signOut, onAuthStateChanged 
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+  
+    // ✅ Ganti dengan config project Firebase kamu
+    const firebaseConfig = {
+      apiKey: "API_KEY_MU",
+      authDomain: "PROJECT_ID.firebaseapp.com",
+      projectId: "PROJECT_ID",
+      storageBucket: "PROJECT_ID.appspot.com",
+      messagingSenderId: "SENDER_ID",
+      appId: "APP_ID"
+    };
+  
+    // Init Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const provider = new GoogleAuthProvider();
+  
+    // Tombol Login
+    document.getElementById("googleLoginBtn").addEventListener("click", () => {
+      signInWithPopup(auth, provider)
+        .catch((error) => {
+          if (error.code === "auth/popup-blocked") {
+            // ✅ Fallback ke redirect kalau popup diblokir
+            signInWithRedirect(auth, provider);
+          } else {
+            alert("Login gagal: " + error.message);
+          }
+        });
+    });
+  
+    // ✅ Ambil hasil dari redirect login (kalau popup gagal)
+    getRedirectResult(auth).then(async (result) => {
+      if (result && result.user) {
         const user = result.user;
-
-        // ✅ Simpan data user ke Firestore
         await setDoc(doc(db, "users", user.uid), {
           name: user.displayName,
           email: user.email,
           photo: user.photoURL,
           lastLogin: new Date()
         });
-
-        // ✅ Tampilkan user info di halaman
+      }
+    }).catch((error) => {
+      console.error("Redirect error:", error);
+    });
+  
+    // ✅ Auto cek status login/logout
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // Kalau sudah login
         document.getElementById("userInfo").innerHTML = `
           <p>Halo, <b>${user.displayName}</b> 👋</p>
           <img src="${user.photoURL}" alt="Foto Profil" width="80" style="border-radius:50%">
           <p>Email: ${user.email}</p>
-          <button onclick="logoutUser()">Logout</button>
+          <button id="logoutBtn" style="background:red;color:white;padding:6px 12px;border:none;border-radius:6px;cursor:pointer;">Logout</button>
         `;
-      })
-      .catch((error) => {
-        console.error(error);
-        alert("Login gagal: " + error.message);
-      });
-  });
-
-  // ✅ Fungsi logout
-  window.logoutUser = () => {
-    signOut(auth).then(() => {
-      document.getElementById("userInfo").innerHTML = "";
-      alert("Logout berhasil ✅");
+  
+        // Event Logout
+        document.getElementById("logoutBtn").addEventListener("click", () => {
+          signOut(auth).then(() => {
+            document.getElementById("userInfo").innerHTML = "";
+            alert("Logout berhasil ✅");
+          });
+        });
+  
+      } else {
+        // Kalau belum login
+        document.getElementById("userInfo").innerHTML = "";
+      }
     });
-  };
-</script>
+  </script>
 </body>
 </html>
+
 
 
 
