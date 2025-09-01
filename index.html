@@ -1007,7 +1007,6 @@
     onAuthStateChanged(auth, (user) => {
       if (user) {
         // Kalau sudah login
-        document.getElementById("nama").value = user.displayName;
         document.getElementById("userInfo").innerHTML = `
           <p>Halo, <b>${user.displayName}</b> 👋</p>
           <img src="${user.photoURL}" alt="Foto Profil" width="80" style="border-radius:50%">
@@ -1102,6 +1101,7 @@
   </script>
 </body>
 </html>
+
 
 
 
