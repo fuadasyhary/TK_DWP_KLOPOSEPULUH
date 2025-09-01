@@ -732,6 +732,9 @@
             <option value="2">⭐⭐ Kurang</option>
             <option value="1">⭐ Tidak Puas</option>
           </select>
+          <!-- Kritik & Saran -->
+          <textarea id="kritik" placeholder="Kritik Anda (opsional, tapi jika diisi maka wajib isi saran)"></textarea>
+          <textarea id="saran" placeholder="Saran Anda (opsional)"></textarea>
           <button type="submit">Kirim Testimoni</button>
         </form>
       </div>
@@ -788,26 +791,6 @@
   <footer><a href="https://id.linkedin.com/in/mochamad-fuad-asyhary">
     ©Mochamad Fuad Asyhary</a>
   </footer>
-
-  <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
-
-  <script>
-    // 🔥 Ganti dengan konfigurasi dari Firebase Console
-    const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-      databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
-      projectId: "YOUR_PROJECT_ID",
-      storageBucket: "YOUR_PROJECT_ID.appspot.com",
-      messagingSenderId: "YOUR_SENDER_ID",
-      appId: "YOUR_APP_ID"
-    };
-
-    const app = firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-  </script>
 
   <script> 
     let attemptCount = 0;
@@ -990,11 +973,32 @@
       const nama = document.getElementById("nama").value;
       const pesan = document.getElementById("pesan").value;
       const rating = document.getElementById("rating").value;
+      const kritik = document.getElementById("kritik").value;
+      const saran = document.getElementById("saran").value;
 
+      // 🔥 Buat tanggal & jam sekarang
+      const now = new Date();
+      const options = { day:"2-digit", month:"2-digit", year:"numeric", 
+                        hour:"2-digit", minute:"2-digit", second:"2-digit" };
+      const tanggalJam = now.toLocaleDateString("id-ID", options);
+
+      // ✅ Validasi
+      if (!kritik && !saran) {
+        alert("Harap isi minimal Kritik atau Saran!");
+        return;
+      }
+      if (kritik && !saran) {
+        alert("Kalau ada Kritik, Saran juga wajib diisi!");
+        return;
+      }
+      
       push(ref(db, "testimoni"), {
         nama,
         pesan,
-        rating
+        rating,
+        kritik,
+        saran,
+        tanggalJam
       });
 
       form.reset();
@@ -1006,9 +1010,10 @@
       const div = document.createElement("div");
       div.classList.add("testimonial");
       div.innerHTML = `
-        <p>"${data.pesan}"</p>
-        <div class="stars">${"⭐".repeat(data.rating)}</div>
-        <h4>- ${data.nama}</h4>
+        <h4>${data.nama} - ${"⭐".repeat(data.rating)} <br><small style="color:gray">${data.tanggalJam}</small></h4>
+        <p>${data.pesan}</p>
+        ${data.kritik ? `<p style="color:red;"><strong>Kritik:</strong> ${data.kritik}</p>` : ""}
+        ${data.saran ? `<p style="color:green;"><strong>Saran:</strong> ${data.saran}</p>` : ""}
       `;
       list.prepend(div);
     });
