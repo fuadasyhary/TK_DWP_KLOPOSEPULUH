@@ -948,8 +948,8 @@
   </script>
   <!-- hapus yang lama, ganti pakai ini -->
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-    import { getDatabase, ref, push, onChildAdded } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getDatabase, ref, push, onChildAdded } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
     // ✅ Config kamu sendiri
     const firebaseConfig = {
@@ -965,7 +965,7 @@
 
     // ✅ Inisialisasi
     const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
+    const gdb = getDatabase(app);
 
     // ✅ Event form
     const form = document.getElementById("testiForm");
@@ -1000,7 +1000,7 @@
       }
     const user = auth.currentUser;
       
-      push(ref(db, "testimoni"), {
+      push(ref(gdb, "testimoni"), {
         nama,
         pesan,
         rating,
@@ -1013,7 +1013,7 @@
     });
 
     // ✅ Baca otomatis
-    onChildAdded(ref(db, "testimoni"), (snapshot) => {
+    onChildAdded(ref(gdb, "testimoni"), (snapshot) => {
       const data = snapshot.val();
       const div = document.createElement("div");
       div.classList.add("testimonial");
@@ -1035,18 +1035,6 @@
       getRedirectResult, signOut, onAuthStateChanged 
     } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
     import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-  
-    // ✅ Ganti dengan config project Firebase kamu
-    const firebaseConfig = {
-      apiKey: "AIzaSyA8bzx6ispP9u2e3fzKGqqEY2Zmle_CEHY",
-      authDomain: "testimoni-tk-dwp-kloposepuluh.firebaseapp.com",
-      databaseURL: "https://testimoni-tk-dwp-kloposepuluh-default-rtdb.firebaseio.com",
-      projectId: "testimoni-tk-dwp-kloposepuluh",
-      storageBucket: "testimoni-tk-dwp-kloposepuluh.firebasestorage.app",
-      messagingSenderId: "148758047246",
-      appId: "1:148758047246:web:6f408f3d622393bb356a5f",
-      measurementId: "G-34N9E2FXVX"
-    };
   
     // Init Firebase
     const app = initializeApp(firebaseConfig);
@@ -1109,6 +1097,7 @@
   </script>
 </body>
 </html>
+
 
 
 
