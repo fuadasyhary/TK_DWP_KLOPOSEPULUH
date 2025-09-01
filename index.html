@@ -966,11 +966,6 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    const user = auth.currentUser;
-    if (document.getElementById("nama").value == '') {
-      alert("Login dulu sebelum kirim testimoni!");
-      return;
-    }
     // ✅ Event form
     const form = document.getElementById("testiForm");
     const list = document.getElementById("testimoniList");
@@ -998,6 +993,11 @@
         alert("Kalau ada Kritik, Saran juga wajib diisi!");
         return;
       }
+    const user = auth.currentUser;
+    if (nama) {
+      alert("Login dulu sebelum kirim testimoni!");
+      return;
+    }
       
       push(ref(db, "testimoni"), {
         nama,
@@ -1108,6 +1108,7 @@
   </script>
 </body>
 </html>
+
 
 
 
