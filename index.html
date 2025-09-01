@@ -720,12 +720,12 @@
     <section class="card" style="margin-top:14px">
       <h2 style="text-align:center;margin-bottom:16px;">💬 Testimoni Orang Tua</h2>
 
-      <button id="googleLoginBtn" class="btn btn-primary">Login dengan Google</button>
-      <div id="userInfo" style="margin-top:20px;"></div>
       <!-- Form -->
       <div class="testi-card">
+      <button id="googleLoginBtn" class="btn btn-primary">Login dengan Google</button>
+      <div id="userInfo" style="margin-top:20px;"></div>
         <form id="testiForm">
-          <input type="text" id="nama" placeholder="Nama Anda" required>
+          <input type="text" id="nama" placeholder="Nama otomatis dari Google" readonly>
           <textarea id="pesan" placeholder="Tulis pesan Anda..." required></textarea>
           <select id="rating">
             <option value="5">⭐⭐⭐⭐⭐ Sangat Puas</option>
@@ -1076,7 +1076,6 @@
           photo: user.photoURL,
           lastLogin: new Date()
         });
-        document.getElementById("nama").value = user.displayName;
       }
     }).catch((error) => {
       console.error("Redirect error:", error);
@@ -1086,6 +1085,7 @@
     onAuthStateChanged(auth, (user) => {
       if (user) {
         // Kalau sudah login
+        document.getElementById("nama").value = user.displayName;
         document.getElementById("userInfo").innerHTML = `
           <p>Halo, <b>${user.displayName}</b> 👋</p>
           <img src="${user.photoURL}" alt="Foto Profil" width="80" style="border-radius:50%">
@@ -1108,6 +1108,7 @@
   </script>
 </body>
 </html>
+
 
 
 
