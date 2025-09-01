@@ -1032,13 +1032,13 @@
     // ✅ Event form
     const form = document.getElementById("testiForm");
     const list = document.getElementById("testimoniList");
+    const user = auth.currentUser;   // ✅ ambil user login dulu
+    
+    const foto = user.photoURL;
 
     form.addEventListener("submit", (e) => {
       e.preventDefault();
       
-      const user = auth.currentUser;   // ✅ ambil user login dulu
-      
-      const foto = user.photoURL;
       const nama = document.getElementById("nama").value;
       const pesan = document.getElementById("pesan").value;
       const rating = document.getElementById("rating").value;
@@ -1095,6 +1095,7 @@
   </script>
 </body>
 </html>
+
 
 
 
