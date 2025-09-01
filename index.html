@@ -966,6 +966,11 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
+    const user = auth.currentUser;
+    if (!user) {
+      alert("Login dulu sebelum kirim testimoni!");
+      return;
+    }
     // ✅ Event form
     const form = document.getElementById("testiForm");
     const list = document.getElementById("testimoniList");
@@ -1071,6 +1076,7 @@
           photo: user.photoURL,
           lastLogin: new Date()
         });
+        document.getElementById("nama").value = user.displayName;
       }
     }).catch((error) => {
       console.error("Redirect error:", error);
@@ -1083,7 +1089,6 @@
         document.getElementById("userInfo").innerHTML = `
           <p>Halo, <b>${user.displayName}</b> 👋</p>
           <img src="${user.photoURL}" alt="Foto Profil" width="80" style="border-radius:50%">
-          <p>Email: ${user.email}</p>
           <button id="logoutBtn" style="background:red;color:white;padding:6px 12px;border:none;border-radius:6px;cursor:pointer;">Logout</button>
         `;
   
@@ -1103,6 +1108,7 @@
   </script>
 </body>
 </html>
+
 
 
 
