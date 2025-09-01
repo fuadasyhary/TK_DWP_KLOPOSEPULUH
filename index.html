@@ -723,7 +723,7 @@
       <!-- Form -->
       <div class="testi-card">
       <button id="googleLoginBtn" class="btn btn-primary">Login dengan Google</button>
-      <div id="userInfo" style="margin-top:20px;"></div>
+      <div id="userInfo" style="margin-top:20px;"></div><br>
         <form id="testiForm">
           <input type="text" id="nama" placeholder="Nama otomatis dari Google" readonly>
           <textarea id="pesan" placeholder="Tulis pesan Anda..." required></textarea>
@@ -950,6 +950,11 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
     import { getDatabase, ref, push, onChildAdded } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+    import { 
+      getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, 
+      getRedirectResult, signOut, onAuthStateChanged 
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     // ✅ Config kamu sendiri
     const firebaseConfig = {
@@ -1108,6 +1113,7 @@
   </script>
 </body>
 </html>
+
 
 
 
