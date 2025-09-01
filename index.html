@@ -1035,6 +1035,9 @@
 
     form.addEventListener("submit", (e) => {
       e.preventDefault();
+      
+      const user = auth.currentUser;   // ✅ ambil user login dulu
+      
       const foto = user.photoURL;
       const nama = document.getElementById("nama").value;
       const pesan = document.getElementById("pesan").value;
@@ -1092,5 +1095,6 @@
   </script>
 </body>
 </html>
+
 
 
