@@ -58,7 +58,7 @@
     .mascot{display:flex;flex-direction:column;align-items:center;justify-content:center;height:140px}
     .mascot svg{width:120px;height:120px}
 
-    footer{max-width:980px;margin:22px auto;padding:12px;text-align:center;color:var(--muted)}
+    footer{max-width:980px;margin:22px auto;padding:12px;text-align:center;color:#bbc1cd;}
 
     .map-container {
       margin: 20px 0;
@@ -321,6 +321,33 @@
       to { opacity: 1; transform: translateY(0);}
     }
 
+    .overall-rating {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      padding: 8px 14px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      color: #fff;
+      font-weight: 700;
+    }
+
+    .overall-rating .stars {
+      font-size: 20px;
+      letter-spacing: 2px;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+
+    .overall-rating .title {
+      font-size: 16px;
+    }
+
+    .overall-rating .score {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+    
     /* playful confetti */
     .confetti{position:absolute;pointer-events:none;z-index:0;opacity:0.9}
   </style>
@@ -333,11 +360,11 @@
     </div>
     <div>
       <h1>TK DHARMA WANITA PERSATUAN KLOPOSEPULUH</h1>
-      <div class="sub">NPSN: <strong>20563203</strong> • PAUD — SWASTA</div>
+      <div class="sub">NPSN: <strong>20563203</strong> <br> PAUD — SWASTA</div>
     </div>
     <div style="margin-left:auto;display:flex;flex-direction:column;align-items:flex-end">
       <a href="https://ban-pdm.id/satuanpendidikan/20563203"><div class="badge">AKREDITASI: C</div></a>
-      <div class="sub" style="margin-top:8px">Naungan: YAYASAN DHARMA WANITA PERSATUAN SIDOARJO</div>
+      <div class="sub" style="margin-top:8px">Naungan: Yayasan Dharma Wanita Persatuan Sidoarjo</div>
     </div>
   </header>
 
@@ -398,7 +425,7 @@
 
         <div class="field">
           <div class="k">Nama</div>
-          <div class="v">TK DHARMA WANITA PERSATUAN KLOPOSEPULUH</div>
+          <div class="v">TK Dharma Wanita Persatuan Kloposepuluh</div>
         </div>
 
         <div class="field">
@@ -408,27 +435,27 @@
 
         <div class="field">
           <div class="k">Desa / Kelurahan</div>
-          <div class="v">KLOPOSEPULUH</div>
+          <div class="v">Kloposepuluh</div>
         </div>
 
         <div class="field">
           <div class="k">Kecamatan</div>
-          <div class="v">SUKODONO</div>
+          <div class="v">Sukodono</div>
         </div>
 
         <div class="field">
           <div class="k">Kabupaten</div>
-          <div class="v">SIDOARJO</div>
+          <div class="v">Sidoarjo</div>
         </div>
 
         <div class="field">
           <div class="k">Provinsi</div>
-          <div class="v">JAWA TIMUR</div>
+          <div class="v">Jawa Timur</div>
         </div>
 
         <div class="field">
           <div class="k">Status Sekolah</div>
-          <div class="v">SWASTA</div>
+          <div class="v">Swasta</div>
         </div>
 
         <div class="field">
@@ -448,7 +475,7 @@
 
         <div class="field">
           <div class="k">Naungan</div>
-          <div class="v">YAYASAN DHARMA WANITA PERSATUAN SIDOARJO</div>
+          <div class="v">Yayasan Dharma Wanita Persatuan Sidoarjo</div>
         </div>
 
         <div class="field">
@@ -678,12 +705,12 @@
 
         <div class="field">
           <div class="k">Alamat Lengkap TK DWP Kloposepuluh Pasegan</div>
-          <div class="v">Pasegan (Sebelah SDN Kloposepuluh 1), KLOPOSEPULUH, KEC. SUKODONO, KAB. SIDOARJO, PROV. JAWA TIMUR</div>
+          <div class="v">Pasegan (Sebelah SDN Kloposepuluh 1), Kloposepuluh, Kec. Sukodono, Kab. Sidoarjo, Prov. Jawa Timur</div>
         </div>
 
         <div class="field">
           <div class="k">Alamat Lengkap TK DWP Kloposepuluh Wonokoyo</div>
-          <div class="v">KLOPOSEPULUH RT 23 RW 06 (Sebelah SDN Kloposepuluh 2), KEC. SUKODONO, KAB. SIDOARJO, PROV. JAWA TIMUR</div>
+          <div class="v">Kloposepuluh RT 23 RW 06 (Sebelah SDN Kloposepuluh 2), Kec. Sukodono, Kab. Sidoarjo, Prov. Jawa Timur</div>
         </div>
 
         <div class="field">
@@ -739,6 +766,13 @@
           <button type="submit">Kirim Testimoni</button>
         </form>
       </div>
+
+      <!-- Overall Rating -->
+      <div id="overallRating" class="overall-rating">
+        <span class="title">📑 Overall Rating TK DWP Kloposepuluh</span>
+        <span class="stars">⭐⭐⭐⭐⭐</span>
+        <span class="score">0.0/5</span>
+      </div>
     
       <!-- List Testimoni -->
       <div id="testimoniList"></div>
@@ -789,8 +823,7 @@
     <p id="report-error" style="color:red;font-size:14px;display:none;margin-top:8px">❌ Akses ditolak</p>
   </div>
 
-  <footer><a href="https://id.linkedin.com/in/mochamad-fuad-asyhary">
-    ©Mochamad Fuad Asyhary</a>
+  <footer>©MOCHAMAD FUAD ASYHARY
   </footer>
 
   <script> 
@@ -946,17 +979,16 @@
     
   </script>
   
-  <!-- hapus yang lama, ganti pakai ini -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getDatabase, ref, push, onChildAdded } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+    import { getDatabase, ref, onChildAdded, onValue, set, update, child, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
     import { 
       getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, 
       getRedirectResult, signOut, onAuthStateChanged 
     } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
     import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-    // ✅ Config kamu sendiri
+  
+    // ✅ Config
     const firebaseConfig = {
       apiKey: "AIzaSyA8bzx6ispP9u2e3fzKGqqEY2Zmle_CEHY",
       authDomain: "testimoni-tk-dwp-kloposepuluh.firebaseapp.com",
@@ -967,20 +999,21 @@
       appId: "1:148758047246:web:6f408f3d622393bb356a5f",
       measurementId: "G-34N9E2FXVX"
     };
-
+  
     // ✅ Inisialisasi
     const app = initializeApp(firebaseConfig);
     const gdb = getDatabase(app);
+    const testimoniRef = ref(gdb, "testimoni");
     const auth = getAuth(app);
     const db = getFirestore(app);
     const provider = new GoogleAuthProvider();
-
+    const testiListEl = document.getElementById("testimoniList");
+  
     // Tombol Login
     document.getElementById("googleLoginBtn").addEventListener("click", () => {
       signInWithPopup(auth, provider)
         .catch((error) => {
           if (error.code === "auth/popup-blocked") {
-            // ✅ Fallback ke redirect kalau popup diblokir
             signInWithRedirect(auth, provider);
           } else {
             alert("Login gagal: " + error.message);
@@ -988,7 +1021,7 @@
         });
     });
   
-    // ✅ Ambil hasil dari redirect login (kalau popup gagal)
+    // ✅ Ambil hasil dari redirect login
     getRedirectResult(auth).then(async (result) => {
       if (result && result.user) {
         const user = result.user;
@@ -1004,108 +1037,161 @@
     });
   
     // ✅ Auto cek status login/logout
-    onAuthStateChanged(auth, (user) => {
+    onAuthStateChanged(auth, async (user) => {
       if (user) {
-        // Kalau sudah login
         document.getElementById("userInfo").innerHTML = `
           <p>Halo, <b>${user.displayName}</b> 👋</p>
           <img src="${user.photoURL}" alt="Foto Profil" width="80" style="border-radius:50%">
           <button id="logoutBtn" style="background:red;color:white;padding:6px 12px;border:none;border-radius:6px;cursor:pointer;">Logout</button>
         `;
-  
-        // Event Logout
+
         document.getElementById("logoutBtn").addEventListener("click", () => {
           signOut(auth).then(() => {
             document.getElementById("userInfo").innerHTML = "";
             alert("Logout berhasil ✅");
           });
         });
-  
+
+        // 🔥 Prefill testimoni user sendiri kalau ada
+        const userRef = ref(gdb, "testimoni/" + user.uid);
+        const snapshot = await get(userRef);
+        if (snapshot.exists()) {
+          const data = snapshot.val();
+          document.getElementById("pesan").value = data.pesan || "";
+          document.getElementById("rating").value = data.rating || "5";
+          document.getElementById("kritik").value = data.kritik || "";
+          document.getElementById("saran").value = data.saran || "";
+        } else {
+          // Kalau belum ada → biarkan form kosong
+          document.getElementById("pesan").value = "";
+          document.getElementById("rating").value = "5";
+          document.getElementById("kritik").value = "";
+          document.getElementById("saran").value = "";
+        }
+
       } else {
-        // Kalau belum login
         document.getElementById("userInfo").innerHTML = "";
+        // 🔥 Form tetap kosong kalau belum login
+        document.getElementById("pesan").value = "";
+        document.getElementById("rating").value = "5";
+        document.getElementById("kritik").value = "";
+        document.getElementById("saran").value = "";
       }
     });
-
+  
     // ✅ Event form
     const form = document.getElementById("testiForm");
     const list = document.getElementById("testimoniList");
     
-    form.addEventListener("submit", (e) => {
+    form.addEventListener("submit", async (e) => {
       e.preventDefault();
-      
+
       const pesan = document.getElementById("pesan").value;
-      const rating = document.getElementById("rating").value;
+      const rating = Number(document.getElementById("rating").value);
       const kritik = document.getElementById("kritik").value;
       const saran = document.getElementById("saran").value;
 
-      // 🔥 Buat tanggal & jam sekarang
       const now = new Date();
       const options = { day:"2-digit", month:"2-digit", year:"numeric", 
                         hour:"2-digit", minute:"2-digit", second:"2-digit" };
       const tanggalJam = now.toLocaleDateString("id-ID", options);
 
       const user = auth.currentUser;
-      // ✅ Validasi
       if (!user) {
         alert("Login dulu sebelum kirim testimoni!");
         return;
       }
-      if (!kritik && !saran) {
-        alert("Harap isi minimal Kritik atau Saran!");
-        return;
+
+      // ✅ Validasi rating
+      if (rating < 4) {
+        if (!kritik || !saran) {
+          alert("Kalau rating di bawah 4, Kritik & Saran wajib diisi!");
+          return;
+        }
+      } else {
+        if (!kritik && !saran) {
+          alert("Harap isi minimal Kritik atau Saran!");
+          return;
+        }
+        if (kritik && !saran) {
+          alert("Kalau ada Kritik, Saran juga wajib diisi!");
+          return;
+        }
       }
-      if (kritik && !saran) {
-        alert("Kalau ada Kritik, Saran juga wajib diisi!");
-        return;
-      }
-      
-    const foto = user.photoURL;
-    const nama = user.displayName;
-      push(ref(gdb, "testimoni"), {
-        foto,
-        nama,
+
+      // ✅ Simpan dengan key = UID (biar unik per user)
+      const userRef = ref(gdb, "testimoni/" + user.uid);
+
+      await set(userRef, {
+        foto: user.photoURL,
+        nama: user.displayName,
+        email: user.email,
         pesan,
         rating,
         kritik,
         saran,
         tanggalJam
       });
-      signOut(auth)
-      form.reset();
+
+      alert("Testimoni berhasil disimpan ✅");
     });
 
-    // ✅ Baca otomatis
-    onChildAdded(ref(gdb, "testimoni"), (snapshot) => {
-      const data = snapshot.val();
-      const div = document.createElement("div");
-      div.classList.add("testimonial");
-      div.innerHTML = `
-                      <div style="display:flex; align-items:flex-start; margin-bottom:15px;">
-                        <img src="${data.foto}" alt="Foto Profil" width="80" 
-                            style="border-radius:50%; margin-right:12px;">
+    onValue(testimoniRef, (snapshot) => {
+      console.log("📡 Data snapshot:", snapshot.val()); // debug log
 
-                        <div>
-                          <p style="margin:0; font-weight:bold; font-size:16px;">${data.nama}</p>
-                          <p style="margin:2px 0; color:orange;">${"⭐".repeat(data.rating)}</p>
-                          <small style="color:gray;">${data.tanggalJam}</small>
-                        </div>
-                      </div>
-
-                      <p style="margin-top:5px;">${data.pesan}</p>
-                      ${data.kritik ? `<p style="color:red; margin:0;"><strong>Kritik:</strong> ${data.kritik}</p>` : ""}
-                      ${data.saran ? `<p style="color:green; margin:0;"><strong>Saran:</strong> ${data.saran}</p>` : ""}
-                    `;
-      list.prepend(div);
+      testiListEl.innerHTML = ""; // clear dulu
+      if (snapshot.exists()) {
+        snapshot.forEach((child) => {
+          const data = child.val();
+          console.log("🔥 Data child:", data); // debug tiap child
+          testiListEl.innerHTML += `
+        <div style="display:flex; align-items:flex-start; margin-bottom:15px;">
+          <img src="${data.foto}" alt="Foto Profil" width="80" 
+              style="border-radius:50%; margin-right:12px;">
+  
+          <div>
+            <p style="margin:0; font-weight:bold; font-size:16px;">${data.nama}</p>
+            <p style="margin:2px 0; color:orange;">${"⭐".repeat(Number(data.rating))}</p>
+            <small style="color:gray;">${data.tanggalJam}</small>
+          </div>
+        </div>
+  
+        <p style="margin-top:5px;">${data.pesan}</p>
+        ${data.kritik ? `<p style="color:red; margin:0;"><strong>Kritik:</strong> ${data.kritik}</p>` : ""}
+        ${data.saran ? `<p style="color:green; margin:0;"><strong>Saran:</strong> ${data.saran}</p>` : ""}
+      `;
+        });
+      } else {
+        testiListEl.innerHTML = "<p>Belum ada testimoni</p>";
+      }
+    });
+  
+    // Fungsi update rating keseluruhan
+    function updateOverallRating(ratings) {
+      if (ratings.length === 0) {
+        document.getElementById("overallRating").innerHTML =
+          `<span class="stars">☆☆☆☆☆</span> <span class="score">0.0/5</span>`;
+        return;
+      }
+      
+      let avg = ratings.reduce((a, b) => a + b, 0) / ratings.length;
+      let stars = "⭐".repeat(Math.round(avg)) + "☆".repeat(5 - Math.round(avg));
+      
+      document.getElementById("overallRating").innerHTML =
+        `<span class="title">📑 Overall Rating TK DWP Kloposepuluh</span>
+        <span class="stars">${stars}</span> <span class="score">${avg.toFixed(1)}/5</span>`;
+    }
+  
+    // 🔥 Ambil data testimoni & hitung rata-rata rating
+    onValue(testimoniRef, (snapshot) => {
+      let ratings = [];
+      snapshot.forEach((child) => {
+        let data = child.val();
+        if (data.rating) ratings.push(Number(data.rating));
+      });
+      updateOverallRating(ratings);
     });
   </script>
 </body>
 </html>
-
-
-
-
-
-
-
 
