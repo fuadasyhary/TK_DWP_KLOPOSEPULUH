@@ -204,6 +204,26 @@
       pointer-events: none;
       border-radius: 6px;
     }
+    .video-content {
+      display: none;
+    }
+    .video-content:first-child {
+      display: grid; /* default tab pertama tampil */
+    }
+    .video-tab-btn {
+      padding:8px 14px;
+      border-radius:12px;
+      border:1px solid #ddd;
+      background:#f5f5f5;
+      cursor:pointer;
+      font-weight:600;
+      transition:0.2s;
+    }
+    .video-tab-btn.active {
+      background:var(--accent);
+      color:white;
+      border-color:var(--accent);
+    }
     
     .tab-btn {
       padding:8px 14px;
@@ -347,7 +367,143 @@
       font-size: 14px;
       opacity: 0.9;
     }
-    
+
+    .captcha-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+    }
+    .captcha-container {
+      background: rgba(255, 255, 255, 0.9);
+      padding: 20px;
+      border-radius: 15px;
+      text-align: center;
+      max-width: 80%;
+      position: relative;
+    }
+    .captcha-container h2 {
+      color: #ff4081;
+      margin-bottom: 10px;
+      font-size: 24px;
+    }
+    .captcha-container p {
+      color: #333;
+      margin-bottom: 20px;
+    }
+    .captcha-area {
+      position: relative;
+      width: 300px;
+      height: 200px;
+      background: #f0f0f0;
+      border-radius: 10px;
+      margin: 0 auto;
+      overflow: hidden;
+    }
+    .captcha-icon {
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      background: url('https://w7.pngwing.com/pngs/601/824/png-transparent-star-system-film-star.png') no-repeat center;
+      background-size: contain;
+      cursor: pointer;
+    }
+    .captcha-status {
+      margin-top: 15px;
+      color: #333;
+      font-size: 16px;
+    }
+    .captcha-reset {
+      margin: 10px auto;
+      padding: 10px 20px;
+      background: #ff4081;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      display: none;
+      text-align: center;
+      width: auto;
+      min-width: 100px;
+    }
+    .captcha-reset:hover {
+      background: #e91e63;
+    }
+    @media (max-width: 768px) {
+      .menu {
+        padding: 20px;
+      }
+      .menu h1 {
+        font-size: 28px;
+      }
+      .menu-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+      }
+      .menu button {
+        font-size: 14px;
+        padding: 10px;
+      }
+      .captcha-container h2 {
+        font-size: 20px;
+      }
+      .captcha-area {
+        width: 250px;
+        height: 150px;
+      }
+      .captcha-icon {
+        width: 25px;
+        height: 25px;
+      }
+      .download-apk img {
+        width: 35px;
+        height: 35px;
+      }
+      .download-apk span {
+        font-size: 11px;
+      }
+    }
+    @media (max-width: 480px) {
+      .menu-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+      }
+      .menu button {
+        font-size: 12px;
+        padding: 8px;
+      }
+      .menu h1 {
+        font-size: 24px;
+      }
+      .captcha-container h2 {
+        font-size: 18px;
+      }
+      .captcha-area {
+        width: 200px;
+        height: 120px;
+      }
+      .captcha-icon {
+        width: 20px;
+        height: 20px;
+      }
+      .captcha-reset {
+        min-width: 80px;
+      }
+      .download-apk img {
+        width: 30px;
+        height: 30px;
+      }
+      .download-apk span {
+        font-size: 10px;
+      }
+    }
+
     /* playful confetti */
     .confetti{position:absolute;pointer-events:none;z-index:0;opacity:0.9}
   </style>
@@ -368,6 +524,15 @@
     </div>
   </header>
 
+  <div class="captcha-overlay" id="captchaOverlay">
+    <div class="captcha-container">
+      <h2>Verifikasi CAPTCHA</h2>
+      <p>Human Atau Robot</p>
+      <div class="captcha-area" id="captchaArea"></div>
+      <div class="captcha-status" id="captchaStatus">Klik 1 bintang untuk verifikasi human</div>
+      <button class="captcha-reset" id="captchaReset">Coba Lagi</button>
+    </div>
+  </div>
     <!-- 🔥 Animasi Anak-anak -->
   <div class="kids-animation">
     <script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.6.2/dist/dotlottie-wc.js" type="module"></script>
@@ -420,7 +585,7 @@
     </section>
 
     <section id="profil" class="card" style="margin-top:14px">
-      <h3 style="margin:0 0 8px 0">Profil Sekolah</h3>
+      <h3 style="margin:0 0 8px 0">🏫 Profil Sekolah</h3>
       <div class="profile-grid">
 
         <div class="field">
@@ -518,7 +683,7 @@
     
     <!-- 🔥 Profil Guru -->
     <section class="card" style="margin-top:14px">
-      <h2 style="margin:0 0 16px 0; text-align:center;">Profil Guru</h2>
+      <h2 style="margin:0 0 16px 0; text-align:center;">👩‍🏫 Profil Guru</h2>
       <div class="guru-grid">
         <div class="guru-card">
           <img src="guru/yuli.jpeg" alt="Ibu Yuli" class="guru-img">
@@ -554,7 +719,7 @@
       
     <!-- 🔥 Section Galeri dengan Tab -->
     <section class="card" style="margin-top:14px">
-      <h2 style="margin:0 0 16px 0; text-align:center;">Galeri Sekolah</h2>
+      <h2 style="margin:0 0 16px 0; text-align:center;">📸 Galeri Sekolah</h2>
       
       <!-- Tab Navigation -->
       <div class="gallery-tabs" style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:16px;">
@@ -678,9 +843,106 @@
       <button id="next-img" style="position:absolute;right:20px;top:50%;transform:translateY(-50%);font-size:40px;color:#fff;background:none;border:none;cursor:pointer;">&#10095;</button>
     </div>
 
+    <!-- 🔥 Section Galeri Video -->
+    <section class="card" style="margin-top:14px">
+      <h2 style="margin:0 0 16px 0; text-align:center;">🎬 Galeri Video</h2>
+
+      <!-- Tab Navigation -->
+      <div class="gallery-tabs" style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:16px;">
+        <button class="video-tab-btn active" onclick="showVideoGallery('videoMpls')">MPLS</button>
+        <button class="video-tab-btn" onclick="showVideoGallery('videoSekolah')">Sekolah</button>
+        <button class="video-tab-btn" onclick="showVideoGallery('videoSenam')">Senam</button>
+        <button class="video-tab-btn" onclick="showVideoGallery('videomakan')">Makan Bersama</button>
+        <button class="video-tab-btn" onclick="showVideoGallery('videotakjil')">Bagi Takjil</button>
+        <button class="video-tab-btn" onclick="showVideoGallery('videomanasik')">Manasik Haji</button>
+      </div>
+
+      <!-- Galeri Video Content -->
+      <div id="video-galeri-container">
+
+        <!-- MPLS -->
+        <div class="gallery-grid video-content" id="videoMpls">
+          <video controls width="100%" style="border-radius:12px;">
+            <source src="mpls/1.mp4" type="video/mp4">
+          </video>
+          <video controls width="100%" style="border-radius:12px;">
+            <source src="mpls/2.mp4" type="video/mp4">
+          </video>
+        </div>
+
+        <!-- Sekolah -->
+        <div class="gallery-grid video-content" id="videoSekolah" style="display:none;">
+          <video controls width="100%" style="border-radius:12px;">
+            <source src="sekolah/1.mp4" type="video/mp4">
+          </video>
+          <video controls width="100%" style="border-radius:12px;">
+            <source src="sekolah/2.mp4" type="video/mp4">
+          </video>
+          <video controls width="100%" style="border-radius:12px;">
+            <source src="sekolah/3.mp4" type="video/mp4">
+          </video>
+        </div>
+
+        <!-- Senam -->
+        <div class="gallery-grid video-content" id="videoSenam" style="display:none;">
+          <video controls width="100%" style="border-radius:12px;">
+            <source src="senam/1.mp4" type="video/mp4">
+          </video>
+          <video controls width="100%" style="border-radius:12px;">
+            <source src="senam/2.mp4" type="video/mp4">
+          </video>
+          <video controls width="100%" style="border-radius:12px;">
+            <source src="senam/3.mp4" type="video/mp4">
+          </video>
+          <video controls width="100%" style="border-radius:12px;">
+            <source src="senam/4.mp4" type="video/mp4">
+          </video>
+        </div>
+
+        <!-- Makan -->
+        <div class="gallery-grid video-content" id="videomakan">
+          <video controls width="100%" style="border-radius:12px;">
+            <source src="makan_bersama/1.mp4" type="video/mp4">
+          </video>
+          <video controls width="100%" style="border-radius:12px;">
+            <source src="makan_bersama/2.mp4" type="video/mp4">
+          </video>
+        </div>
+
+        <!-- Takjil -->
+        <div class="gallery-grid video-content" id="videotakjil">
+          <video controls width="100%" style="border-radius:12px;">
+            <source src="bagi_takjil/1.mp4" type="video/mp4">
+          </video>
+          <video controls width="100%" style="border-radius:12px;">
+            <source src="bagi_takjil/2.mp4" type="video/mp4">
+          </video>
+        </div>
+
+        <!-- Manasik Haji -->
+        <div class="gallery-grid video-content" id="videomanasik">
+          <video controls width="100%" style="border-radius:12px;">
+            <source src="manasik_haji/1.mp4" type="video/mp4">
+          </video>
+          <video controls width="100%" style="border-radius:12px;">
+            <source src="manasik_haji/1.mp4" type="video/mp4">
+          </video>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 🔥 Modal Full Video -->
+    <div id="video-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.9);align-items:center;justify-content:center;z-index:99999;">
+      <span id="close-video" style="position:absolute;top:20px;right:30px;font-size:30px;color:#fff;cursor:pointer;">&times;</span>
+      <video id="video-full" controls autoplay style="max-width:90%;max-height:90%;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,0.6);"></video>
+      <button id="prev-video" style="position:absolute;left:20px;top:50%;transform:translateY(-50%);font-size:40px;color:#fff;background:none;border:none;cursor:pointer;">&#10094;</button>
+      <button id="next-video" style="position:absolute;right:20px;top:50%;transform:translateY(-50%);font-size:40px;color:#fff;background:none;border:none;cursor:pointer;">&#10095;</button>
+    </div>
+
     <!-- 🔥 Section Kontak -->
     <section class="card" style="margin-top:14px">
-      <h2 style="margin:0 0 16px 0; text-align:center;">Kontak Sekolah</h2>
+      <h2 style="margin:0 0 16px 0; text-align:center;">📞📧📱Kontak Sekolah</h2>
       <div class="profile-grid">
 
         <div class="field">
@@ -723,7 +985,7 @@
 
     <section class="card" style="margin-top:14px">
       <div class="map-container" style="margin:20px 0; text-align:center;">
-        <h2>Lokasi Sekolah Pasegan</h2>
+        <h2>📍Lokasi Sekolah Pasegan</h2>
         <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d247.28926787964912!2d112.68678510320208!3d-7.395481311682645!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd7e3f14b213ea1%3A0x449bd3a46273fda!2sTK%20Dharma%20Wanita%20Persatuan%20Klopo%20Sepuluh%20Pasegan!5e0!3m2!1sid!2sid!4v1756187581448!5m2!1sid!2sid" 
             width="250" 
             height="250" 
@@ -732,7 +994,7 @@
             loading="lazy" 
             referrerpolicy="no-referrer-when-downgrade">
         </iframe>
-        <h2>Lokasi Sekolah Wonokoyo</h2>
+        <h2>📍Lokasi Sekolah Wonokoyo</h2>
         <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3956.593248236775!2d112.69582954783125!3d-7.399389320171529!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd7e39b3a14f9b5%3A0x7272805c771ac88f!2sTK%20Dharma%20Wanita%20Persatuan%20Kloposepuluh%20Wonokoyo!5e0!3m2!1sid!2sid!4v1756343384044!5m2!1sid!2sid" 
             width="250" 
             height="250" 
@@ -825,6 +1087,62 @@
 
   <footer>©MOCHAMAD FUAD ASYHARY
   </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const audio = document.getElementById('bg-audio');
+      const captchaOverlay = document.getElementById('captchaOverlay');
+      const captchaArea = document.getElementById('captchaArea');
+      const captchaStatus = document.getElementById('captchaStatus');
+      const captchaReset = document.getElementById('captchaReset');
+      const mainMenu = document.getElementById('mainMenu');
+      let clickCount = 0;
+      const requiredClicks = 1;
+
+      function generateCaptcha() {
+        captchaArea.innerHTML = '';
+        clickCount = 0;
+        captchaStatus.textContent = `Klik 1 bintang untuk verifikasi human`;
+        captchaReset.style.display = 'none';
+
+        for (let i = 0; i < 2; i++) {
+          const icon = document.createElement('div');
+          icon.className = 'captcha-icon';
+          icon.style.left = `${Math.random() * (captchaArea.offsetWidth - 30)}px`;
+          icon.style.top = `${Math.random() * (captchaArea.offsetHeight - 30)}px`;
+          icon.addEventListener('click', handleIconClick);
+          captchaArea.appendChild(icon);
+        }
+
+        captchaArea.addEventListener('click', handleWrongClick);
+      }
+
+      function handleIconClick(e) {
+        e.stopPropagation();
+        clickCount++;
+        e.target.style.display = 'none';
+        captchaStatus.textContent = `Klik ${requiredClicks - clickCount} bintang lagi untuk verifikasi human`;
+
+        if (clickCount >= requiredClicks) {
+          captchaOverlay.style.display = 'none';
+          mainMenu.classList.add('show');
+          captchaArea.removeEventListener('click', handleWrongClick);
+          playAudio(); // Putar audio setelah verifikasi berhasil
+        }
+      }
+
+      function handleWrongClick() {
+        captchaStatus.textContent = 'Verifikasi gagal! Coba lagi.';
+        captchaArea.innerHTML = ''; // Hapus semua bintang saat klik salah
+        captchaReset.style.display = 'block';
+        captchaArea.removeEventListener('click', handleWrongClick);
+      }
+
+      captchaReset.addEventListener('click', generateCaptcha);
+
+      generateCaptcha();
+    });
+  </script>
 
   <script> 
     let attemptCount = 0;
@@ -976,7 +1294,68 @@
       document.getElementById(id).style.display = 'grid';
       event.target.classList.add('active');
     }
-    
+
+    function showVideoGallery(id) {
+      // Sembunyikan semua konten video
+      document.querySelectorAll('#video-galeri-container .video-content')
+        .forEach(el => el.style.display = 'none');
+
+      // Reset semua tombol video tab
+      document.querySelectorAll('.video-tab-btn')
+        .forEach(el => el.classList.remove('active'));
+
+      // Tampilkan konten sesuai ID
+      document.getElementById(id).style.display = 'grid';
+
+      // Kasih highlight ke tombol yang diklik
+      event.target.classList.add('active');
+    }
+
+    // Fullscreen Video Modal
+    const videoEls = document.querySelectorAll('#video-galeri-container video');
+    const videoModal = document.getElementById('video-modal');
+    const videoFull = document.getElementById('video-full');
+    const closeVideoBtn = document.getElementById('close-video');
+    const prevVideoBtn = document.getElementById('prev-video');
+    const nextVideoBtn = document.getElementById('next-video');
+
+    let currentVideoIndex = 0;
+
+    videoEls.forEach((vid, idx) => {
+      vid.addEventListener('click', () => {
+        currentVideoIndex = idx;
+        videoModal.style.display = 'flex';
+        videoFull.src = vid.querySelector('source').src;
+        videoFull.play();
+      });
+    });
+
+    closeVideoBtn.addEventListener('click', () => {
+      videoModal.style.display = 'none';
+      videoFull.pause();
+      videoFull.src = ""; // reset supaya tidak bunyi di background
+    });
+
+    prevVideoBtn.addEventListener('click', () => {
+      currentVideoIndex = (currentVideoIndex - 1 + videoEls.length) % videoEls.length;
+      videoFull.src = videoEls[currentVideoIndex].querySelector('source').src;
+      videoFull.play();
+    });
+
+    nextVideoBtn.addEventListener('click', () => {
+      currentVideoIndex = (currentVideoIndex + 1) % videoEls.length;
+      videoFull.src = videoEls[currentVideoIndex].querySelector('source').src;
+      videoFull.play();
+    });
+
+    // optional: keyboard support
+    document.addEventListener('keydown', (e) => {
+      if(videoModal.style.display === 'flex'){
+        if(e.key === 'ArrowLeft') prevVideoBtn.click();
+        if(e.key === 'ArrowRight') nextVideoBtn.click();
+        if(e.key === 'Escape') closeVideoBtn.click();
+      }
+    });
   </script>
   
   <script type="module">
@@ -1194,4 +1573,3 @@
   </script>
 </body>
 </html>
-
