@@ -8,7 +8,7 @@
   <style>
     body { font-family: Arial, sans-serif; padding: 20px; }
     .card { background: #fff; padding: 16px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-bottom: 20px; }
-    input, select { width: 100%; padding: 10px; margin: 6px 0; border-radius: 8px; border: 1px solid #ddd; }
+    input, select { width: 50%; padding: 10px; margin: 6px 0; border-radius: 8px; border: 1px solid #ddd; }
     button { padding: 10px 14px; border: none; border-radius: 8px; cursor: pointer; margin: 4px; }
     .btn-primary { background: #007bff; color: white; }
     .btn-danger { background: #dc3545; color: white; }
@@ -34,12 +34,14 @@
           <input type="hidden" id="galleryId">
 
           <label>Jenis</label>
+          <br>
           <select id="jenis" required>
               <option value="foto">Foto</option>
               <option value="video">Video</option>
           </select>
-          
+          <br>
           <label>Kategori</label>
+          <br>
           <select id="kategori" required>
             <option value="mpls">MPLS</option>
             <option value="sekolah">Sekolah</option>
@@ -51,27 +53,41 @@
             <option value="pelepasan">Pelepasan Siswa</option>
             <option value="lainnya">➕ Lainnya...</option>
           </select>
-          
+          <br>
           <!-- Input tambahan untuk kategori custom -->
           <input type="text" id="kategoriCustom" placeholder="Isi kategori baru" style="display:none; margin-top:8px;">
 
           <label>Judul</label>
+          <br>
           <input type="text" id="judul" placeholder="Judul media" required>
-
+          <br>
           <label>URL Gambar/Video</label>
+          <br>
           <input type="url" id="url" placeholder="https://example.com/media.jpg" required>
-
+          <br>
           <!-- 🔥 Preview otomatis -->
           <div id="preview" style="margin-top:10px;"></div>
-
+          <br>
           <button type="submit" class="btn-primary">💾 Simpan</button>
           <button type="button" onclick="resetForm()" class="btn-warning">🔄 Reset</button>
       </form>
     </div>
+    <h2>📸 Manajemen Galeri</h2>
 
-    <!-- List Data -->
-    <h2>📂 Data Galeri</h2>
-    <div id="galleryList"></div>
+    <!-- ✅ Filter input -->
+     <input type="text" id="gallerySearch" placeholder="Cari judul atau kategori..."
+       style="padding:8px;width:100%;max-width:300px;margin-bottom:12px;border-radius:8px;border:1px solid #ccc;">
+
+    <table id="galleryTable" border="1" style="width:100%;border-collapse:collapse;">
+      <thead>
+        <tr>
+          <th>Preview Data</th>
+        </tr>
+      </thead>
+      <tbody id="galleryList">
+        <!-- data galeri dari Firebase -->
+      </tbody>
+    </table>
   </div>
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -237,7 +253,23 @@
   
     urlInput.addEventListener("input", updatePreview);
     jenisInput.addEventListener("change", updatePreview);
+
+    // ✅ Filter pencarian
+    document.getElementById("gallerySearch").addEventListener("input", function() {
+      const filter = this.value.toLowerCase();
+      const items = document.querySelectorAll("#galleryList .gallery-item");
+
+      items.forEach(item => {
+        const text = item.textContent.toLowerCase();
+        if (text.includes(filter)) {
+          item.style.display = "";
+        } else {
+          item.style.display = "none";
+        }
+      });
+    });
   </script>
+  
   <script>
     // Ganti password sesuai kebutuhan
     const ADMIN_PASSWORD = "Tkdwpklopo10";
