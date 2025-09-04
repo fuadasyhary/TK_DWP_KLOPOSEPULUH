@@ -86,6 +86,34 @@
       .hero{padding:28px}
       h1{font-size:26px}
     }
+    
+    #galleryContainer {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px;
+      padding: 10px;
+    }
+
+    .gallery-item {
+      background: #fff;
+      border-radius: 8px;
+      padding: 6px;
+      text-align: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    .gallery-item b {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 14px;
+    }
+
+    .gallery-img, .gallery-video {
+      width: 100%;
+      height: auto;
+      border-radius: 6px;
+      cursor: pointer;
+    }
 
     .gallery-grid {
       display: grid;
@@ -719,120 +747,10 @@
       
     <!-- 🔥 Section Galeri dengan Tab -->
     <section class="card" style="margin-top:14px">
-      <h2 style="margin:0 0 16px 0; text-align:center;">📸 Galeri Sekolah</h2>
+      <h2 style="margin:0 0 16px 0; text-align:center;">📸🎬 Galeri Sekolah</h2>
       
-      <!-- Tab Navigation -->
-      <div class="gallery-tabs" style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:16px;">
-        <button class="tab-btn active" onclick="showGallery('mpls')">MPLS</button>
-        <button class="tab-btn" onclick="showGallery('sekolah')">Sekolah</button>
-        <button class="tab-btn" onclick="showGallery('senam')">Senam</button>
-        <button class="tab-btn" onclick="showGallery('makan')">Makan Bersama</button>
-        <button class="tab-btn" onclick="showGallery('agama')">Belajar Nilai Agama</button>
-        <button class="tab-btn" onclick="showGallery('takjil')">Bagi Takjil</button>
-        <button class="tab-btn" onclick="showGallery('manasik')">Manasik Haji</button>
-        <button class="tab-btn" onclick="showGallery('pelepasan')">Pelepasan Siswa</button>
-      </div>
-      
-      <!-- Galeri Content -->
-      <div id="galeri-container">
-      
-        <!-- MPLS -->
-        <div class="gallery-grid gallery-content" id="mpls">
-          <img src="mpls/1.jpeg" alt="Kegiatan 1">
-          <img src="mpls/2.jpeg" alt="Kegiatan 2">
-          <img src="mpls/3.jpeg" alt="Kegiatan 3">
-          <img src="mpls/4.jpeg" alt="Kegiatan 4">
-          <img src="mpls/5.jpeg" alt="Kegiatan 5">
-          <img src="mpls/6.jpeg" alt="Kegiatan 6">
-          <img src="mpls/7.jpeg" alt="Kegiatan 7">
-          <img src="mpls/8.jpeg" alt="Kegiatan 8">
-          <img src="mpls/9.jpeg" alt="Kegiatan 9">
-          <img src="mpls/10.jpeg" alt="Kegiatan 10">
-          <img src="mpls/11.jpeg" alt="Kegiatan 11">
-          <img src="mpls/12.jpeg" alt="Kegiatan 12">
-          <img src="mpls/13.jpeg" alt="Kegiatan 13">
-          <img src="mpls/14.jpeg" alt="Kegiatan 14">
-          <img src="mpls/15.jpeg" alt="Kegiatan 15">
-          <img src="mpls/16.jpeg" alt="Kegiatan 16">
-          <img src="mpls/17.jpeg" alt="Kegiatan 17">
-          <!-- tambahkan sesuai kebutuhan -->
-        </div>
-      
-        <!-- Sekolah -->
-        <div class="gallery-grid gallery-content" id="sekolah" style="display:none;">
-          <img src="sekolah/1.jpeg" alt="Kegiatan 1">
-          <img src="sekolah/2.jpeg" alt="Kegiatan 2">
-          <img src="sekolah/3.jpeg" alt="Kegiatan 3">
-          <img src="sekolah/4.jpeg" alt="Kegiatan 4">
-          <img src="sekolah/5.jpeg" alt="Kegiatan 5">
-          <img src="sekolah/6.jpeg" alt="Kegiatan 6">
-          <img src="sekolah/7.jpeg" alt="Kegiatan 7">
-          <img src="sekolah/8.jpeg" alt="Kegiatan 8">
-        </div>
-      
-        <!-- Senam -->
-        <div class="gallery-grid gallery-content" id="senam" style="display:none;">
-          <img src="senam/1.jpeg" alt="Kegiatan 1">
-          <img src="senam/2.jpeg" alt="Kegiatan 2">
-          <img src="senam/3.jpeg" alt="Kegiatan 3">
-          <img src="senam/4.jpeg" alt="Kegiatan 4">
-          <img src="senam/5.jpeg" alt="Kegiatan 5">
-          <img src="senam/6.jpeg" alt="Kegiatan 6">
-          <img src="senam/7.jpeg" alt="Kegiatan 7">
-          <img src="senam/8.jpeg" alt="Kegiatan 8">
-          <img src="senam/9.jpeg" alt="Kegiatan 9">
-          <img src="senam/10.jpeg" alt="Kegiatan 10">
-        </div>
-      
-        <!-- Makan Bersama -->
-        <div class="gallery-grid gallery-content" id="makan" style="display:none;">
-          <img src="makan_bersama/1.jpeg" alt="Kegiatan 1">
-          <img src="makan_bersama/2.jpeg" alt="Kegiatan 2">
-          <img src="makan_bersama/3.jpeg" alt="Kegiatan 3">
-          <img src="makan_bersama/4.jpeg" alt="Kegiatan 4">
-          <img src="makan_bersama/5.jpeg" alt="Kegiatan 5">
-          <img src="makan_bersama/6.jpeg" alt="Kegiatan 6">
-          <img src="makan_bersama/7.jpeg" alt="Kegiatan 7">
-          <img src="makan_bersama/8.jpeg" alt="Kegiatan 8">
-          <img src="makan_bersama/9.jpeg" alt="Kegiatan 9">
-        </div>
-      
-        <!-- Belajar Nilai Agama -->
-        <div class="gallery-grid gallery-content" id="agama" style="display:none;">
-          <img src="belajar_nilai_agama/1.jpeg" alt="Agama 1">
-          <img src="belajar_nilai_agama/2.jpeg" alt="Agama 2">
-        </div>
-      
-        <!-- Bagi Takjil -->
-        <div class="gallery-grid gallery-content" id="takjil" style="display:none;">
-          <img src="bagi_takjil/1.jpeg" alt="Kegiatan 1">
-          <img src="bagi_takjil/2.jpeg" alt="Kegiatan 2">
-          <img src="bagi_takjil/3.jpeg" alt="Kegiatan 3">
-          <img src="bagi_takjil/4.jpeg" alt="Kegiatan 4">
-        </div>
-      
-        <!-- Manasik Haji -->
-        <div class="gallery-grid gallery-content" id="manasik" style="display:none;">
-          <img src="manasik_haji/1.jpeg" alt="Kegiatan 3">
-          <img src="manasik_haji/2.jpeg" alt="Kegiatan 4">
-          <img src="manasik_haji/3.jpeg" alt="Kegiatan 5">
-          <img src="manasik_haji/4.jpeg" alt="Kegiatan 6">
-          <img src="manasik_haji/5.jpeg" alt="Kegiatan 7">
-          <img src="manasik_haji/6.jpeg" alt="Kegiatan 8">
-          <img src="manasik_haji/7.jpeg" alt="Kegiatan 9">
-          <img src="manasik_haji/8.jpeg" alt="Kegiatan 10">
-          <img src="manasik_haji/9.jpeg" alt="Kegiatan 11">
-        </div>
-      
-        <!-- Pelepasan -->
-        <div class="gallery-grid gallery-content" id="pelepasan" style="display:none;">
-          <img src="pelepasan siswa/1.jpeg" alt="Kegiatan 1">
-          <img src="pelepasan siswa/2.jpeg" alt="Kegiatan 2">
-          <img src="pelepasan siswa/3.jpeg" alt="Kegiatan 12">
-          <img src="pelepasan siswa/4.jpeg" alt="Kegiatan 13">
-        </div>
-    
-      </div>
+      <div id="categoryButtons" class="gallery-tabs" style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:16px;"></div>
+      <div id="galleryContainer" class="gallery-grid gallery-content"></div>
     </section>
 
     <!-- Modal Full Galeri -->
@@ -842,95 +760,6 @@
       <button id="prev-img" style="position:absolute;left:20px;top:50%;transform:translateY(-50%);font-size:40px;color:#fff;background:none;border:none;cursor:pointer;">&#10094;</button>
       <button id="next-img" style="position:absolute;right:20px;top:50%;transform:translateY(-50%);font-size:40px;color:#fff;background:none;border:none;cursor:pointer;">&#10095;</button>
     </div>
-
-    <!-- 🔥 Section Galeri Video -->
-    <section class="card" style="margin-top:14px">
-      <h2 style="margin:0 0 16px 0; text-align:center;">🎬 Galeri Video</h2>
-
-      <!-- Tab Navigation -->
-      <div class="gallery-tabs" style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:16px;">
-        <button class="video-tab-btn active" onclick="showVideoGallery('videoMpls')">MPLS</button>
-        <button class="video-tab-btn" onclick="showVideoGallery('videoSekolah')">Sekolah</button>
-        <button class="video-tab-btn" onclick="showVideoGallery('videoSenam')">Senam</button>
-        <button class="video-tab-btn" onclick="showVideoGallery('videomakan')">Makan Bersama</button>
-        <button class="video-tab-btn" onclick="showVideoGallery('videotakjil')">Bagi Takjil</button>
-        <button class="video-tab-btn" onclick="showVideoGallery('videomanasik')">Manasik Haji</button>
-      </div>
-
-      <!-- Galeri Video Content -->
-      <div id="video-galeri-container">
-
-        <!-- MPLS -->
-        <div class="gallery-grid video-content" id="videoMpls">
-          <video controls width="100%" style="border-radius:12px;">
-            <source src="mpls/1.mp4" type="video/mp4">
-          </video>
-          <video controls width="100%" style="border-radius:12px;">
-            <source src="mpls/2.mp4" type="video/mp4">
-          </video>
-        </div>
-
-        <!-- Sekolah -->
-        <div class="gallery-grid video-content" id="videoSekolah" style="display:none;">
-          <video controls width="100%" style="border-radius:12px;">
-            <source src="sekolah/1.mp4" type="video/mp4">
-          </video>
-          <video controls width="100%" style="border-radius:12px;">
-            <source src="sekolah/2.mp4" type="video/mp4">
-          </video>
-          <video controls width="100%" style="border-radius:12px;">
-            <source src="sekolah/3.mp4" type="video/mp4">
-          </video>
-        </div>
-
-        <!-- Senam -->
-        <div class="gallery-grid video-content" id="videoSenam" style="display:none;">
-          <video controls width="100%" style="border-radius:12px;">
-            <source src="senam/1.mp4" type="video/mp4">
-          </video>
-          <video controls width="100%" style="border-radius:12px;">
-            <source src="senam/2.mp4" type="video/mp4">
-          </video>
-          <video controls width="100%" style="border-radius:12px;">
-            <source src="senam/3.mp4" type="video/mp4">
-          </video>
-          <video controls width="100%" style="border-radius:12px;">
-            <source src="senam/4.mp4" type="video/mp4">
-          </video>
-        </div>
-
-        <!-- Makan -->
-        <div class="gallery-grid video-content" id="videomakan">
-          <video controls width="100%" style="border-radius:12px;">
-            <source src="makan_bersama/1.mp4" type="video/mp4">
-          </video>
-          <video controls width="100%" style="border-radius:12px;">
-            <source src="makan_bersama/2.mp4" type="video/mp4">
-          </video>
-        </div>
-
-        <!-- Takjil -->
-        <div class="gallery-grid video-content" id="videotakjil">
-          <video controls width="100%" style="border-radius:12px;">
-            <source src="bagi_takjil/1.mp4" type="video/mp4">
-          </video>
-          <video controls width="100%" style="border-radius:12px;">
-            <source src="bagi_takjil/2.mp4" type="video/mp4">
-          </video>
-        </div>
-
-        <!-- Manasik Haji -->
-        <div class="gallery-grid video-content" id="videomanasik">
-          <video controls width="100%" style="border-radius:12px;">
-            <source src="manasik_haji/1.mp4" type="video/mp4">
-          </video>
-          <video controls width="100%" style="border-radius:12px;">
-            <source src="manasik_haji/1.mp4" type="video/mp4">
-          </video>
-        </div>
-
-      </div>
-    </section>
 
     <!-- 🔥 Modal Full Video -->
     <div id="video-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.9);align-items:center;justify-content:center;z-index:99999;">
@@ -1383,10 +1212,14 @@
     const app = initializeApp(firebaseConfig);
     const gdb = getDatabase(app);
     const testimoniRef = ref(gdb, "testimoni");
+    const galleryRef = ref(gdb, "galeri");
     const auth = getAuth(app);
     const db = getFirestore(app);
     const provider = new GoogleAuthProvider();
     const testiListEl = document.getElementById("testimoniList");
+    
+    const categoryButtons = document.getElementById("categoryButtons");
+    const galleryContainer = document.getElementById("galleryContainer");
   
     // Tombol Login
     document.getElementById("googleLoginBtn").addEventListener("click", () => {
@@ -1570,6 +1403,84 @@
       });
       updateOverallRating(ratings);
     });
-  </script>
+    
+    let allData = [];
+
+    onValue(galleryRef, (snapshot) => {
+      galleryContainer.innerHTML = "";
+      categoryButtons.innerHTML = "";
+      allData = [];
+
+      const categories = new Set();
+
+      snapshot.forEach((child) => {
+        const data = child.val();
+        allData.push(data);
+        categories.add(data.kategori);
+      });
+
+      // ✅ Buat tombol kategori
+      const allBtn = document.createElement("button");
+      allBtn.textContent = "Semua";
+      allBtn.className = "tab-btn";
+      allBtn.onclick = (e) => {
+        document.querySelectorAll("#categoryButtons .tab-btn")
+          .forEach(el => el.classList.remove("active"));
+        e.target.classList.add("active");
+        renderGallery(allData);
+      };
+      categoryButtons.appendChild(allBtn);
+
+      categories.forEach((cat) => {
+        const btn = document.createElement("button");
+        btn.textContent = cat;
+        btn.className = "tab-btn";
+        btn.onclick = (e) => {
+          // reset semua tombol
+          document.querySelectorAll("#categoryButtons .tab-btn")
+            .forEach(el => el.classList.remove("active"));
+
+          // kasih active ke tombol yang diklik
+          e.target.classList.add("active");
+
+          // render ulang galeri sesuai kategori
+          const filtered = allData.filter((d) => d.kategori === cat);
+          renderGallery(filtered);
+        };
+        categoryButtons.appendChild(btn);
+      });
+
+      // Tampilkan semua default
+      renderGallery(allData);
+    });
+
+    function renderGallery(data) {
+      galleryContainer.innerHTML = "";
+      data.forEach((item) => {
+        let media = "";
+        if (item.jenis === "foto") {
+          media = `<img src="${item.url}" alt="${item.judul}" class="gallery-img">`;
+        } else if (item.jenis === "video") {
+          media = `<video controls class="gallery-video">
+                    <source src="${item.url}" type="video/mp4">
+                  </video>`;
+        }
+        galleryContainer.innerHTML += `
+          <div class="gallery-item">
+            <b>${item.judul}</b>
+            ${media}
+          </div>`;
+      });
+    }
+
+    galleryContainer.addEventListener("click", (e) => {
+      if (e.target.tagName === "IMG") {
+        modal.style.display = "flex";
+        modalImg.src = e.target.src;
+        modalImg.style.maxWidth = "90%";
+        modalImg.style.maxHeight = "90%";
+      }
+    });
+  </script>  
 </body>
 </html>
