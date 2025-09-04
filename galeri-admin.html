@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Admin Galeri</title>
+  <link rel="icon" type="image/png" href="logo admin galeri.png">
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    .card { background: #fff; padding: 16px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-bottom: 20px; }
+    input, select { width: 100%; padding: 10px; margin: 6px 0; border-radius: 8px; border: 1px solid #ddd; }
+    button { padding: 10px 14px; border: none; border-radius: 8px; cursor: pointer; margin: 4px; }
+    .btn-primary { background: #007bff; color: white; }
+    .btn-danger { background: #dc3545; color: white; }
+    .btn-warning { background: #ffc107; }
+    .gallery-item { border: 1px solid #eee; padding: 12px; border-radius: 10px; margin-bottom: 12px; }
+  </style>
+</head>
+<body>
+  <h1>📸 Admin Galeri</h1>
+
+  <!-- 🔒 Login sederhana -->
+  <div id="loginCard" class="card">
+    <h2>🔑 Login Admin</h2>
+    <input type="password" id="adminPass" placeholder="Masukkan password" required>
+    <button onclick="login()" class="btn-primary">Login</button>
+    <p id="loginError" style="color:red;display:none;">❌ Password salah!</p>
+  </div>
+  
+  <!-- Form Galeri (disembunyikan dulu) -->
+  <div id="adminPanel" style="display:none;">
+    <div class="card">
+      <form id="galleryForm">
+          <input type="hidden" id="galleryId">
+
+          <label>Jenis</label>
+          <select id="jenis" required>
+              <option value="foto">Foto</option>
+              <option value="video">Video</option>
+          </select>
+          
+          <label>Kategori</label>
+          <select id="kategori" required>
+            <option value="mpls">MPLS</option>
+            <option value="sekolah">Sekolah</option>
+            <option value="senam">Senam</option>
+            <option value="makan">Makan Bersama</option>
+            <option value="agama">Belajar Nilai Agama</option>
+            <option value="takjil">Bagi Takjil</option>
+            <option value="manasik">Manasik Haji</option>
+            <option value="pelepasan">Pelepasan Siswa</option>
+            <option value="lainnya">➕ Lainnya...</option>
+          </select>
+          
+          <!-- Input tambahan untuk kategori custom -->
+          <input type="text" id="kategoriCustom" placeholder="Isi kategori baru" style="display:none; margin-top:8px;">
+
+          <label>Judul</label>
+          <input type="text" id="judul" placeholder="Judul media" required>
+
+          <label>URL Gambar/Video</label>
+          <input type="url" id="url" placeholder="https://example.com/media.jpg" required>
+
+          <!-- 🔥 Preview otomatis -->
+          <div id="preview" style="margin-top:10px;"></div>
+
+          <button type="submit" class="btn-primary">💾 Simpan</button>
+          <button type="button" onclick="resetForm()" class="btn-warning">🔄 Reset</button>
+      </form>
+    </div>
+
+    <!-- List Data -->
+    <h2>📂 Data Galeri</h2>
+    <div id="galleryList"></div>
+  </div>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+  
+    // ✅ Config Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyA8bzx6ispP9u2e3fzKGqqEY2Zmle_CEHY",
+      authDomain: "testimoni-tk-dwp-kloposepuluh.firebaseapp.com",
+      databaseURL: "https://testimoni-tk-dwp-kloposepuluh-default-rtdb.firebaseio.com",
+      projectId: "testimoni-tk-dwp-kloposepuluh",
+      storageBucket: "testimoni-tk-dwp-kloposepuluh.firebasestorage.app",
+      messagingSenderId: "148758047246",
+      appId: "1:148758047246:web:35211d0a9a4cac11356a5f",
+      measurementId: "G-54N43JC5WC"
+    };
+  
+    // Init Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const galleryRef = ref(db, "galeri");
+  
+    const form = document.getElementById("galleryForm");
+    const list = document.getElementById("galleryList");
+    const idField = document.getElementById("galleryId");
+  
+    const kategoriInput = document.getElementById("kategori");
+    const kategoriCustom = document.getElementById("kategoriCustom");
+  
+    // 👀 Tampilkan input custom kalau pilih "lainnya"
+    kategoriInput.addEventListener("change", () => {
+      if (kategoriInput.value === "lainnya") {
+        kategoriCustom.style.display = "block";
+        kategoriCustom.required = true;
+      } else {
+        kategoriCustom.style.display = "none";
+        kategoriCustom.required = false;
+      }
+    });
+  
+    // 🚀 Simpan / Update
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const id = idField.value || Date.now();
+  
+      // ✅ Ambil kategori sesuai pilihan
+      let kategoriValue =
+        kategoriInput.value === "lainnya"
+          ? kategoriCustom.value.trim()
+          : kategoriInput.value;
+  
+      // Tambahin ke dropdown kalau kategori custom & belum ada
+      if (
+        kategoriInput.value === "lainnya" &&
+        kategoriValue &&
+        ![...kategoriInput.options].some((opt) => opt.value === kategoriValue)
+      ) {
+        const newOption = document.createElement("option");
+        newOption.value = kategoriValue;
+        newOption.textContent = kategoriValue;
+        kategoriInput.insertBefore(newOption, kategoriInput.lastElementChild); // taruh sebelum "Lainnya"
+        kategoriInput.value = kategoriValue;
+        kategoriCustom.value = "";
+        kategoriCustom.style.display = "none";
+      }
+  
+      const data = {
+        jenis: document.getElementById("jenis").value,
+        kategori: kategoriValue,
+        judul: document.getElementById("judul").value,
+        url: document.getElementById("url").value,
+        updatedAt: new Date().toISOString(),
+      };
+  
+      await set(ref(db, "galeri/" + id), data);
+      alert("✅ Data tersimpan!");
+      resetForm();
+    });
+  
+    // 📂 Tampilkan Data
+    onValue(galleryRef, (snapshot) => {
+      list.innerHTML = "";
+      snapshot.forEach((child) => {
+        const id = child.key;
+        const data = child.val();
+  
+        let mediaPreview = "";
+        if (data.jenis === "foto") {
+          mediaPreview = `<img src="${data.url}" style="max-width:120px;border-radius:8px;margin-top:6px;">`;
+        } else if (data.jenis === "video") {
+          mediaPreview = `
+            <video controls style="max-width:150px;border-radius:8px;margin-top:6px;">
+              <source src="${data.url}" type="video/mp4">
+            </video>`;
+        }
+  
+        list.innerHTML += `
+          <div class="gallery-item">
+            <b>[${data.jenis}]</b> ${data.kategori} - ${data.judul}<br>
+            ${mediaPreview}<br>
+            <button onclick="editGallery('${id}','${data.jenis}','${data.kategori}','${data.judul}','${data.url}')">✏️ Edit</button>
+            <button onclick="deleteGallery('${id}')" class="btn-danger">🗑️ Hapus</button>
+          </div>`;
+      });
+    });
+  
+    // ✏️ Edit
+    window.editGallery = (id, jenis, kategori, judul, url) => {
+      idField.value = id;
+      document.getElementById("jenis").value = jenis;
+      document.getElementById("judul").value = judul;
+      document.getElementById("url").value = url;
+  
+      // kalau kategori sudah ada di dropdown → pilih langsung
+      if ([...kategoriInput.options].some((opt) => opt.value === kategori)) {
+        kategoriInput.value = kategori;
+        kategoriCustom.style.display = "none";
+      } else {
+        // kalau custom, set ke "lainnya" dan isi textbox
+        kategoriInput.value = "lainnya";
+        kategoriCustom.style.display = "block";
+        kategoriCustom.value = kategori;
+      }
+    };
+  
+    // 🗑️ Hapus
+    window.deleteGallery = async (id) => {
+      if (confirm("Yakin hapus data?")) {
+        await set(ref(db, "galeri/" + id), null);
+        alert("🗑️ Data terhapus!");
+      }
+    };
+  
+    // 🔄 Reset
+    window.resetForm = () => {
+      idField.value = "";
+      form.reset();
+      kategoriCustom.style.display = "none";
+    };
+  
+    // 🔥 Preview otomatis
+    const urlInput = document.getElementById("url");
+    const jenisInput = document.getElementById("jenis");
+    const preview = document.getElementById("preview");
+  
+    function updatePreview() {
+      const url = urlInput.value.trim();
+      const jenis = jenisInput.value;
+      preview.innerHTML = "";
+  
+      if (!url) return;
+  
+      if (jenis === "foto") {
+        preview.innerHTML = `<img src="${url}" alt="preview" style="max-width:200px; border-radius:8px; margin-top:8px;">`;
+      } else if (jenis === "video") {
+        preview.innerHTML = `
+          <video controls style="max-width:250px; border-radius:8px; margin-top:8px;">
+            <source src="${url}" type="video/mp4">
+            Browser tidak mendukung video.
+          </video>`;
+      }
+    }
+  
+    urlInput.addEventListener("input", updatePreview);
+    jenisInput.addEventListener("change", updatePreview);
+  </script>
+  <script>
+    // Ganti password sesuai kebutuhan
+    const ADMIN_PASSWORD = "Tkdwpklopo10";
+
+    function login() {
+      const pass = document.getElementById("adminPass").value;
+      if (pass === ADMIN_PASSWORD) {
+        document.getElementById("loginCard").style.display = "none";
+        document.getElementById("adminPanel").style.display = "block";
+        localStorage.setItem("isLoggedIn", "true"); // simpan status login
+      } else {
+        document.getElementById("loginError").style.display = "block";
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem("isLoggedIn");
+      document.getElementById("loginCard").style.display = "block";
+      document.getElementById("adminPanel").style.display = "none";
+    }
+
+    // Biar tetap login setelah refresh
+    window.onload = () => {
+      if (localStorage.getItem("isLoggedIn") === "true") {
+        document.getElementById("loginCard").style.display = "none";
+        document.getElementById("adminPanel").style.display = "block";
+      }
+    };
+  </script>
+  
+</body>
+</html>
