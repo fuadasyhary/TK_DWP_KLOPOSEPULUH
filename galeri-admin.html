@@ -130,7 +130,7 @@
   </style>
 </head>
 <body>
-  <h1>📸 Admin Galeri</h1>
+  <h2>📸 Manajemen Galeri</h2>
 
   <!-- 🔒 Login sederhana -->
   <div id="loginCard" class="card">
@@ -185,11 +185,10 @@
           <button type="button" onclick="resetForm()" class="btn-warning">🔄 Reset</button>
       </form>
     </div>
-    <h2>📸 Manajemen Galeri</h2>
 
     <!-- ✅ Filter input -->
-     <input type="text" id="gallerySearch" placeholder="Cari judul atau kategori..."
-       style="padding:8px;width:100%;max-width:300px;margin-bottom:12px;border-radius:8px;border:1px solid #ccc;">
+    <input type="text" id="gallerySearch" placeholder="Cari judul atau kategori..."
+      style="padding:8px;width:100%;max-width:300px;margin-bottom:12px;border-radius:8px;border:1px solid #ccc;">
     <div class="table-container">
       <table id="galleryTable" border="1" style="width:100%;border-collapse:collapse;">
         <thead>
@@ -203,6 +202,44 @@
         </tbody>
       </table>
     </div>
+
+    <h2>👨‍🏫 Manajemen Guru</h2>
+
+    <div class="card">
+      <form id="guruForm">
+          <input type="hidden" id="guruId">
+
+          <label>Nama Guru</label><br>
+          <input type="text" id="guruNama" placeholder="Nama lengkap" required><br>
+
+          <label>Jabatan</label><br>
+          <input type="text" id="guruJabatan" placeholder="Contoh: Kepala Sekolah" required><br>
+
+          <label>Foto (URL)</label><br>
+          <input type="url" id="guruFoto" placeholder="https://example.com/foto.jpg" required><br>
+
+          <label>Keterangan</label><br>
+          <input type="text" id="guruKeterangan" placeholder="Misalnya: Guru senior bidang Matematika"><br>
+
+          <div id="guruPreview" style="margin-top:10px;"></div><br>
+
+          <button type="submit" class="btn-primary">💾 Simpan</button>
+          <button type="button" onclick="resetGuruForm()" class="btn-warning">🔄 Reset</button>
+      </form>
+    </div>
+
+    <div class="table-container">
+      <table id="guruTable" border="1" style="width:100%;border-collapse:collapse;">
+        <thead>
+          <tr>
+            <th>Profil Guru</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="guruList"></tbody>
+      </table>
+    </div>
+</div>
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
@@ -223,6 +260,11 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
     const galleryRef = ref(db, "galeri");
+    const guruRef = ref(db, "guru");
+
+    const guruForm = document.getElementById("guruForm");
+    const guruList = document.getElementById("guruList");
+    const guruIdField = document.getElementById("guruId");
   
     const form = document.getElementById("galleryForm");
     const list = document.getElementById("galleryList");
@@ -368,9 +410,79 @@
           </video>`;
       }
     }
-  
+      
     urlInput.addEventListener("input", updatePreview);
     jenisInput.addEventListener("change", updatePreview);
+
+    guruForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const id = guruIdField.value || Date.now();
+
+      const data = {
+        nama: document.getElementById("guruNama").value,
+        jabatan: document.getElementById("guruJabatan").value,
+        foto: document.getElementById("guruFoto").value,
+        keterangan: document.getElementById("guruKeterangan").value,
+        updatedAt: new Date().toISOString(),
+      };
+
+      await set(ref(db, "guru/" + id), data);
+      alert("✅ Profil guru tersimpan!");
+      resetGuruForm();
+    });
+
+    // 📂 Tampilkan Data Guru
+    onValue(guruRef, (snapshot) => {
+      guruList.innerHTML = "";
+      snapshot.forEach((child) => {
+        const id = child.key;
+        const data = child.val();
+
+        guruList.innerHTML += `
+          <tr>
+            <td>
+              <b>${data.nama}</b> - ${data.jabatan}<br>
+              <img src="${data.foto}" alt="foto guru" style="max-width:120px;border-radius:12px;"><br>
+              <small>${data.keterangan || ""}</small>
+            </td>
+            <td>
+              <button onclick="editGuru('${id}','${data.nama}','${data.jabatan}','${data.foto}','${data.keterangan || ""}')" class="btn-warning">✏️ Edit</button>
+              <button onclick="deleteGuru('${id}')" class="btn-danger">🗑️ Hapus</button>
+            </td>
+          </tr>`;
+      });
+    });
+
+    // ✏️ Edit Guru
+    window.editGuru = (id, nama, jabatan, foto, keterangan) => {
+      guruIdField.value = id;
+      document.getElementById("guruNama").value = nama;
+      document.getElementById("guruJabatan").value = jabatan;
+      document.getElementById("guruFoto").value = foto;
+      document.getElementById("guruKeterangan").value = keterangan;
+    };
+
+    // 🗑️ Hapus Guru
+    window.deleteGuru = async (id) => {
+      if (confirm("Yakin hapus profil guru?")) {
+        await set(ref(db, "guru/" + id), null);
+        alert("🗑️ Profil terhapus!");
+      }
+    };
+
+    // 🔄 Reset Form
+    window.resetGuruForm = () => {
+      guruIdField.value = "";
+      guruForm.reset();
+    };
+
+    // 🔥 Preview otomatis foto
+    const guruFotoInput = document.getElementById("guruFoto");
+    const guruPreview = document.getElementById("guruPreview");
+    guruFotoInput.addEventListener("input", () => {
+      const url = guruFotoInput.value.trim();
+      guruPreview.innerHTML = url ? `<img src="${url}" style="max-width:150px;border-radius:12px;">` : "";
+    });
 
     // ✅ Filter pencarian
     document.getElementById("gallerySearch").addEventListener("input", function() {
