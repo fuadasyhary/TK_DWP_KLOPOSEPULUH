@@ -4,16 +4,129 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Admin Galeri</title>
-  <link rel="icon" type="image/png" href="logo admin galeri.png">
-  <style>
-    body { font-family: Arial, sans-serif; padding: 20px; }
-    .card { background: #fff; padding: 16px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-bottom: 20px; }
-    input, select { width: 50%; padding: 10px; margin: 6px 0; border-radius: 8px; border: 1px solid #ddd; }
-    button { padding: 10px 14px; border: none; border-radius: 8px; cursor: pointer; margin: 4px; }
-    .btn-primary { background: #007bff; color: white; }
-    .btn-danger { background: #dc3545; color: white; }
-    .btn-warning { background: #ffc107; }
-    .gallery-item { border: 1px solid #eee; padding: 12px; border-radius: 10px; margin-bottom: 12px; }
+  <link rel="icon" type="image/png" href="logo admin galeri.png"><style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f8fafc;
+      color: #333;
+    }
+  
+    h1, h2 {
+      color: #222;
+    }
+  
+    .card {
+      background: #fff;
+      padding: 16px;
+      border-radius: 16px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+      margin-bottom: 20px;
+    }
+  
+    input, select {
+      width: 95%;
+      max-width: 200px;
+      padding: 10px;
+      margin: 6px 0;
+      border-radius: 10px;
+      border: 1px solid #ddd;
+      font-size: 14px;
+    }
+  
+    button {
+      padding: 10px 14px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      margin: 6px 4px;
+      font-size: 14px;
+      transition: 0.2s ease-in-out;
+    }
+  
+    .btn-primary {
+      background: #007bff;
+      color: white;
+    }
+    .btn-primary:hover {
+      background: #0056b3;
+    }
+  
+    .btn-danger {
+      background: #dc3545;
+      color: white;
+    }
+    .btn-danger:hover {
+      background: #b02a37;
+    }
+  
+    .btn-warning {
+      background: #ffc107;
+      color: black;
+    }
+    .btn-warning:hover {
+      background: #e0a800;
+    }
+  
+    /* ✅ Table modern style */
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      background: #fff;
+      margin-top: 12px;
+    }
+
+    table {
+      width: 50%;
+      border-collapse: collapse;
+      font-size: 14px;
+      min-width: 50px;
+    }
+
+    th, td {
+      padding: 12px 16px;
+      border-bottom: 1px solid #eee;
+      vertical-align: middle;
+    }
+
+    th {
+      background: #f1f5f9;
+      font-weight: bold;
+      color: #444;
+    }
+
+    tr:hover {
+      background: #f9fafb;
+    }
+
+    td img, td video {
+      max-width: 200px;
+      border-radius: 8px;
+      margin-top: 6px;
+    }
+
+    .action-buttons button {
+      margin: 2px;
+    }
+  
+    .gallery-item {
+      border: 1px solid #eee;
+      padding: 12px;
+      border-radius: 12px;
+      margin-bottom: 12px;
+      background: #fff;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+  
+    /* ✅ Responsive tweak */
+    @media (max-width: 768px) {
+      body { padding: 12px; }
+      input, select { max-width: 100%; }
+      table { font-size: 13px; }
+      th, td { padding: 10px; }
+    }
   </style>
 </head>
 <body>
@@ -77,18 +190,19 @@
     <!-- ✅ Filter input -->
      <input type="text" id="gallerySearch" placeholder="Cari judul atau kategori..."
        style="padding:8px;width:100%;max-width:300px;margin-bottom:12px;border-radius:8px;border:1px solid #ccc;">
-
-    <table id="galleryTable" border="1" style="width:100%;border-collapse:collapse;">
-      <thead>
-        <tr>
-          <th>Preview Data</th>
-        </tr>
-      </thead>
-      <tbody id="galleryList">
-        <!-- data galeri dari Firebase -->
-      </tbody>
-    </table>
-  </div>
+    <div class="table-container">
+      <table id="galleryTable" border="1" style="width:100%;border-collapse:collapse;">
+        <thead>
+          <tr>
+            <th>Preview Data</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="galleryList">
+          <!-- data galeri dari Firebase -->
+        </tbody>
+      </table>
+    </div>
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
@@ -173,24 +287,28 @@
       snapshot.forEach((child) => {
         const id = child.key;
         const data = child.val();
-  
+
         let mediaPreview = "";
         if (data.jenis === "foto") {
-          mediaPreview = `<img src="${data.url}" style="max-width:120px;border-radius:8px;margin-top:6px;">`;
+          mediaPreview = `<img src="${data.url}" alt="foto">`;
         } else if (data.jenis === "video") {
           mediaPreview = `
-            <video controls style="max-width:150px;border-radius:8px;margin-top:6px;">
+            <video controls>
               <source src="${data.url}" type="video/mp4">
             </video>`;
         }
-  
+
         list.innerHTML += `
-          <div class="gallery-item">
-            <b>[${data.jenis}]</b> ${data.kategori} - ${data.judul}<br>
-            ${mediaPreview}<br>
-            <button onclick="editGallery('${id}','${data.jenis}','${data.kategori}','${data.judul}','${data.url}')">✏️ Edit</button>
-            <button onclick="deleteGallery('${id}')" class="btn-danger">🗑️ Hapus</button>
-          </div>`;
+          <tr>
+            <td>
+              <b>[${data.jenis}]</b> ${data.kategori} - ${data.judul}<br>
+              ${mediaPreview}
+            </td>
+            <td class="action-buttons">
+              <button onclick="editGallery('${id}','${data.jenis}','${data.kategori}','${data.judul}','${data.url}')" class="btn-warning">✏️ Edit</button>
+              <br><button onclick="deleteGallery('${id}')" class="btn-danger">🗑️ Hapus</button>
+            </td>
+          </tr>`;
       });
     });
   
