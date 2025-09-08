@@ -858,6 +858,16 @@
   <!-- 🔥 Captcha -->
   <script>
     //DEBUGGER TRAP
+    
+    // Allow contextmenu hanya di input/textarea
+    document.addEventListener("contextmenu", e => {
+      const tag = e.target.tagName.toLowerCase();
+      if (tag === "input" || tag === "textarea") {
+        return; // biarkan default → user bisa copas
+      }
+      e.preventDefault(); // selain itu tetap di-block
+    });
+    
     document.addEventListener("contextmenu", e => e.preventDefault());  
     document.addEventListener("keydown", e => {
       if (e.key === "F12" || 
