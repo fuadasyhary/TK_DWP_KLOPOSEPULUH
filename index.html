@@ -1435,7 +1435,7 @@
       // ✅ Buat tombol kategori
       const allBtn = document.createElement("button");
       allBtn.textContent = "Semua";
-      allBtn.className = "tab-btn";
+      allBtn.className = "tab-btn active";
       allBtn.onclick = (e) => {
         document.querySelectorAll("#categoryButtons .tab-btn")
           .forEach(el => el.classList.remove("active"));
