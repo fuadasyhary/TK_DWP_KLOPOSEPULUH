@@ -396,17 +396,15 @@
       opacity: 0.9;
     }
 
-    .captcha-overlay {
+    #captchaOverlay {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.7);
+      inset: 0;
+      background: rgba(0,0,0,0.85);
       display: flex;
-      justify-content: center;
       align-items: center;
-      z-index: 100;
+      justify-content: center;
+      z-index: 99999;
+      pointer-events: all; /* blok klik web di bawah */
     }
     .captcha-container {
       background: rgba(255, 255, 255, 0.9);
@@ -426,109 +424,62 @@
       margin-bottom: 20px;
     }
     .captcha-area {
-      position: relative;
-      width: 300px;
-      height: 200px;
-      background: #f0f0f0;
-      border-radius: 10px;
-      margin: 0 auto;
-      overflow: hidden;
-    }
-    .captcha-icon {
-      position: absolute;
-      width: 30px;
-      height: 30px;
-      background: url('https://w7.pngwing.com/pngs/601/824/png-transparent-star-system-film-star.png') no-repeat center;
-      background-size: contain;
-      cursor: pointer;
-    }
+    width: 90%;
+    max-width: 300px;
+    min-height: 200px;
+    background: #f9f9f9;
+    border-radius: 12px;
+    margin: 0 auto;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    overflow: hidden;
+    position: relative; /* penting biar absolute child tetap di dalam */
+  }
+  #dropZone {
+    width: 70px;
+    height: 70px;
+    border: 2px dashed #555;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+  }
+  .captcha-icons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+  }
+  .captcha-icon {
+    font-size: 28px;
+    cursor: grab;
+    user-select: none;
+    touch-action: none;
+  }
+
+    /* teks biar tidak overflow */
     .captcha-status {
-      margin-top: 15px;
-      color: #333;
-      font-size: 16px;
-    }
-    .captcha-reset {
-      margin: 10px auto;
-      padding: 10px 20px;
-      background: #ff4081;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      display: none;
+      font-size: 14px;
       text-align: center;
-      width: auto;
-      min-width: 100px;
+      word-wrap: break-word;
+      line-height: 1.4;
     }
-    .captcha-reset:hover {
-      background: #e91e63;
-    }
-    @media (max-width: 768px) {
-      .menu {
-        padding: 20px;
-      }
-      .menu h1 {
-        font-size: 28px;
-      }
-      .menu-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 10px;
-      }
-      .menu button {
-        font-size: 14px;
-        padding: 10px;
-      }
-      .captcha-container h2 {
-        font-size: 20px;
-      }
-      .captcha-area {
-        width: 250px;
-        height: 150px;
-      }
-      .captcha-icon {
-        width: 25px;
-        height: 25px;
-      }
-      .download-apk img {
-        width: 35px;
-        height: 35px;
-      }
-      .download-apk span {
-        font-size: 11px;
-      }
-    }
+
+    /* hp kecil */
     @media (max-width: 480px) {
-      .menu-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 8px;
-      }
-      .menu button {
-        font-size: 12px;
-        padding: 8px;
-      }
-      .menu h1 {
-        font-size: 24px;
-      }
-      .captcha-container h2 {
-        font-size: 18px;
-      }
-      .captcha-area {
-        width: 200px;
-        height: 120px;
+      #dropZone {
+        width: 55px;
+        height: 55px;
       }
       .captcha-icon {
-        width: 20px;
-        height: 20px;
+        font-size: 22px;
       }
-      .captcha-reset {
-        min-width: 80px;
-      }
-      .download-apk img {
-        width: 30px;
-        height: 30px;
-      }
-      .download-apk span {
-        font-size: 10px;
+      .captcha-status {
+        font-size: 12px;
       }
     }
 
@@ -552,15 +503,37 @@
     </div>
   </header>
 
-  <div class="captcha-overlay" id="captchaOverlay">
-    <div class="captcha-container">
-      <h2>Verifikasi CAPTCHA</h2>
-      <p>Human Atau Robot</p>
-      <div class="captcha-area" id="captchaArea"></div>
-      <div class="captcha-status" id="captchaStatus">Klik 1 bintang untuk verifikasi human</div>
-      <button class="captcha-reset" id="captchaReset">Coba Lagi</button>
+  <!-- 🔒 CAPTCHA Overlay -->
+  <div id="captchaOverlay" style="
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.8);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:99999;">
+
+  <div class="captcha-container" style="
+    background:white;
+    padding:20px;
+    border-radius:16px;
+    text-align:center;
+    max-width:320px;
+    width:90%;">
+    
+    <h2>🔒 Verifikasi Dulu</h2>
+    <p>Geser icon yang benar ke kotak 🎯</p>
+    
+    <div class="captcha-area" id="captchaArea">
+      <div id="dropZone">🎯</div>
+      <div class="captcha-icons" id="iconContainer"></div>
+      <div class="captcha-status" id="captchaStatus"></div>
+      <button id="captchaReset" class="btn btn-primary" style="display:none;">Coba Lagi</button>
     </div>
+    
   </div>
+  </div>
+
     <!-- 🔥 Animasi Anak-anak -->
   <div class="kids-animation">
     <script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.6.2/dist/dotlottie-wc.js" type="module"></script>
@@ -622,46 +595,6 @@
         </div>
 
         <div class="field">
-          <div class="k">NPSN</div>
-          <div class="v">20563203</div>
-        </div>
-
-        <div class="field">
-          <div class="k">Desa / Kelurahan</div>
-          <div class="v">Kloposepuluh</div>
-        </div>
-
-        <div class="field">
-          <div class="k">Kecamatan</div>
-          <div class="v">Sukodono</div>
-        </div>
-
-        <div class="field">
-          <div class="k">Kabupaten</div>
-          <div class="v">Sidoarjo</div>
-        </div>
-
-        <div class="field">
-          <div class="k">Provinsi</div>
-          <div class="v">Jawa Timur</div>
-        </div>
-
-        <div class="field">
-          <div class="k">Status Sekolah</div>
-          <div class="v">Swasta</div>
-        </div>
-
-        <div class="field">
-          <div class="k">Bentuk Pendidikan</div>
-          <div class="v">TK</div>
-        </div>
-
-        <div class="field">
-          <div class="k">Jenjang Pendidikan</div>
-          <div class="v">PAUD</div>
-        </div>
-
-        <div class="field">
           <div class="k">Kementerian Pembina</div>
           <div class="v">Kementerian Pendidikan Dasar dan Menengah</div>
         </div>
@@ -702,6 +635,46 @@
         </div>
 
         <div class="field">
+          <div class="k">NPSN</div>
+          <div class="v">20563203</div>
+        </div>
+
+        <div class="field">
+          <div class="k">Desa / Kelurahan</div>
+          <div class="v">Kloposepuluh</div>
+        </div>
+
+        <div class="field">
+          <div class="k">Kecamatan</div>
+          <div class="v">Sukodono</div>
+        </div>
+
+        <div class="field">
+          <div class="k">Kabupaten</div>
+          <div class="v">Sidoarjo</div>
+        </div>
+
+        <div class="field">
+          <div class="k">Provinsi</div>
+          <div class="v">Jawa Timur</div>
+        </div>
+
+        <div class="field">
+          <div class="k">Status Sekolah</div>
+          <div class="v">Swasta</div>
+        </div>
+
+        <div class="field">
+          <div class="k">Bentuk Pendidikan</div>
+          <div class="v">TK</div>
+        </div>
+
+        <div class="field">
+          <div class="k">Jenjang Pendidikan</div>
+          <div class="v">PAUD</div>
+        </div>
+
+        <div class="field">
           <div class="k">Akreditasi</div>
           <div class="v">C</div>
         </div>
@@ -712,37 +685,7 @@
     <!-- 🔥 Profil Guru -->
     <section class="card" style="margin-top:14px">
       <h2 style="margin:0 0 16px 0; text-align:center;">👩‍🏫 Profil Guru</h2>
-      <div class="guru-grid">
-        <div class="guru-card">
-          <img src="guru/yuli.jpeg" alt="Ibu Yuli" class="guru-img">
-          <h3>Bu Yuli</h3>
-          <p>Kepala Sekolah</p>
-        </div>
-
-        <div class="guru-card">
-          <img src="guru/niken.png" alt="Ibu Niken" class="guru-img">
-          <h3>Bu Niken</h3>
-          <p>Guru Kelas A</p>
-        </div>
-
-        <div class="guru-card">
-          <img src="guru/ririn.png" alt="Ibu Ririn" class="guru-img">
-          <h3>Bu Ririn</h3>
-          <p>Guru Kelas A</p>
-        </div>
-
-        <div class="guru-card">
-          <img src="guru/jijah.png" alt="Ibu Azizah" class="guru-img">
-          <h3>Bu Azizah</h3>
-          <p>Guru Kelas B</p>
-        </div>
-
-        <div class="guru-card">
-          <img src="guru/nita.png" alt="Ibu Nita" class="guru-img">
-          <h3>Bu Nita</h3>
-          <p>Guru Kelas B</p>
-        </div>
-      </div>
+      <div id="guruContainer" class="guru-grid"></div>
     </section>
       
     <!-- 🔥 Section Galeri dengan Tab -->
@@ -887,6 +830,7 @@
         <label style="display:block;margin-bottom:6px;">Password Guru:</label>
         <input type="password" id="report-pass" placeholder="Password..." style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;margin-bottom:6px">
         <p id="attempt-info" style="color:orange;font-size:13px;display:none;margin:4px 0 0;"></p>
+        <p id="report-error" style="color:red;font-size:14px;display:none;margin-top:8px">❌ Akses ditolak</p>
       </div>
 
       <!-- Dropdown jenis data (muncul hanya jika guru + password benar) -->
@@ -907,72 +851,138 @@
     </div>
   </div>
 
-  <div id="password-wrapper" style="display:none;">
-    <label style="display:block;margin-bottom:6px;">Password Guru:</label>
-    <input type="password" id="report-pass" placeholder="Password..." style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;margin-bottom:6px">
-    <p id="attempt-info" style="color:orange;font-size:13px;display:none;margin:4px 0 0;"></p>
-    <p id="report-error" style="color:red;font-size:14px;display:none;margin-top:8px">❌ Akses ditolak</p>
-  </div>
 
   <footer>©MOCHAMAD FUAD ASYHARY
   </footer>
 
+  <!-- 🔥 Captcha -->
   <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      const audio = document.getElementById('bg-audio');
-      const captchaOverlay = document.getElementById('captchaOverlay');
-      const captchaArea = document.getElementById('captchaArea');
-      const captchaStatus = document.getElementById('captchaStatus');
-      const captchaReset = document.getElementById('captchaReset');
-      const mainMenu = document.getElementById('mainMenu');
-      let clickCount = 0;
-      const requiredClicks = 1;
+    //DEBUGGER TRAP
+    document.addEventListener("contextmenu", e => e.preventDefault());  
+    document.addEventListener("keydown", e => {
+      if (e.key === "F12" || 
+          (e.ctrlKey && e.shiftKey && (e.key === "I" || e.key === "J")) || 
+          (e.ctrlKey && e.key === "U")) {
+        e.preventDefault();
+      }
+    });
+    setInterval(() => {
+      if (window.outerHeight - window.innerHeight > 100 ||
+          window.outerWidth - window.innerWidth > 100) {
+        document.body.innerHTML = "<h1 style='color:red;text-align:center;'>❌ DevTools terdeteksi! Akses ditolak.</h1>";
+      }
+    }, 1000);
+    setInterval(() => {
+      function block() { debugger; }
+      block();
+    }, 3000);
 
-      function generateCaptcha() {
-        captchaArea.innerHTML = '';
-        clickCount = 0;
-        captchaStatus.textContent = `Klik 1 bintang untuk verifikasi human`;
-        captchaReset.style.display = 'none';
-
-        for (let i = 0; i < 2; i++) {
-          const icon = document.createElement('div');
-          icon.className = 'captcha-icon';
-          icon.style.left = `${Math.random() * (captchaArea.offsetWidth - 30)}px`;
-          icon.style.top = `${Math.random() * (captchaArea.offsetHeight - 30)}px`;
-          icon.addEventListener('click', handleIconClick);
-          captchaArea.appendChild(icon);
+    //CAPTCHA
+    document.addEventListener("DOMContentLoaded", function(){
+      const captchaOverlay = document.getElementById("captchaOverlay");
+      const captchaArea = document.getElementById("captchaArea");
+      const iconContainer = document.getElementById("iconContainer");
+      const dropZone = document.getElementById("dropZone");
+      const captchaStatus = document.getElementById("captchaStatus");
+      const captchaReset = document.getElementById("captchaReset");
+    
+      const icons = ["⭐", "🌸", "🐤", "🧸", "🍎", "🚗"];
+      let targetIcon = "";
+      let failCount = 0;
+    
+      function generateCaptcha(){
+        iconContainer.innerHTML = "";
+        targetIcon = icons[Math.floor(Math.random()*icons.length)];
+        captchaStatus.textContent = `👉 Geser "${targetIcon}" ke kotak 🎯`;
+        captchaReset.style.display = "none";
+        failCount = 0;
+    
+        // buat pilihan icon (target wajib ada)
+        let choices = [targetIcon];
+        while (choices.length < 5) {
+          const randIcon = icons[Math.floor(Math.random()*icons.length)];
+          if (!choices.includes(randIcon)) choices.push(randIcon);
         }
-
-        captchaArea.addEventListener('click', handleWrongClick);
+        choices = choices.sort(() => Math.random() - 0.5);
+    
+        choices.forEach(symbol => {
+          const icon = document.createElement("div");
+          icon.textContent = symbol;
+          icon.className = "captcha-icon";
+          icon.draggable = true;
+    
+          // Desktop drag
+          icon.addEventListener("dragstart", e => {
+            e.dataTransfer.setData("text/plain", icon.textContent);
+          });
+    
+          // Mobile touch
+          icon.addEventListener("touchstart", e => {
+            icon.style.position = "absolute";
+            icon.style.zIndex = "1000";
+          });
+          icon.addEventListener("touchmove", e => {
+            let touch = e.touches[0];
+            const rect = captchaArea.getBoundingClientRect();
+            icon.style.left = (touch.clientX - rect.left - 20) + "px";
+            icon.style.top = (touch.clientY - rect.top - 20) + "px";
+          });
+          icon.addEventListener("touchend", e => {
+            checkDrop(icon.textContent, e.changedTouches[0]);
+            resetIconPos(icon);
+          });
+    
+          iconContainer.appendChild(icon);
+        });
       }
-
-      function handleIconClick(e) {
-        e.stopPropagation();
-        clickCount++;
-        e.target.style.display = 'none';
-        captchaStatus.textContent = `Klik ${requiredClicks - clickCount} bintang lagi untuk verifikasi human`;
-
-        if (clickCount >= requiredClicks) {
-          captchaOverlay.style.display = 'none';
-          mainMenu.classList.add('show');
-          captchaArea.removeEventListener('click', handleWrongClick);
-          playAudio(); // Putar audio setelah verifikasi berhasil
+    
+      // desktop drop
+      dropZone.addEventListener("dragover", e => e.preventDefault());
+      dropZone.addEventListener("drop", e => {
+        e.preventDefault();
+        const dropped = e.dataTransfer.getData("text/plain");
+        checkDrop(dropped);
+      });
+    
+      // cek hasil drop
+      function checkDrop(value, touch=null){
+        if(value === targetIcon){
+          captchaStatus.textContent = "✅ Berhasil!";
+          setTimeout(()=> captchaOverlay.style.display="none",800);
+        } else {
+          failCount++;
+          if(failCount >= 3){
+            captchaStatus.textContent = "⏳ Terlalu banyak gagal! Refresh CAPTCHA...";
+            setTimeout(()=> generateCaptcha(), 1500);
+          } else {
+            captchaStatus.textContent = `❌ Salah! Percobaan ke-${failCount}`;
+            captchaReset.style.display = "block";
+          }
         }
       }
-
-      function handleWrongClick() {
-        captchaStatus.textContent = 'Verifikasi gagal! Coba lagi.';
-        captchaArea.innerHTML = ''; // Hapus semua bintang saat klik salah
-        captchaReset.style.display = 'block';
-        captchaArea.removeEventListener('click', handleWrongClick);
+    
+      function resetIconPos(icon){
+        icon.style.position = "";
+        icon.style.left = "";
+        icon.style.top = "";
+        icon.style.zIndex = "";
       }
-
-      captchaReset.addEventListener('click', generateCaptcha);
-
+    
+      captchaReset.addEventListener("click", generateCaptcha);
       generateCaptcha();
+    
+      // 🔒 Anti-oprek DevTools (cek overlay hilang)
+      setInterval(()=>{
+        if(!document.body.contains(captchaOverlay) || captchaOverlay.style.display==="none" && failCount<0){
+          // jika overlay dihapus manual → reload
+          location.reload();
+        }
+      }, 2000);
     });
   </script>
+    
 
+  <!-- 🔥 Report Pendaftaran -->
   <script> 
     let attemptCount = 0;
     let isLocked = false;
@@ -1187,6 +1197,7 @@
     });
   </script>
   
+  <!-- 🔥 Integration Firebase -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getDatabase, ref, onChildAdded, onValue, set, update, child, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
@@ -1213,6 +1224,7 @@
     const gdb = getDatabase(app);
     const testimoniRef = ref(gdb, "testimoni");
     const galleryRef = ref(gdb, "galeri");
+    const guruRef = ref(gdb, "guru");
     const auth = getAuth(app);
     const db = getFirestore(app);
     const provider = new GoogleAuthProvider();
@@ -1220,6 +1232,7 @@
     
     const categoryButtons = document.getElementById("categoryButtons");
     const galleryContainer = document.getElementById("galleryContainer");
+    const guruContainer = document.getElementById("guruContainer");
   
     // Tombol Login
     document.getElementById("googleLoginBtn").addEventListener("click", () => {
@@ -1320,16 +1333,7 @@
           alert("Kalau rating di bawah 4, Kritik & Saran wajib diisi!");
           return;
         }
-      } else {
-        if (!kritik && !saran) {
-          alert("Harap isi minimal Kritik atau Saran!");
-          return;
-        }
-        if (kritik && !saran) {
-          alert("Kalau ada Kritik, Saran juga wajib diisi!");
-          return;
-        }
-      }
+      } 
 
       // ✅ Simpan dengan key = UID (biar unik per user)
       const userRef = ref(gdb, "testimoni/" + user.uid);
@@ -1474,11 +1478,30 @@
     }
 
     galleryContainer.addEventListener("click", (e) => {
-      if (e.target.tagName === "IMG") {
+      if (e.target.classList.contains("gallery-img")) {
         modal.style.display = "flex";
         modalImg.src = e.target.src;
         modalImg.style.maxWidth = "90%";
         modalImg.style.maxHeight = "90%";
+      }
+    });
+
+    onValue(guruRef, (snapshot) => {
+      guruContainer.innerHTML = "";
+      if (snapshot.exists()) {
+        snapshot.forEach((child) => {
+          const data = child.val();
+          guruContainer.innerHTML += `
+            <div class="guru-card">
+              <img src="${data.foto}" alt="${data.nama}" class="guru-img">
+              <h3>${data.nama}</h3>
+              <p>${data.jabatan}</p>
+              <p>${data.keterangan}</p>
+            </div>
+          `;
+        });
+      } else {
+        guruContainer.innerHTML = "<p>Belum ada data guru</p>";
       }
     });
   </script>  
