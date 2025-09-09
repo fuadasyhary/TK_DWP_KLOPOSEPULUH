@@ -483,6 +483,36 @@
       }
     }
 
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+    .modal-content {
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      max-width: 600px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+      text-align: center;
+    }
+    .modal-content img {
+      max-width: 100%;
+      margin: 10px 0;
+      border-radius: 8px;
+    }
+    .close {
+      float: right;
+      font-size: 24px;
+      cursor: pointer;
+    }
+
     /* playful confetti */
     .confetti{position:absolute;pointer-events:none;z-index:0;opacity:0.9}
   </style>
@@ -579,6 +609,7 @@
 
         <div class="actions">
           <button class="btn btn-primary" onclick="window.location.href='https://forms.zohopublic.com/tkdwpklopox/form/PendaftaranSiswaTK/formperma/6LN1Dx6Z1YKB5_Q94LM3DKG4fCyGJJly-_FvFA-414s'">Pendaftaran / Pindahan</button>
+          <button class="btn btn-ghost" id="btnLangkah">Langkah-langkah Pendaftaran</button>
           <button class="btn btn-ghost" onclick="openReportPopup()">Report Pendaftaran</button>
           <button class="btn btn-ghost" onclick="window.location.href='elearning/index.html'">E-Learning</button>
         </div>
@@ -813,6 +844,51 @@
     </section>
     
   </main>
+
+  <!-- Modal Langkah Pendaftaran -->
+  <!-- Modal Langkah Pendaftaran -->
+  <div id="langkahModal" class="modal" style="display:none;">
+    <div class="modal-content">
+      <span class="close" id="closeLangkah">&times;</span>
+      <h2>📋 Langkah-langkah Pendaftaran</h2>
+      <div class="langkah-content">
+        <div class="langkah-item">
+          <p>1. Buka website https://tkdwpklopox.netlify.app/ dan Verifikasi memasukan icon ke kotak sesuai permintaannya</p>
+          <img src="pendaftaran/1.jpg" alt="Langkah 1" />
+        </div>
+        <div class="langkah-item">
+          <p>2. klik tombol pendaftaran</p>
+          <img src="pendaftaran/2.jpg" alt="Langkah 2" />
+        </div>
+        <div class="langkah-item">
+          <p>3. klik pilihan pendaftaran lalu isi data semua sesuai calon siswa</p>
+          <img src="pendaftaran/3.jpg" alt="Langkah 3" />
+        </div>
+        <div class="langkah-item">
+          <p>4. isi data semua sesuai calon siswa</p>
+          <img src="pendaftaran/4.jpg" alt="Langkah 4" />
+        </div>
+        <div class="langkah-item">
+          <p>5. isi data semua sesuai calon siswa</p>
+          <img src="pendaftaran/5.jpg" alt="Langkah 5" />
+        </div>
+        <div class="langkah-item">
+          <p>6. upload foto dokumen siswa sesuai arahan (nama file harus sesuai contoh instruksi & ukuran foto harus dibawah 1MB jika diatas 1MB maka harus dicompress)</p>
+          <img src="pendaftaran/6.jpg" alt="Langkah 6" />
+        </div>
+        <div class="langkah-item">
+          <p>7. Klik tombol "Download your response as PDF" lalu simpan PDF nya dan diprint </p>
+          <p>lalu dikumpulkan ke sekolah bersamaan membayar biaya pendaftaran TK jika nggk transfer biayanya & mengambil ATK dan seragam sekolah</p>
+          <img src="pendaftaran/7.jpg" alt="Langkah 7" />
+        </div>
+        <div class="langkah-item">
+          <p>8. Tampilan PDF Pendaftaran</p>
+          <img src="pendaftaran/8.jpg" alt="Langkah 8" />
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- 🔥 Modal Report -->
   <div id="report-modal" style="display:none;position:fixed;inset:0;background:rgba(3,6,18,0.45);align-items:center;justify-content:center;padding:20px;z-index:9999">
     <div style="max-width:400px;width:100%;background:white;border-radius:12px;padding:18px;box-shadow:0 14px 40px rgba(2,6,23,0.35);">
@@ -1204,6 +1280,25 @@
         if(e.key === 'Escape') closeVideoBtn.click();
       }
     });
+
+    // tombol & modal langkah
+    const btnLangkah = document.getElementById("btnLangkah");
+    const langkahModal = document.getElementById("langkahModal");
+    const closeLangkah = document.getElementById("closeLangkah");
+
+    btnLangkah.addEventListener("click", () => {
+      langkahModal.style.display = "flex";
+    });
+    closeLangkah.addEventListener("click", () => {
+      langkahModal.style.display = "none";
+    });
+    // klik luar modal
+    window.addEventListener("click", (e) => {
+      if (e.target === langkahModal) {
+        langkahModal.style.display = "none";
+      }
+    });
+
   </script>
   
   <!-- 🔥 Integration Firebase -->
