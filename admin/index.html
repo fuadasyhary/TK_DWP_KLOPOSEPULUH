@@ -187,8 +187,16 @@
     </div>
 
     <!-- ✅ Filter input -->
-    <input type="text" id="gallerySearch" placeholder="Cari judul atau kategori..."
-      style="padding:8px;width:100%;max-width:300px;margin-bottom:12px;border-radius:8px;border:1px solid #ccc;">
+    <div style="margin-bottom:12px; display:flex; flex-wrap:wrap; gap:10px;">
+      <!-- Search judul -->
+      <input type="text" id="judulSearch" placeholder="Cari judul..."
+        style="padding:8px;flex:1;max-width:250px;border-radius:8px;border:1px solid #ccc;">
+    
+      <!-- Dropdown kategori (otomatis dari Firebase) -->
+      <select id="kategoriFilter" style="padding:8px;border-radius:8px;border:1px solid #ccc;">
+        <option value="">🔎 Semua Kategori</option>
+      </select>
+    </div>
     <div class="table-container">
       <table id="galleryTable" border="1" style="width:100%;border-collapse:collapse;">
         <thead>
@@ -513,21 +521,49 @@
       const url = guruFotoInput.value.trim();
       guruPreview.innerHTML = url ? `<img src="${url}" style="max-width:150px;border-radius:12px;">` : "";
     });
+    
+    // 🔥 Isi dropdown kategori realtime dari Firebase
+    const kategoriFilter = document.getElementById("kategoriFilter");
+    const judulSearch = document.getElementById("judulSearch");
 
-    // ✅ Filter pencarian
-    document.getElementById("gallerySearch").addEventListener("input", function() {
-      const filter = this.value.toLowerCase();
-      const items = document.querySelectorAll("#galleryList .gallery-item");
+    onValue(galleryRef, (snapshot) => {
+      let kategoriSet = new Set();
 
-      items.forEach(item => {
-        const text = item.textContent.toLowerCase();
-        if (text.includes(filter)) {
-          item.style.display = "";
-        } else {
-          item.style.display = "none";
-        }
+      snapshot.forEach((child) => {
+        const data = child.val();
+        if (data.kategori) kategoriSet.add(data.kategori);
+      });
+
+      // Reset dropdown isi ulang
+      kategoriFilter.innerHTML = '<option value="">🔎 Semua Kategori</option>';
+      kategoriSet.forEach(kat => {
+        const opt = document.createElement("option");
+        opt.value = kat;
+        opt.textContent = kat;
+        kategoriFilter.appendChild(opt);
       });
     });
+
+    function applyFilter() {
+      const searchText = judulSearch.value.toLowerCase();
+      const selectedKategori = kategoriFilter.value.toLowerCase();
+      const rows = document.querySelectorAll("#galleryList tr");
+
+      rows.forEach(row => {
+        const rowText = row.textContent.toLowerCase();
+        const matchJudul = rowText.includes(searchText);
+        const matchKategori = !selectedKategori || rowText.includes(selectedKategori);
+
+        if (matchJudul && matchKategori) {
+          row.style.display = "";
+        } else {
+          row.style.display = "none";
+        }
+      });
+    }
+
+    judulSearch.addEventListener("input", applyFilter);
+    kategoriFilter.addEventListener("change", applyFilter);
   </script>
   
   <script>
