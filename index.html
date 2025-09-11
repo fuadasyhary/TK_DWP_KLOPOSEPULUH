@@ -537,7 +537,30 @@
       display: block;
       margin: 10px auto; /* biar center */
     }
-
+    /* Modal gambar langkah */
+    #imgModal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.8);
+      z-index: 99999;
+      align-items: center;
+      justify-content: center;
+    }
+    #imgModal img {
+      max-width: 90%;
+      max-height: 90%;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+    }
+    #imgModal span {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      font-size: 30px;
+      color: #fff;
+      cursor: pointer;
+    }
 
     /* playful confetti */
     .confetti{position:absolute;pointer-events:none;z-index:0;opacity:0.9}
@@ -915,6 +938,10 @@
       </div>
     </div>
   </div>
+  <div id="imgModal">
+    <span id="closeImg">&times;</span>
+    <img id="modalImg" src="" alt="Preview">
+  </div>  
 
   <!-- 🔥 Modal Report -->
   <div id="report-modal" style="display:none;position:fixed;inset:0;background:rgba(3,6,18,0.45);align-items:center;justify-content:center;padding:20px;z-index:9999">
@@ -1326,6 +1353,29 @@
       }
     });
 
+    // Modal gambar untuk langkah (khusus gambar di langkah pendaftaran)
+    const langkahImgs = document.querySelectorAll('#langkahModal .langkah-item img');
+    const langkahImgModal = document.getElementById('imgModal');
+    const langkahModalImg = document.getElementById('modalImg');
+    const langkahCloseImg = document.getElementById('closeImg');
+
+    langkahImgs.forEach(img => {
+      img.addEventListener('click', () => {
+        langkahModalImg.src = img.src;
+        langkahImgModal.style.display = 'flex';
+      });
+    });
+
+    langkahCloseImg.addEventListener('click', () => {
+      langkahImgModal.style.display = 'none';
+    });
+
+    // Tutup modal kalau klik di luar gambar
+    langkahImgModal.addEventListener('click', (e) => {
+      if (e.target === langkahImgModal) {
+        langkahImgModal.style.display = 'none';
+      }
+    });
   </script>
   
   <!-- 🔥 Integration Firebase -->
