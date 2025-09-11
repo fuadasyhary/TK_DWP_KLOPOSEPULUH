@@ -513,6 +513,29 @@
       cursor: pointer;
     }
 
+    .langkah-content {
+      display: flex;
+      gap: 20px;
+      overflow-x: auto;
+      padding: 10px;
+      scroll-snap-type: x mandatory;
+    }
+
+    .langkah-item {
+      flex: 0 0 80%; /* lebar tiap langkah (80% layar modal) */
+      max-width: 500px;
+      scroll-snap-align: start;
+      background: #fff;
+      border-radius: 12px;
+      padding: 14px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    .langkah-item img {
+      max-width: 70%;
+      border-radius: 8px;
+    }
+
+
     /* playful confetti */
     .confetti{position:absolute;pointer-events:none;z-index:0;opacity:0.9}
   </style>
@@ -879,11 +902,11 @@
         <div class="langkah-item">
           <p>7. Klik tombol "Download your response as PDF" lalu simpan PDF nya dan diprint </p>
           <p>lalu dikumpulkan ke sekolah bersamaan membayar biaya pendaftaran TK jika nggk transfer biayanya & mengambil ATK dan seragam sekolah</p>
-          <p>kalau sudah semua mohon diupload PDF dengan contoh nama file "2025 - Haurah Fatimah Mawar" di <a href="https://drive.google.com/drive/folders/1HoqtebkWEAjKpPJsDvaXzu4WEBRnbQ5h">Klik URL INI</a></p>
           <img src="pendaftaran/7.jpg" alt="Langkah 7" />
         </div>
         <div class="langkah-item">
           <p>8. Tampilan PDF Pendaftaran</p>
+          <p>kalau sudah semua mohon diupload PDF dengan contoh nama file "2025 - Haurah Fatimah Mawar" di <a href="https://drive.google.com/drive/folders/1HoqtebkWEAjKpPJsDvaXzu4WEBRnbQ5h">Klik URL INI</a></p>
           <img src="pendaftaran/8.jpg" alt="Langkah 8" />
         </div>
       </div>
