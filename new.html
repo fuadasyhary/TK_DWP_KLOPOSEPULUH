@@ -1,0 +1,1155 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Profil TK Dharma Wanita Persatuan Kloposepuluh</title>
+  <link rel="icon" type="image/png" href="logo.png">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script src="https://unpkg.com/feather-icons"></script>
+  <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+  <style>
+    :root {
+      --primary: #FF7AA2;
+      --secondary: #FFD166;
+      --accent: #7AD6FF;
+      --light: #FFFDF2;
+      --dark: #2E2E2E;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+    .animate-float {
+      animation: float 3s ease-in-out infinite;
+    }
+    .clip-path-hero {
+      clip-path: polygon(0 0, 100% 0, 100% 90%, 0 100%);
+    }
+    .glass-card {
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    .hover-scale {
+      transition: transform 0.3s ease;
+    }
+    .hover-scale:hover {
+      transform: scale(1.05);
+    }
+    .parallax-bg {
+      background-attachment: fixed;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;
+    }
+    
+    #captchaOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 99999;
+      pointer-events: all; /* blok klik web di bawah */
+    }
+    .captcha-container {
+      background: rgba(255, 255, 255, 0.9);
+      padding: 20px;
+      border-radius: 15px;
+      text-align: center;
+      max-width: 80%;
+      position: relative;
+    }
+    .captcha-container h2 {
+      color: #ff4081;
+      margin-bottom: 10px;
+      font-size: 24px;
+    }
+    .captcha-container p {
+      color: #333;
+      margin-bottom: 20px;
+    }
+    .captcha-area {
+    width: 90%;
+    max-width: 300px;
+    min-height: 200px;
+    background: #f9f9f9;
+    border-radius: 12px;
+    margin: 0 auto;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    overflow: hidden;
+    position: relative; /* penting biar absolute child tetap di dalam */
+  }
+  #dropZone {
+    width: 70px;
+    height: 70px;
+    border: 2px dashed #555;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+  }
+  .captcha-icons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+  }
+  .captcha-icon {
+    font-size: 28px;
+    cursor: grab;
+    user-select: none;
+    touch-action: none;
+  }
+
+    /* teks biar tidak overflow */
+    .captcha-status {
+      font-size: 14px;
+      text-align: center;
+      word-wrap: break-word;
+      line-height: 1.4;
+    }
+
+    /* hp kecil */
+    @media (max-width: 480px) {
+      #dropZone {
+        width: 55px;
+        height: 55px;
+      }
+      .captcha-icon {
+        font-size: 22px;
+      }
+      .captcha-status {
+        font-size: 12px;
+      }
+    }
+
+  </style>
+</head>
+<body class="bg-gradient-to-b from-pink-50 to-yellow-50">
+  <!-- Confetti Background -->
+  <div id="vanta-bg" class="fixed inset-0 -z-10"></div>
+  <!-- 🔒 CAPTCHA Overlay -->
+<div id="captchaOverlay" style="
+position:fixed;
+inset:0;
+background:rgba(0,0,0,0.8);
+display:flex;
+align-items:center;
+justify-content:center;
+z-index:99999;">
+
+  <div class="captcha-container" style="
+    background:white;
+    padding:20px;
+    border-radius:16px;
+    text-align:center;
+    max-width:320px;
+    width:90%;">
+    
+    <h2>🔒 Verifikasi Dulu</h2>
+    <p>Geser icon yang benar ke kotak 🎯</p>
+    
+    <div class="captcha-area" id="captchaArea">
+      <div id="dropZone">🎯</div>
+      <div class="captcha-icons" id="iconContainer"></div>
+      <div class="captcha-status" id="captchaStatus"></div>
+      <button id="captchaReset" class="btn btn-primary" style="display:none;">Coba Lagi</button>
+    </div>
+    
+  </div>
+</div>
+
+  <!-- Header -->
+  <header class="py-6 px-4 md:px-8 bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50">
+    <div class="container mx-auto flex items-center justify-between">
+      <div class="flex items-center space-x-4">
+        <div>
+          <h1 class="text-xl md:text-2xl font-bold font-['Baloo_2'] text-gray-800">TK DHARMA WANITA PERSATUAN KLOPOSEPULUH</h1>
+          <p class="text-xs text-gray-600">NPSN: <strong>20563203</strong> • PAUD — SWASTA</p>
+        </div>
+      </div>
+      <div class="flex flex-col items-end">
+        <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-400 to-green-400 flex items-center justify-center shadow-lg overflow-hidden">
+          <img src="logo.png" alt="Logo Sekolah" class="max-w-full max-h-full object-contain p-1">
+        </div>
+        <p class="text-xs text-gray-600 mt-2">Naungan: Yayasan Dharma Wanita Persatuan Sidoarjo</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="relative py-40 md:py-24 px-4 md:px-8 bg-gradient-to-r from-pink-100 to-yellow-100 clip-path-hero">
+    <div class="container mx-auto flex flex-col md:flex-row items-center">
+      <div class="md:w-1/2 mb-8 md:mb-0" data-aos="fade-right">
+        <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Selamat datang di profil kami <span class="text-pink-500">👋</span></h2>
+        <h3 class="text-xl font-semibold text-gray-700 mb-3">Visi dan Misi</h3>
+        
+        <div class="glass-card rounded-xl p-6 mb-4">
+          <h4 class="text-lg font-semibold text-pink-600 mb-2">Visi</h4>
+          <p class="text-gray-700">"Membentuk Generasi Yang Mandiri, Cerdas, Berprestasi Dan Berakhlak Mulia"</p>
+        </div>
+        
+        <div class="glass-card rounded-xl p-6 mb-4">
+          <h4 class="text-lg font-semibold text-pink-600 mb-2">Misi</h4>
+          <ul class="list-disc pl-5 text-gray-700 space-y-1">
+            <li>Membangun Pembiasaan Berperilaku Hidup Sehat, Bersih Dan Berakhlak Mulia</li>
+            <li>Membangun Kecerdasan Anak Dalam Aspek Kognitif, Afektif, Spiritual Maupun Sosial</li>
+            <li>Mengembangkan Kreativitas Yang Inovatif Pada Anak, Sehingga Mampu Bersosialisasi</li>
+          </ul>
+        </div>
+        
+        <div class="flex flex-wrap gap-2 mt-6">
+          <div class="bg-white/80 rounded-lg p-3 shadow-sm">
+            <p class="text-xs text-gray-500">No. SK Pendirian</p>
+            <a href="https://dapo.kemendikdasmen.go.id/sekolah/01A883E38029620E2DF6" class="text-sm font-medium text-blue-600 hover:underline">077/104.10/i-90</a>
+          </div>
+          <div class="bg-white/80 rounded-lg p-3 shadow-sm">
+            <p class="text-xs text-gray-500">Tgl SK Pendirian</p>
+            <p class="text-sm font-medium">17 Jan 1990</p>
+          </div>
+          <div class="bg-white/80 rounded-lg p-3 shadow-sm">
+            <p class="text-xs text-gray-500">SK Operasional</p>
+            <a href="https://dapo.kemendikdasmen.go.id/sekolah/01A883E38029620E2DF6" class="text-sm font-medium text-blue-600 hover:underline">421.1/1810/438.5.1/2019</a>
+          </div>
+        </div>
+        
+        <div class="mt-6 flex flex-wrap gap-3">
+          <button class="bg-pink-500 hover:bg-pink-600 text-white px-6 py-3 rounded-xl font-semibold shadow-md transition-all transform hover:scale-105" 
+                  onclick="window.location.href='https://forms.zohopublic.com/tkdwpklopox/form/PendaftaranSiswaTK/formperma/6LN1Dx6Z1YKB5_Q94LM3DKG4fCyGJJly-_FvFA-414s'">
+            Pendaftaran / Pindahan
+          </button>
+          <button class="bg-white hover:bg-gray-100 border border-gray-200 text-gray-700 px-6 py-3 rounded-xl font-semibold shadow-sm transition-all transform hover:scale-105" 
+                  id="btnLangkah">
+            Langkah-langkah Pendaftaran
+          </button>
+          <button class="bg-white hover:bg-gray-100 border border-gray-200 text-gray-700 px-6 py-3 rounded-xl font-semibold shadow-sm transition-all transform hover:scale-105" 
+                  onclick="openReportPopup()">
+            Report Pendaftaran
+          </button>
+          <button class="bg-white hover:bg-gray-100 border border-gray-200 text-gray-700 px-6 py-3 rounded-xl font-semibold shadow-sm transition-all transform hover:scale-105" 
+                  onclick="window.location.href='elearning/index.html'">
+            E-Learning
+          </button>
+        </div>
+      </div>
+      
+      <div class="md:w-1/2 flex justify-center" data-aos="fade-left">
+        <div class="relative">
+          <div class="w-64 h-64 md:w-80 md:h-80 bg-gradient-to-br from-pink-200 to-yellow-200 rounded-full flex items-center justify-center shadow-xl animate-float">
+            <img src="https://static.photos/education/640x360/1" alt="Anak-anak belajar" class="w-full h-full object-cover rounded-full">
+          </div>
+          <div class="absolute md:-bottom-6 md:-right-6 md:left-auto md:translate-x-0 
+                    bottom-[-3.5rem] left-1/2 -translate-x-1/2 
+                    bg-white/90 px-3 py-2 rounded-lg shadow-md max-w-[90%] text-center">
+          <p class="text-sm font-medium text-gray-700">"Mendidik dengan hati sejak 1990"</p>
+        </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Profile Section -->
+  <section class="py-12 px-4 md:px-8 bg-white">
+    <div class="container mx-auto" data-aos="fade-up">
+      <h2 class="text-2xl font-bold text-center mb-8 text-gray-800 flex items-center justify-center">
+        <div class="w-8 h-8 bg-pink-500 rounded-full flex items-center justify-center text-white mr-2">🏫</div>
+        Profil Sekolah
+      </h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div class="bg-gray-50 p-4 rounded-xl border border-gray-100 hover:border-pink-200 transition-all hover:shadow-md">
+          <p class="text-xs text-gray-500">Nama</p>
+          <p class="font-medium">TK Dharma Wanita Persatuan Kloposepuluh</p>
+        </div>
+        
+        <div class="bg-gray-50 p-4 rounded-xl border border-gray-100 hover:border-pink-200 transition-all hover:shadow-md">
+          <p class="text-xs text-gray-500">NPSN</p>
+          <p class="font-medium">20563203</p>
+        </div>
+        
+        <div class="bg-gray-50 p-4 rounded-xl border border-gray-100 hover:border-pink-200 transition-all hover:shadow-md">
+          <p class="text-xs text-gray-500">Status Sekolah</p>
+          <p class="font-medium">Swasta</p>
+        </div>
+        
+        <div class="bg-gray-50 p-4 rounded-xl border border-gray-100 hover:border-pink-200 transition-all hover:shadow-md">
+          <p class="text-xs text-gray-500">Bentuk Pendidikan</p>
+          <p class="font-medium">TK</p>
+        </div>
+        
+        <div class="bg-gray-50 p-4 rounded-xl border border-gray-100 hover:border-pink-200 transition-all hover:shadow-md">
+          <p class="text-xs text-gray-500">Jenjang Pendidikan</p>
+          <p class="font-medium">PAUD</p>
+        </div>
+        
+        <div class="bg-gray-50 p-4 rounded-xl border border-gray-100 hover:border-pink-200 transition-all hover:shadow-md">
+          <p class="text-xs text-gray-500">Akreditasi</p>
+          <p class="font-medium">C</p>
+        </div>
+        
+        <div class="bg-gray-50 p-4 rounded-xl border border-gray-100 hover:border-pink-200 transition-all hover:shadow-md">
+          <p class="text-xs text-gray-500">Desa / Kelurahan</p>
+          <p class="font-medium">Kloposepuluh</p>
+        </div>
+        
+        <div class="bg-gray-50 p-4 rounded-xl border border-gray-100 hover:border-pink-200 transition-all hover:shadow-md">
+          <p class="text-xs text-gray-500">Kecamatan</p>
+          <p class="font-medium">Sukodono</p>
+        </div>
+        
+        <div class="bg-gray-50 p-4 rounded-xl border border-gray-100 hover:border-pink-200 transition-all hover:shadow-md">
+          <p class="text-xs text-gray-500">Kabupaten</p>
+          <p class="font-medium">Sidoarjo</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Guru Section -->
+  <section class="py-12 px-4 md:px-8 bg-gray-50">
+    <div class="container mx-auto" data-aos="fade-up">
+      <h2 class="text-2xl font-bold text-center mb-8 text-gray-800 flex items-center justify-center">
+        <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white mr-2">👩‍🏫</div>
+        Profil Guru
+      </h2>
+      
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" id="guruContainer">
+        <!-- Guru cards will be inserted here by JavaScript -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Gallery Section -->
+  <section class="py-12 px-4 md:px-8 bg-white">
+    <div class="container mx-auto" data-aos="fade-up">
+      <h2 class="text-2xl font-bold text-center mb-8 text-gray-800 flex items-center justify-center">
+        <div class="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center text-white mr-2">📸</div>
+        Galeri Sekolah
+      </h2>
+      
+      <div class="flex flex-wrap gap-2 justify-center mb-6" id="categoryButtons">
+        <!-- Category buttons will be inserted here by JavaScript -->
+      </div>
+      
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4" id="galleryContainer">
+        <!-- Gallery items will be inserted here by JavaScript -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Kontak Section -->
+  <section class="py-12 px-4 md:px-8 bg-gradient-to-r from-blue-50 to-green-50">
+    <div class="container mx-auto" data-aos="fade-up">
+      <h2 class="text-2xl font-bold text-center mb-8 text-gray-800 flex items-center justify-center">
+        <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white mr-2">📞</div>
+        Kontak Sekolah
+      </h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-white p-6 rounded-xl shadow-md">
+          <h3 class="text-lg font-semibold mb-4 text-gray-800">Pasegan</h3>
+          <div class="space-y-4">
+            <div>
+              <p class="text-sm text-gray-500">Telepon</p>
+              <a href="https://wa.me/+6281233961727?text=Halo Kepala Sekola TK DWP Kloposepuluh" class="text-blue-600 hover:underline">081233961727</a>
+            </div>
+            <div>
+              <p class="text-sm text-gray-500">Email</p>
+              <a href="mailto:tkdwpklopox@gmail.com" class="text-blue-600 hover:underline">tkdwpklopox@gmail.com</a>
+            </div>
+            <div>
+              <p class="text-sm text-gray-500">Alamat</p>
+              <p class="text-gray-700">Pasegan (Sebelah SDN Kloposepuluh 1), Kloposepuluh, Kec. Sukodono, Kab. Sidoarjo, Prov. Jawa Timur</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="bg-white p-6 rounded-xl shadow-md">
+          <h3 class="text-lg font-semibold mb-4 text-gray-800">Wonokoyo</h3>
+          <div class="space-y-4">
+            <div>
+              <p class="text-sm text-gray-500">Website</p>
+              <a href="https://tkdwpklopox.netlify.app/" target="_blank" class="text-blue-600 hover:underline">https://tkdwpklopox.netlify.app/</a>
+            </div>
+            <div>
+              <p class="text-sm text-gray-500">Instagram</p>
+              <a href="https://www.instagram.com/tkdwpklopox/" target="_blank" class="text-blue-600 hover:underline">@tkdwpklopox</a>
+            </div>
+            <div>
+              <p class="text-sm text-gray-500">Alamat</p>
+              <p class="text-gray-700">Kloposepuluh RT 23 RW 06 (Sebelah SDN Kloposepuluh 2), Kec. Sukodono, Kab. Sidoarjo, Prov. Jawa Timur</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-white p-4 rounded-xl shadow-md">
+          <h3 class="text-lg font-semibold mb-4 text-center text-gray-800">📍Lokasi Sekolah Pasegan</h3>
+          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d247.28926787964912!2d112.68678510320208!3d-7.395481311682645!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd7e3f14b213ea1%3A0x449bd3a46273fda!2sTK%20Dharma%20Wanita%20Persatuan%20Klopo%20Sepuluh%20Pasegan!5e0!3m2!1sid!2sid!4v1756187581448!5m2!1sid!2sid" 
+                  class="w-full h-64 rounded-lg" 
+                  allowfullscreen="" 
+                  loading="lazy" 
+                  referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+        
+        <div class="bg-white p-4 rounded-xl shadow-md">
+          <h3 class="text-lg font-semibold mb-4 text-center text-gray-800">📍Lokasi Sekolah Wonokoyo</h3>
+          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3956.593248236775!2d112.69582954783125!3d-7.399389320171529!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd7e39b3a14f9b5%3A0x7272805c771ac88f!2sTK%20Dharma%20Wanita%20Persatuan%20Kloposepuluh%20Wonokoyo!5e0!3m2!1sid!2sid!4v1756343384044!5m2!1sid!2sid" 
+                  class="w-full h-64 rounded-lg" 
+                  allowfullscreen="" 
+                  loading="lazy" 
+                  referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimoni Section -->
+  <section class="py-12 px-4 md:px-8 bg-white">
+    <div class="container mx-auto max-w-4xl" data-aos="fade-up">
+      <h2 class="text-2xl font-bold text-center mb-8 text-gray-800 flex items-center justify-center">
+        <div class="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center text-white mr-2">💬</div>
+        Testimoni Orang Tua
+      </h2>
+      
+      <div class="bg-gradient-to-r from-pink-100 to-purple-100 rounded-xl p-6 shadow-md mb-8">
+        <div id="overallRating" class="flex items-center justify-center gap-2">
+          <span class="text-lg font-semibold">📑 Overall Rating TK DWP Kloposepuluh</span>
+          <span class="text-yellow-400 text-xl">⭐⭐⭐⭐⭐</span>
+          <span class="font-bold">0.0/5</span>
+        </div>
+      </div>
+      
+      <div class="bg-white rounded-xl shadow-md p-6 mb-8">
+        <div class="flex justify-center mb-6">
+          <button id="googleLoginBtn" class="bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-xl font-semibold shadow-md transition-all flex items-center gap-2">
+            <i data-feather="log-in"></i>
+            Login dengan Google
+          </button>
+        </div>
+        
+        <div id="userInfo" class="text-center mb-6"></div>
+        
+        <form id="testiForm" class="space-y-4">
+          <div>
+            <label for="pesan" class="block text-sm font-medium text-gray-700 mb-1">Pesan Anda</label>
+            <textarea id="pesan" rows="4" class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-all" placeholder="Tulis pesan Anda..." required></textarea>
+          </div>
+          
+          <div>
+            <label for="rating" class="block text-sm font-medium text-gray-700 mb-1">Rating</label>
+            <select id="rating" class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-all">
+              <option value="5">⭐⭐⭐⭐⭐ Sangat Puas</option>
+              <option value="4">⭐⭐⭐⭐ Puas</option>
+              <option value="3">⭐⭐⭐ Cukup</option>
+              <option value="2">⭐⭐ Kurang</option>
+              <option value="1">⭐ Tidak Puas</option>
+            </select>
+          </div>
+          
+          <div>
+            <label for="kritik" class="block text-sm font-medium text-gray-700 mb-1">Kritik (opsional)</label>
+            <textarea id="kritik" rows="2" class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-all" placeholder="Kritik Anda (opsional, tapi jika diisi maka wajib isi saran)"></textarea>
+          </div>
+          
+          <div>
+            <label for="saran" class="block text-sm font-medium text-gray-700 mb-1">Saran (opsional)</label>
+            <textarea id="saran" rows="2" class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-all" placeholder="Saran Anda (opsional)"></textarea>
+          </div>
+          
+          <button type="submit" class="w-full bg-pink-500 hover:bg-pink-600 text-white px-6 py-3 rounded-xl font-semibold shadow-md transition-all transform hover:scale-[1.02]">
+            Kirim Testimoni
+          </button>
+        </form>
+      </div>
+      
+      <div id="testimoniList" class="space-y-6 max-h-[500px] overflow-y-auto pr-2">
+        <!-- Testimoni items will be inserted here by JavaScript -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="py-6 px-4 md:px-8 bg-gray-800 text-white text-center">
+    <div class="container mx-auto">
+      <p>© MOCHAMAD FUAD ASYHARY • TK Dharma Wanita Persatuan Kloposepuluh</p>
+      <p class="text-sm text-gray-400 mt-2">Jl. Pasegan, Kloposepuluh, Kec. Sukodono, Kab. Sidoarjo, Jawa Timur</p>
+    </div>
+  </footer>
+
+  <!-- Modals -->
+  <!-- Report Modal -->
+  <div id="report-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-xl p-6 max-w-md w-full mx-4">
+      <h3 class="text-xl font-bold mb-4">📑 Pilih Jenis Report</h3>
+      
+      <div class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Jenis Pengunjung:</label>
+          <select id="report-type" class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-all" onchange="togglePasswordField()">
+            <option value="">-- Pilih --</option>
+            <option value="calonsiswa">Calon Siswa</option>
+            <option value="guru">Guru</option>
+          </select>
+        </div>
+        
+        <div id="password-wrapper" class="hidden">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Password Guru:</label>
+          <input type="password" id="report-pass" placeholder="Password..." class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-all">
+          <p id="attempt-info" class="text-orange-500 text-sm mt-1 hidden"></p>
+          <p id="report-error" class="text-red-500 text-sm mt-1 hidden">❌ Akses ditolak</p>
+        </div>
+        
+        <div id="data-type-wrapper" class="hidden">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Jenis Data:</label>
+          <select id="data-type" class="w-full px-4 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-pink-500 focus:border-pink-500 transition-all">
+            <option value="">-- Pilih Data --</option>
+            <option value="report">Data Report</option>
+            <option value="excel">Data Excel</option>
+            <option value="dokumen">Data Dokument</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="flex justify-end gap-3 mt-6">
+        <button onclick="closeReportPopup()" class="px-4 py-2 border border-gray-300 rounded-xl font-medium text-gray-700 hover:bg-gray-100 transition-all">Batal</button>
+        <button onclick="checkReportAccess()" class="px-4 py-2 bg-pink-500 text-white rounded-xl font-medium hover:bg-pink-600 transition-all">Masuk</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Langkah Pendaftaran Modal -->
+  <div id="langkahModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-xl p-6 max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-2xl font-bold">📋 Langkah-langkah Pendaftaran</h2>
+        <button id="closeLangkah" class="text-gray-500 hover:text-gray-700">
+          <i data-feather="x"></i>
+        </button>
+      </div>
+      
+      <div class="grid grid-cols-1 gap-6">
+        <!-- Langkah 1 -->
+        <div class="bg-gray-50 p-4 rounded-xl">
+          <h3 class="font-semibold mb-2">1. Buka website https://tkdwpklopox.netlify.app/ dan Verifikasi memasukan icon ke kotak sesuai permintaannya</h3>
+          <img src="pendaftaran/1.jpg" alt="Langkah 1" class="w-full rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer" onclick="openImageModal(this.src)">
+        </div>
+        
+        <!-- Langkah 2 -->
+        <div class="bg-gray-50 p-4 rounded-xl">
+          <h3 class="font-semibold mb-2">2. klik tombol pendaftaran</h3>
+          <img src="pendaftaran/2.jpg" alt="Langkah 2" class="w-full rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer" onclick="openImageModal(this.src)">
+        </div>
+        
+        <!-- Langkah 3 -->
+        <div class="bg-gray-50 p-4 rounded-xl">
+          <h3 class="font-semibold mb-2">3. klik pilihan pendaftaran lalu isi data semua sesuai calon siswa</h3>
+          <img src="pendaftaran/3.jpg" alt="Langkah 3" class="w-full rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer" onclick="openImageModal(this.src)">
+        </div>
+        
+        <!-- Langkah 4 -->
+        <div class="bg-gray-50 p-4 rounded-xl">
+          <h3 class="font-semibold mb-2">4. isi data semua sesuai calon siswa</h3>
+          <img src="pendaftaran/4.jpg" alt="Langkah 4" class="w-full rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer" onclick="openImageModal(this.src)">
+        </div>
+        
+        <!-- Langkah 5 -->
+        <div class="bg-gray-50 p-4 rounded-xl">
+          <h3 class="font-semibold mb-2">5. isi data semua sesuai calon siswa</h3>
+          <img src="pendaftaran/5.jpg" alt="Langkah 5" class="w-full rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer" onclick="openImageModal(this.src)">
+        </div>
+        
+        <!-- Langkah 6 -->
+        <div class="bg-gray-50 p-4 rounded-xl">
+          <h3 class="font-semibold mb-2">6. upload foto dokumen siswa sesuai arahan (nama file harus sesuai contoh instruksi & ukuran foto harus dibawah 1MB jika diatas 1MB maka harus dicompress)</h3>
+          <img src="pendaftaran/6.jpg" alt="Langkah 6" class="w-full rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer" onclick="openImageModal(this.src)">
+        </div>
+        
+        <!-- Langkah 7 -->
+        <div class="bg-gray-50 p-4 rounded-xl">
+          <h3 class="font-semibold mb-2">7. Klik tombol "Download your response as PDF" lalu simpan PDF nya dan diprint</h3>
+          <p>lalu dikumpulkan ke sekolah bersamaan membayar biaya pendaftaran TK jika nggk transfer biayanya & mengambil ATK dan seragam sekolah</p>
+          <img src="pendaftaran/7.jpg" alt="Langkah 7" class="w-full rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer" onclick="openImageModal(this.src)">
+        </div>
+        
+        <!-- Langkah 8 -->
+        <div class="bg-gray-50 p-4 rounded-xl">
+          <h3 class="font-semibold mb-2">8. Tampilan PDF Pendaftaran</h3>
+          <p>kalau sudah semua mohon diupload PDF dengan contoh nama file "2025 - Haurah Fatimah Mawar" di <a href="https://drive.google.com/drive/folders/1HoqtebkWEAjKpPJsDvaXzu4WEBRnbQ5h" class="text-blue-600 hover:underline">Klik URL INI</a></p>
+          <img src="pendaftaran/8.jpg" alt="Langkah 8" class="w-full rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer" onclick="openImageModal(this.src)">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Image Modal -->
+  <div id="imgModal" class="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 hidden">
+    <span id="closeImg" class="absolute top-6 right-6 text-white text-3xl cursor-pointer hover:text-gray-300">
+      <i data-feather="x"></i>
+    </span>
+    <img id="modalImg" src="" alt="Preview" class="max-w-[90%] max-h-[90%] rounded-lg shadow-2xl">
+  </div>
+
+  <!-- Vanta.js Background -->
+  <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.globe.min.js"></script>
+  <script>
+    VANTA.GLOBE({
+      el: "#vanta-bg",
+      mouseControls: true,
+      touchControls: true,
+      gyroControls: false,
+      minHeight: 200.00,
+      minWidth: 200.00,
+      scale: 1.00,
+      scaleMobile: 1.00,
+      color: 0xff7aa2,
+      backgroundColor: 0xfffdf2,
+      size: 0.80
+    });
+  </script>
+
+  <!-- Other Scripts -->
+  <script>
+    // Initialize AOS
+    AOS.init({
+      duration: 800,
+      easing: 'ease-in-out',
+      once: true
+    });
+    
+    // Initialize Feather Icons
+    feather.replace();
+    
+    // Function to open image modal
+    function openImageModal(src) {
+      const modal = document.getElementById('imgModal');
+      const modalImg = document.getElementById('modalImg');
+      modalImg.src = src;
+      modal.classList.remove('hidden');
+    }
+    
+    // Close modals when clicking outside
+    document.addEventListener('click', function(e) {
+      if (e.target.id === 'report-modal') {
+        closeReportPopup();
+      }
+      if (e.target.id === 'langkahModal') {
+        document.getElementById('langkahModal').classList.add('hidden');
+      }
+      if (e.target.id === 'imgModal') {
+        document.getElementById('imgModal').classList.add('hidden');
+      }
+    });
+    
+    // Close buttons
+    document.getElementById('closeLangkah').addEventListener('click', function() {
+      document.getElementById('langkahModal').classList.add('hidden');
+    });
+    
+    document.getElementById('closeImg').addEventListener('click', function() {
+      document.getElementById('imgModal').classList.add('hidden');
+    });
+    
+    // Keyboard navigation for modals
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        document.getElementById('report-modal').classList.add('hidden');
+        document.getElementById('langkahModal').classList.add('hidden');
+        document.getElementById('imgModal').classList.add('hidden');
+      }
+    });
+    
+    // Button to open langkah modal
+    document.getElementById('btnLangkah').addEventListener('click', function() {
+      document.getElementById('langkahModal').classList.remove('hidden');
+    });
+    
+    // Report functions
+    let attemptCount = 0;
+    let isLocked = false;
+    let lockTimeout;
+    let countdownInterval;
+    
+    function openReportPopup() {
+      document.getElementById('report-modal').classList.remove('hidden');
+      document.getElementById('report-type').value = "";
+      document.getElementById('password-wrapper').classList.add('hidden');
+      document.getElementById('data-type-wrapper').classList.add('hidden');
+      document.getElementById('report-error').classList.add('hidden');
+      document.getElementById('report-pass').value = "";
+      document.getElementById('attempt-info').classList.add('hidden');
+      document.getElementById('report-pass').disabled = false;
+      document.querySelector('#report-modal button').disabled = false;
+      attemptCount = 0;
+      clearTimeout(lockTimeout);
+      clearInterval(countdownInterval);
+      isLocked = false;
+    }
+    
+    function closeReportPopup() {
+      document.getElementById('report-modal').classList.add('hidden');
+    }
+    
+    function togglePasswordField() {
+      const type = document.getElementById('report-type').value;
+      if (type === "guru") {
+        document.getElementById('password-wrapper').classList.remove('hidden');
+      } else {
+        document.getElementById('password-wrapper').classList.add('hidden');
+        document.getElementById('data-type-wrapper').classList.add('hidden');
+        document.getElementById('report-error').classList.add('hidden');
+        document.getElementById('attempt-info').classList.add('hidden');
+      }
+    }
+    
+    function checkReportAccess() {
+      const type = document.getElementById('report-type').value;
+      const pass = document.getElementById('report-pass').value.trim();
+      const dataType = document.getElementById('data-type').value;
+    
+      if(isLocked) {
+        return; // kalau masih di-lock jangan bisa login
+      }
+    
+      if(type === "calonsiswa") {
+        window.open("https://forms.zohopublic.com/tkdwpklopox/report/CalonSiswa/reportperma/LZvNu6V6osLIWSQjGFR4kFWP9zeIZHd428RnVUukp78","_blank");
+        closeReportPopup();
+    
+      } else if(type === "guru") {
+        if(pass === "Tkdwpklopo10") { // 🔑 password guru
+          attemptCount = 0; // reset counter kalau benar
+          document.getElementById('attempt-info').classList.add('hidden');
+          if(dataType === "") {
+            document.getElementById('data-type-wrapper').classList.remove('hidden');
+            document.getElementById('report-error').classList.add('hidden');
+          } else if(dataType === "report") {
+            window.open("https://forms.zohopublic.com/tkdwpklopox/report/Guru/reportperma/upFhj3x_RzPpOSibaucobubAJfpzVZ8Ei3ebuO8Jtgw","_blank");
+          } else if(dataType === "excel") {
+            window.open("https://docs.google.com/spreadsheets/d/12pnmW0KKCm4V21MunudXJ0yb17-r4BiNeJYW3dXJ5s4/edit?usp=sharing","_blank");
+          } else if(dataType === "dokumen") {
+            window.open("https://drive.google.com/drive/folders/1NlqQcu4Xwe6HkO7Mg4IpsMrtVYjhEoTO?usp=sharing","_blank");
+          }
+        } else {
+          attemptCount++;
+          document.getElementById('report-error').classList.remove('hidden');
+          document.getElementById('attempt-info').classList.remove('hidden');
+          document.getElementById('attempt-info').innerText = `❌ Password salah (${attemptCount}/5)`;
+    
+          if(attemptCount >= 5) {
+            isLocked = true;
+            let remaining = 30; // ⏳ diganti 30 detik
+            document.getElementById('attempt-info').innerText = `⏳ Terlalu banyak percobaan gagal. Coba lagi dalam ${remaining} detik.`;
+            document.getElementById('report-pass').disabled=true;
+            document.querySelector('#report-modal button').disabled=true;
+    
+            countdownInterval = setInterval(()=>{
+              remaining--;
+              document.getElementById('attempt-info').innerText = `⏳ Terlalu banyak percobaan gagal. Coba lagi dalam ${remaining} detik.`;
+              if(remaining <= 0) {
+                clearInterval(countdownInterval);
+                attemptCount = 0;
+                isLocked = false;
+                document.getElementById('attempt-info').classList.add('hidden');
+                document.getElementById('report-pass').disabled=false;
+                document.querySelector('#report-modal button').disabled=false;
+                document.getElementById('report-pass').focus(); // auto fokus lagi biar enak
+              }
+            },1000);
+          }
+        }
+      } else {
+        document.getElementById('report-error').classList.remove('hidden');
+      }
+    }
+    
+    //CAPTCHA
+    document.addEventListener("DOMContentLoaded", function(){
+      const captchaOverlay = document.getElementById("captchaOverlay");
+      const captchaArea = document.getElementById("captchaArea");
+      const iconContainer = document.getElementById("iconContainer");
+      const dropZone = document.getElementById("dropZone");
+      const captchaStatus = document.getElementById("captchaStatus");
+      const captchaReset = document.getElementById("captchaReset");
+    
+      const icons = ["⭐", "🌸", "🐤", "🧸", "🍎", "🚗"];
+      let targetIcon = "";
+      let failCount = 0;
+    
+      function generateCaptcha(){
+        iconContainer.innerHTML = "";
+        targetIcon = icons[Math.floor(Math.random()*icons.length)];
+        captchaStatus.textContent = `👉 Geser "${targetIcon}" ke kotak 🎯`;
+        captchaReset.style.display = "none";
+        failCount = 0;
+    
+        // buat pilihan icon (target wajib ada)
+        let choices = [targetIcon];
+        while (choices.length < 5) {
+          const randIcon = icons[Math.floor(Math.random()*icons.length)];
+          if (!choices.includes(randIcon)) choices.push(randIcon);
+        }
+        choices = choices.sort(() => Math.random() - 0.5);
+    
+        choices.forEach(symbol => {
+          const icon = document.createElement("div");
+          icon.textContent = symbol;
+          icon.className = "captcha-icon";
+          icon.draggable = true;
+    
+          // Desktop drag
+          icon.addEventListener("dragstart", e => {
+            e.dataTransfer.setData("text/plain", icon.textContent);
+          });
+    
+          // Mobile touch
+          icon.addEventListener("touchstart", e => {
+            icon.style.position = "absolute";
+            icon.style.zIndex = "1000";
+          });
+          icon.addEventListener("touchmove", e => {
+            let touch = e.touches[0];
+            const rect = captchaArea.getBoundingClientRect();
+            icon.style.left = (touch.clientX - rect.left - 20) + "px";
+            icon.style.top = (touch.clientY - rect.top - 20) + "px";
+          });
+          icon.addEventListener("touchend", e => {
+            checkDrop(icon.textContent, e.changedTouches[0]);
+            resetIconPos(icon);
+          });
+    
+          iconContainer.appendChild(icon);
+        });
+      }
+    
+      // desktop drop
+      dropZone.addEventListener("dragover", e => e.preventDefault());
+      dropZone.addEventListener("drop", e => {
+        e.preventDefault();
+        const dropped = e.dataTransfer.getData("text/plain");
+        checkDrop(dropped);
+      });
+    
+      // cek hasil drop
+      function checkDrop(value, touch=null){
+        if(value === targetIcon){
+          captchaStatus.textContent = "✅ Berhasil!";
+          setTimeout(()=> captchaOverlay.style.display="none",800);
+        } else {
+          failCount++;
+          if(failCount >= 3){
+            captchaStatus.textContent = "⏳ Terlalu banyak gagal! Refresh CAPTCHA...";
+            setTimeout(()=> generateCaptcha(), 1500);
+          } else {
+            captchaStatus.textContent = `❌ Salah! Percobaan ke-${failCount}`;
+            captchaReset.style.display = "block";
+          }
+        }
+      }
+    
+      function resetIconPos(icon){
+        icon.style.position = "";
+        icon.style.left = "";
+        icon.style.top = "";
+        icon.style.zIndex = "";
+      }
+    
+      captchaReset.addEventListener("click", generateCaptcha);
+      generateCaptcha();
+    
+      // 🔒 Anti-oprek DevTools (cek overlay hilang)
+      setInterval(()=>{
+        if(!document.body.contains(captchaOverlay) || captchaOverlay.style.display==="none" && failCount<0){
+          // jika overlay dihapus manual → reload
+          location.reload();
+        }
+      }, 2000);
+    });
+  </script>
+
+  <!-- Firebase Integration -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getDatabase, ref, onChildAdded, onValue, set, update, child, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+    import { 
+      getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, 
+      getRedirectResult, signOut, onAuthStateChanged 
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+  
+    // Firebase Config
+    const firebaseConfig = {
+      apiKey: "AIzaSyA8bzx6ispP9u2e3fzKGqqEY2Zmle_CEHY",
+      authDomain: "testimoni-tk-dwp-kloposepuluh.firebaseapp.com",
+      databaseURL: "https://testimoni-tk-dwp-kloposepuluh-default-rtdb.firebaseio.com",
+      projectId: "testimoni-tk-dwp-kloposepuluh",
+      storageBucket: "testimoni-tk-dwp-kloposepuluh.firebasestorage.app",
+      messagingSenderId: "148758047246",
+      appId: "1:148758047246:web:6f408f3d622393bb356a5f",
+      measurementId: "G-34N9E2FXVX"
+    };
+  
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const gdb = getDatabase(app);
+    const testimoniRef = ref(gdb, "testimoni");
+    const galleryRef = ref(gdb, "galeri");
+    const guruRef = ref(gdb, "guru");
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const provider = new GoogleAuthProvider();
+    const testiListEl = document.getElementById("testimoniList");
+    
+    const categoryButtons = document.getElementById("categoryButtons");
+    const galleryContainer = document.getElementById("galleryContainer");
+    const guruContainer = document.getElementById("guruContainer");
+  
+    // Google Login Button
+    document.getElementById("googleLoginBtn").addEventListener("click", () => {
+      signInWithPopup(auth, provider)
+        .catch((error) => {
+          if (error.code === "auth/popup-blocked") {
+            signInWithRedirect(auth, provider);
+          } else {
+            alert("Login gagal: " + error.message);
+          }
+        });
+    });
+  
+    // Redirect Result
+    getRedirectResult(auth).then(async (result) => {
+      if (result && result.user) {
+        const user = result.user;
+        await setDoc(doc(db, "users", user.uid), {
+          name: user.displayName,
+          email: user.email,
+          photo: user.photoURL,
+          lastLogin: new Date()
+        });
+      }
+    }).catch((error) => {
+      console.error("Redirect error:", error);
+    });
+  
+    // Auth State Changed
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        document.getElementById("userInfo").innerHTML = `
+          <div class="flex flex-col items-center gap-3">
+            <img src="${user.photoURL}" alt="Foto Profil" class="w-16 h-16 rounded-full shadow-md">
+            <p class="text-center">Halo, <b>${user.displayName}</b> <span class="text-2xl">👋</span></p>
+            <button id="logoutBtn" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-medium text-sm shadow transition-all">
+              Logout
+            </button>
+          </div>
+        `;
+
+        document.getElementById("logoutBtn").addEventListener("click", () => {
+          signOut(auth).then(() => {
+            document.getElementById("userInfo").innerHTML = "";
+            alert("Logout berhasil ✅");
+          });
+        });
+
+        // Prefill testimoni user
+        const userRef = ref(gdb, "testimoni/" + user.uid);
+        const snapshot = await get(userRef);
+        if (snapshot.exists()) {
+          const data = snapshot.val();
+          document.getElementById("pesan").value = data.pesan || "";
+          document.getElementById("rating").value = data.rating || "5";
+          document.getElementById("kritik").value = data.kritik || "";
+          document.getElementById("saran").value = data.saran || "";
+        } else {
+          document.getElementById("pesan").value = "";
+          document.getElementById("rating").value = "5";
+          document.getElementById("kritik").value = "";
+          document.getElementById("saran").value = "";
+        }
+
+      } else {
+        document.getElementById("userInfo").innerHTML = "";
+        document.getElementById("pesan").value = "";
+        document.getElementById("rating").value = "5";
+        document.getElementById("kritik").value = "";
+        document.getElementById("saran").value = "";
+      }
+    });
+  
+    // Testimoni Form
+    const form = document.getElementById("testiForm");
+    
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const pesan = document.getElementById("pesan").value;
+      const rating = Number(document.getElementById("rating").value);
+      const kritik = document.getElementById("kritik").value;
+      const saran = document.getElementById("saran").value;
+
+      const now = new Date();
+      const options = { day:"2-digit", month:"2-digit", year:"numeric", 
+                        hour:"2-digit", minute:"2-digit", second:"2-digit" };
+      const tanggalJam = now.toLocaleDateString("id-ID", options);
+
+      const user = auth.currentUser;
+      if (!user) {
+        alert("Login dulu sebelum kirim testimoni!");
+        return;
+      }
+
+      if (rating < 4) {
+        if (!kritik || !saran) {
+          alert("Kalau rating di bawah 4, Kritik & Saran wajib diisi!");
+          return;
+        }
+      } 
+
+      const userRef = ref(gdb, "testimoni/" + user.uid);
+
+      await set(userRef, {
+        foto: user.photoURL,
+        nama: user.displayName,
+        email: user.email,
+        pesan,
+        rating,
+        kritik,
+        saran,
+        tanggalJam
+      });
+
+      alert("Testimoni berhasil disimpan ✅");
+    });
+
+    onValue(testimoniRef, (snapshot) => {
+      testiListEl.innerHTML = "";
+      if (snapshot.exists()) {
+        snapshot.forEach((child) => {
+          const data = child.val();
+          testiListEl.innerHTML += `
+            <div class="bg-white rounded-xl shadow-sm p-4">
+              <div class="flex items-start gap-4 mb-3">
+                <img src="${data.foto}" alt="Foto Profil" class="w-12 h-12 rounded-full">
+                <div>
+                  <p class="font-semibold">${data.nama}</p>
+                  <div class="text-yellow-400">${"⭐".repeat(data.rating)}</div>
+                  <p class="text-xs text-gray-500">${data.tanggalJam}</p>
+                </div>
+              </div>
+              <p class="text-gray-700 mb-2">${data.pesan}</p>
+              ${data.kritik ? `<p class="text-sm text-red-600"><span class="font-medium">Kritik:</span> ${data.kritik}</p>` : ""}
+              ${data.saran ? `<p class="text-sm text-green-600"><span class="font-medium">Saran:</span> ${data.saran}</p>` : ""}
+            </div>
+          `;
+        });
+      } else {
+        testiListEl.innerHTML = "<p class='text-center text-gray-500'>Belum ada testimoni</p>";
+      }
+    });
+  
+    function updateOverallRating(ratings) {
+      if (ratings.length === 0) {
+        document.getElementById("overallRating").innerHTML =
+          `<span class="stars">☆☆☆☆☆</span> <span class="score">0.0/5</span>`;
+        return;
+      }
+      
+      let avg = ratings.reduce((a, b) => a + b, 0) / ratings.length;
+      let stars = "⭐".repeat(Math.round(avg)) + "☆".repeat(5 - Math.round(avg));
+      
+      document.getElementById("overallRating").innerHTML =
+        `<span class="text-lg font-semibold">📑 Overall Rating TK DWP Kloposepuluh</span>
+        <span class="text-yellow-400 text-xl">${stars}</span> <span class="font-bold">${avg.toFixed(1)}/5</span>`;
+    }
+  
+    onValue(testimoniRef, (snapshot) => {
+      let ratings = [];
+      snapshot.forEach((child) => {
+        let data = child.val();
+        if (data.rating) ratings.push(Number(data.rating));
+      });
+      updateOverallRating(ratings);
+    });
+    
+    let allData = [];
+
+    onValue(galleryRef, (snapshot) => {
+      categoryButtons.innerHTML = "";
+      allData = [];
+      const categories = new Set();
+
+      snapshot.forEach((child) => {
+        const data = child.val();
+        allData.push(data);
+        categories.add(data.kategori);
+      });
+
+      categories.forEach((cat) => {
+        const btn = document.createElement("button");
+        btn.textContent = cat;
+        btn.className = "px-4 py-2 bg-white rounded-lg shadow-sm border border-gray-200 hover:bg-gray-100 transition-all";
+        btn.onclick = (e) => {
+          document.querySelectorAll("#categoryButtons button").forEach(el => el.classList.remove("bg-pink-500", "text-white"));
+          e.target.classList.add("bg-pink-500", "text-white");
+          renderGallery(allData.filter(d => d.kategori === cat));
+        };
+        categoryButtons.appendChild(btn);
+      });
+    });
+
+    function renderGallery(data) {
+      galleryContainer.innerHTML = "";
+      if (data.length === 0) {
+        galleryContainer.innerHTML = '<p class="text-center text-gray-500 col-span-full py-8">Tidak ada data pada kategori ini</p>';
+        return;
+      }
+
+      data.forEach((item) => {
+        let media = "";
+        if (item.jenis === "foto") {
+          media = `<img src="${item.url}" alt="${item.judul}" class="w-full h-48 object-cover rounded-lg shadow-md hover:shadow-lg transition-all cursor-pointer" onclick="openImageModal(this.src)">`;
+        } else if (item.jenis === "video") {
+          media = `<video class="w-full h-48 object-cover rounded-lg shadow-md" controls><source src="${item.url}" type="video/mp4"></video>`;
+        }
+
+        galleryContainer.innerHTML += `
+          <div class="bg-white p-3 rounded-xl shadow-sm hover:shadow-md transition-all">
+            <b class="block text-sm font-medium mb-2">${item.judul}</b>
+            ${media}
+          </div>
+        `;
+      });
+    }
+
+    onValue(guruRef, (snapshot) => {
+      guruContainer.innerHTML = "";
+      if (snapshot.exists()) {
+        snapshot.forEach((child) => {
+          const data = child.val();
+          guruContainer.innerHTML += `
+            <div class="bg-white p-4 rounded-xl shadow-md text-center hover:shadow-lg transition-all transform hover:-translate-y-1">
+              <img src="${data.foto}" alt="${data.nama}" class="w-24 h-24 rounded-full object-cover mx-auto mb-3 shadow-sm border-4 border-white">
+              <h3 class="font-bold text-gray-800">${data.nama}</h3>
+              <p class="text-sm text-pink-600 font-medium">${data.jabatan}</p>
+              <p class="text-xs text-gray-600 mt-1">${data.keterangan}</p>
+            </div>
+          `;
+        });
+      } else {
+        guruContainer.innerHTML = "<p class='text-center text-gray-500 col-span-full py-8'>Belum ada data guru</p>";
+      }
+    });
+  </script>
+</body>
+</html>
